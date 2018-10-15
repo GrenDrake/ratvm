@@ -27,6 +27,13 @@ const Token* ParseState::next() {
     return here();
 }
 
+const Token* ParseState::peek() const {
+    if (current_token == tokens.end() || current_token + 1 == tokens.end()) {
+        return nullptr;
+    }
+    return &(*(current_token+1));
+}
+
 bool ParseState::matches(Token::Type type) const {
     const Token *token = here();
     if (!token) return false;

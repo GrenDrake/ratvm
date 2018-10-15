@@ -11,6 +11,7 @@ struct ParseState {
     bool eof() const;
     const Token* here() const;
     const Token* next();
+    const Token* peek() const;
     bool matches(Token::Type type) const;
     bool matches(const std::string &text) const;
     void require(Token::Type type) const;

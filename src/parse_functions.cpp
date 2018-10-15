@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -91,6 +92,8 @@ void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) 
 }
 
 void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
+    std::map<std::string, unsigned> labels;
+
     while (!state.at_end()) {
         int ident;
         const OpcodeDef *opcode;
@@ -117,6 +120,17 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     bytecode_push_value(function->code, Value::LocalVar, localNumber);
                     break;
                 }
+                if (state.peek() && state.peek()->type == Token::Colon) {
+                    auto labelIter = labels.find(state.here()->text);
+                    if (labelIter != labels.end()) {
+                        std::stringstream ss;
+                        ss << "Label " << state.here()->text << " already defined.";
+                        throw BuildError(state.here()->origin, ss.str());
+                    }
+                    labels.insert(std::make_pair(state.here()->text, function->code.size()));
+                    state.next();
+                    break;
+                }
                 std::stringstream ss;
                 ss << "Unknown symbol " << state.here()->text << '.';
                 throw BuildError(state.here()->origin, ss.str());
@@ -131,6 +145,10 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 throw BuildError(state.here()->origin, "Unexpected token in function.");
         }
         state.next();
+    }
+
+    for (auto iter : labels) {
+        std::cout << iter.first << ": " << iter.second << '\n';
     }
 }
 
