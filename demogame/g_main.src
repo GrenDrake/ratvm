@@ -1,0 +1,143 @@
+
+object gamedata
+    title   "Forest of the Gnoll"
+    author  "Gren Drake"
+    version "Alpha-0"
+;
+
+include "demogame/g_system.src";
+
+constant turnip-count -66;
+
+object sex-neuter;
+object sex-male;
+object sex-female;
+object spc-human;
+
+object common-helmet;
+object common-sword;
+object loincloth;
+object act-punch;
+object debug-kill;
+object act-fireball;
+
+object character
+    to-lower (c)
+        (do )
+    is-alpha (c)
+        (or (and (gte c 'A') (lte c 'Z')) (and (gte c 'a') (lte c 'z')))
+    is-digit (c)
+        (and (gte c '0') (lte c '9'))
+    is-alnum (c)
+        (or (call character $is-alpha c) (call character $is-digit c))
+;
+
+object string
+    compare (str1 str2)
+        (do )
+    to-lower (str)
+        (do )
+;
+
+object tf-potion
+    on-use  "Stuff happens!"
+;
+
+object gnoll-tf-potion : tf-potion
+    article "the "
+    name    "potion of gnoll"
+    plural  "potions of gnoll"
+;
+
+
+object the-player
+    article "the "
+    name    "player"
+    sex     sex-neuter
+    species spc-human
+    faction 0
+    skills [skl-unarmed:    12
+            skl-melee:      4]
+    starting-gear   [common-helmet common-sword loincloth]
+    base-abilities  [act-punch]
+    extra-abilities [debug-kill act-fireball]
+;
+
+
+object act-swing
+    name "whirlwind"
+    combat-node
+        [attacker index target my-faction]
+        (say-uf attacker " swings ")
+        (say-pronoun pro-adject attacker)
+        (say " sword! ")
+
+        (set index 0)
+        (set target (combatant 0))
+        (set my-faction (get-property attacker $faction))
+
+        (loop
+            (if (nq my-faction (get-property target $faction))
+                (proc
+                    (if (opposed-skill-check attacker skl-melee 0 target)
+                        (proc
+                            (say-uf target " is hit! ")
+                            (do-daage target 39 skl-health dt-cutting))
+                        (say-uf target " avoids the strike! "))))
+            (inc index)
+            (set target (combatant index))
+            (if (not target)
+                (break)))
+        (say "\n")
+
+;
+
+
+object start
+    location "(not in game)"
+    body
+        (say "Welcome to the game!")
+        (add-option "Create a new character" chargen-sex)
+
+;
+
+object chargen-sex
+    body
+        (say "What sex is your character?")
+        (add-option "Male" chargen-species sex-male)
+        (add-option "Female" chargen-species sex-female)
+
+;
+
+object chargen-species
+    body  [new-sex]
+        (set-property the-player $sex new-sex)
+        (say "What species is your character?")
+        (add-option push "Human" chargen-done spc-human)
+        (add-option push "Gnoll" chargen-done spc-gnoll)
+        (add-option push "Dragon" chargen-done spc-dragon)
+
+;
+
+object chargen-done
+    body (new-species)
+        (do
+            (set-property the-player $species new-species)
+            (add-to-party the-player)
+            (add-to-party the-gnoll)
+
+            (add-item teleport-crystal 20)
+            (add-item gnoll-potion 2)
+            (add-item loincloth)
+            (add-item plate-armour)
+
+            (add-item gold 30)
+
+            (say "You are a "
+                 (get-property the-player $sex)
+                 " "
+                 (get-property the-player $species)
+                 ". Beginning the game now.\n* * * * * * * * * *\n")
+            (start-game)
+            (do-scene forest-path))
+;

@@ -1,0 +1,8 @@
+*.o
+build
+filescan
+runner
+test_bytestream
+game.bin
+tokens.txt
+data.txt

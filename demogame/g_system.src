@@ -1,0 +1,24 @@
+constant skill-default 6;
+
+//      iname               dname               def rec ko-when
+skill   skl-unarmed         "unarmed combat"    6;
+skill   skl-melee           "melee combat"      6;
+skill   skl-ranged          "ranged combat"     6;
+skill   skl-thievery        "thievery"          6;
+skill   skl-persuasion      "persuasion"        6;
+skill   skl-knowledge       "knowledge"         6;
+skill   skl-demon-magic     "demon magic"       4;
+skill   skl-divine-magic    "divine magic"      4;
+skill   skl-void-magic      "void magic"        4;
+
+skill   skl-health  "health"                    250 250 on-empty;
+skill   skl-energy  "energy"                    125 500 never;
+skill   skl-void    "void corruption"           100 -50 on-full;
+
+resistance  res-blunt       "blunt";
+resistance  res-cutting     "cutting";
+resistance  res-piercing    "piercing";
+resistance  res-fire        "fire";
+resistance  res-air         "air";
+resistance  res-earth       "earth";
+resistance  res-water       "water";
