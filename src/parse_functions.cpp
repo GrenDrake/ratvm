@@ -33,8 +33,20 @@ struct OpcodeDef {
         Push8        = 4,
         Push16       = 5,
         Push32       = 6,
+        Store        = 7,
         Say          = 10,
         GetProp      = 20,
+        Jump         = 30,
+        JumpEq       = 31,
+        JumpNeq      = 32,
+        JumpLt       = 33,
+        JumpLte      = 34,
+        JumpGt       = 35,
+        JumpGte      = 36,
+        Add          = 40,
+        Sub          = 41,
+        Mult         = 42,
+        Div          = 43,
     };
 
     std::string name;
@@ -51,9 +63,21 @@ OpcodeDef opcodes[] = {
     {   "push8",        OpcodeDef::Push8    },
     {   "push16",       OpcodeDef::Push16   },
     {   "push32",       OpcodeDef::Push32   },
+    {   "store",        OpcodeDef::Store    },
     {   "say",          OpcodeDef::Say      },
     {   "get-prop",     OpcodeDef::GetProp  },
-    {   ""                          }
+    {   "jump",         OpcodeDef::Jump     },
+    {   "jump-eq",      OpcodeDef::JumpEq   },
+    {   "jump-neq",     OpcodeDef::JumpNeq  },
+    {   "jump-lt",      OpcodeDef::JumpLt   },
+    {   "jump-lte",     OpcodeDef::JumpLte  },
+    {   "jump-gt",      OpcodeDef::JumpGt   },
+    {   "jump-gte",     OpcodeDef::JumpGte  },
+    {   "add",          OpcodeDef::Add      },
+    {   "sub",          OpcodeDef::Sub      },
+    {   "mult",         OpcodeDef::Mult     },
+    {   "div",          OpcodeDef::Div      },
+    {   ""                                  }
 };
 
 static void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state);
@@ -109,22 +133,26 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 bytecode_push_value(function->code, Value::String, ident);
                 break;
             case Token::Identifier: {
+                // is opcode name
                 opcode = getOpcode(state.here()->text);
                 if (opcode) {
                     function->code.add_8(opcode->code);
                     break;
                 }
+                // is global symbol
                 symbol = gamedata.symbols.get(state.here()->text);
                 if (symbol) {
                     bytecode_push_value(function->code, symbol->value.type, symbol->value.value);
                     break;
                 }
+                // is local name
                 auto localIter = std::find(function->local_names.begin(), function->local_names.end(), state.here()->text);
                 if (localIter != function->local_names.end()) {
                     int localNumber = std::distance(function->local_names.begin(), localIter);
                     bytecode_push_value(function->code, Value::LocalVar, localNumber);
                     break;
                 }
+                // is label
                 if (state.peek() && state.peek()->type == Token::Colon) {
                     auto labelIter = labels.find(state.here()->text);
                     if (labelIter != labels.end()) {
@@ -136,7 +164,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     state.next();
                     break;
                 }
-
+                // presume its a label
                 auto labelIter = labels.find(state.here()->text);
                 if (labelIter != labels.end()) {
                     bytecode_push_value(function->code, Value::JumpTarget, labelIter->second);
@@ -147,6 +175,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     patches.push_back(Backpatch{labelPos, state.here()->text});
                     function->code.add_32(0xFFFFFFFF);
                 }
+                break;
             }
             case Token::Integer:
                 bytecode_push_value(function->code, Value::Integer, state.here()->value);
