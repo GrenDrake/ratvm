@@ -35,8 +35,11 @@ function main(: test-local) {
     asm
     "Hello World!" say
     test-local say
+    $an-int say
+    $an-int third_obj get-prop say
+    " " say
     54 say
-    map-of-maps return
+    "\n" say
 }
 
 value te "";

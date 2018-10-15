@@ -33,6 +33,7 @@ struct OpcodeDef {
         Push16       = 5,
         Push32       = 6,
         Say          = 10,
+        GetProp      = 20,
     };
 
     std::string name;
@@ -50,6 +51,7 @@ OpcodeDef opcodes[] = {
     {   "push16",       OpcodeDef::Push16   },
     {   "push32",       OpcodeDef::Push32   },
     {   "say",          OpcodeDef::Say      },
+    {   "get-prop",     OpcodeDef::GetProp  },
     {   ""                          }
 };
 
@@ -122,6 +124,9 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
             case Token::Integer:
                 bytecode_push_value(function->code, Value::Integer, state.here()->value);
                 break;
+            case Token::Property:
+                bytecode_push_value(function->code, Value::Property, state.here()->value);
+                break;
             default:
                 throw BuildError(state.here()->origin, "Unexpected token in function.");
         }
@@ -141,14 +146,13 @@ int parse_functions(GameData &gamedata) {
         function->codePosition = gamedata.bytecode.size();
         if (state.at_end()) {
             // empty function
-            bytecode_push_value(function->code, Value::Integer, 0);
-            function->code.add_8(OpcodeDef::Return);
         } else if (state.matches("asm")) {
             state.next();
             parse_asm_function(gamedata, function, state);
         } else {
             throw BuildError(function->origin, "Unknown function type.");
         }
+        function->code.add_8(OpcodeDef::Return);
         function->code.padTo(4);
         gamedata.bytecode.append(function->code);
     }
