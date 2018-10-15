@@ -1,7 +1,7 @@
 object 3 third_obj
     $its-me third_obj
     $an-int 2
-    $a-string "Hello World!"
+    $a-string "Hello World!\n"
     $a-map {
         "another":    5
         third_obj:       "Test"
@@ -31,14 +31,85 @@ value map-of-maps {
     {1: 9}: {4: 2}
 };
 
-function main(: test-local) {
+function main(: counter the-value) {
     asm
-    "Hello World!" say
-    test-local say
-    $an-int say
-    $an-int third_obj get-prop say
+
+// show a count up loop and calculate 2^10
+    0 counter store
+    1 the-value store
+    loop-start:
+    counter 1 add counter store
+    2 the-value mult the-value store
+    counter say
     " " say
-    54 say
+    counter 10 loop-start jump-lt
+    "Loop finished!\n" say
+    "Final result: " say
+    the-value say
+    "\n" say
+
+// get and display the value of third_obj.a-string
+    "third_obj.a-string: " say
+    $a-string third_obj get-prop say
+
+// test jumps
+    5 5 jump-eq-good jump-eq
+    "jump-eq failed\n" say
+    after-jump-eq jump
+    jump-eq-good:
+    "jump-eq succeeded!\n" say
+    after-jump-eq:
+
+    5 10 jump-neq-good jump-neq
+    "jump-neq failed\n" say
+    after-jump-neq jump
+    jump-neq-good:
+    "jump-neq succeeded!\n" say
+    after-jump-neq:
+
+    5 10 jump-lt-good jump-lt
+    "jump-lt failed\n" say
+    after-jump-lt jump
+    jump-lt-good:
+    "jump-lt succeeded!\n" say
+    after-jump-lt:
+
+    10 10 jump-lte-good jump-lte
+    "jump-lte failed\n" say
+    after-jump-lte jump
+    jump-lte-good:
+    "jump-lte succeeded!\n" say
+    after-jump-lte:
+
+    10 5 jump-gt-good jump-gt
+    "jump-gt failed\n" say
+    after-jump-gt jump
+    jump-gt-good:
+    "jump-gt succeeded!\n" say
+    after-jump-gt:
+
+    10 10 jump-gte-good jump-gte
+    "jump-gte failed\n" say
+    after-jump-gte jump
+    jump-gte-good:
+    "jump-gte succeeded!\n" say
+    after-jump-gte:
+
+// test arithmetic
+    "5+5=" say
+    5 5 add say
+    "\n" say
+
+    "10-5=" say
+    10 5 sub say
+    "\n" say
+
+    "5*5=" say
+    5 5 mult say
+    "\n" say
+
+    "40/5=" say
+    40 5 div say
     "\n" say
 }
 
