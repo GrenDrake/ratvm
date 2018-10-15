@@ -72,7 +72,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     // write lists section
     std::cout << "GenLists " << out.tellp() << '\n';
     write_32(out, gamedata.lists.size() - 1);
-    for (int i = 0; i < gamedata.lists.size(); ++i) {
+    for (unsigned i = 0; i < gamedata.lists.size(); ++i) {
         const GameList *list = gamedata.lists[i];
         if (list == nullptr) continue;
         write_32(out, i);
@@ -86,7 +86,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     // write maps section
     std::cout << "GenMaps " << out.tellp() << '\n';
     write_32(out, gamedata.maps.size() - 1);
-    for (int i = 0; i < gamedata.maps.size(); ++i) {
+    for (unsigned i = 0; i < gamedata.maps.size(); ++i) {
         const GameMap *map = gamedata.maps[i];
         if (map == nullptr) continue;
         write_32(out, i);
@@ -116,7 +116,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     // write functions section
     std::cout << "GenFuncs " << out.tellp() << '\n';
     write_32(out, gamedata.functions.size() - 1);
-    for (int i = 0; i < gamedata.functions.size(); ++i) {
+    for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
         const FunctionDef *function = gamedata.functions[i];
         if (function == nullptr) continue;
         write_32(out, function->ident);

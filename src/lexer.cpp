@@ -71,10 +71,10 @@ bool isValidIdentifier(int c) {
 }
 
 void handle_string_escapes(GameData &gamedata, const Origin &origin, std::string &text) {
-    size_t spacesStart = SIZE_T_MAX;
-    for (int i = 0; i < text.size(); ++i) {
-        if (isspace(text[i]) && spacesStart == SIZE_T_MAX)  spacesStart = i;
-        else if (!isspace(text[i]))                         spacesStart = SIZE_T_MAX;
+    size_t spacesStart = SIZE_MAX;
+    for (unsigned i = 0; i < text.size(); ++i) {
+        if (isspace(text[i]) && spacesStart == SIZE_MAX)  spacesStart = i;
+        else if (!isspace(text[i]))                       spacesStart = SIZE_MAX;
         if (text[i] == '\n') {
             size_t whitespaceEnd = i;
             while (whitespaceEnd < text.size() && isspace(text[whitespaceEnd])) {
@@ -90,7 +90,7 @@ void handle_string_escapes(GameData &gamedata, const Origin &origin, std::string
             --i;
             continue;
         }
-        
+
         if (text[i] != '\\') continue;
         switch(text[i + 1]) {
             case '\'':
@@ -188,7 +188,7 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
                 tokens.push_back(Token(origin, Token::String, text));
             } else {
                 if (text.size() != 1) {
-                    gamedata.errors.push_back(Error{origin, 
+                    gamedata.errors.push_back(Error{origin,
                         "character literal has invalid length"});
                 } else {
                     tokens.push_back(Token(origin, Token::Integer, text[0]));
@@ -206,7 +206,7 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             }
             std::string text = state.text.substr(start, state.pos - start);
             if (text.empty()) {
-                    gamedata.errors.push_back(Error{origin, 
+                    gamedata.errors.push_back(Error{origin,
                         "found empty property name"});
             }
             unsigned propertyId = gamedata.getPropertyId(text);
