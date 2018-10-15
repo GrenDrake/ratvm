@@ -1,0 +1,3 @@
+[submodule "gtrpge-runner"]
+	path = gtrpge-runner
+	url = git@github.com:GrenDrake/gtrpge-runner.git
