@@ -91,8 +91,13 @@ void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) 
     }
 }
 
+struct Backpatch {
+    unsigned position;
+    std::string name;
+};
 void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
     std::map<std::string, unsigned> labels;
+    std::vector<Backpatch> patches;
 
     while (!state.at_end()) {
         int ident;
@@ -131,9 +136,17 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     state.next();
                     break;
                 }
-                std::stringstream ss;
-                ss << "Unknown symbol " << state.here()->text << '.';
-                throw BuildError(state.here()->origin, ss.str());
+
+                auto labelIter = labels.find(state.here()->text);
+                if (labelIter != labels.end()) {
+                    bytecode_push_value(function->code, Value::JumpTarget, labelIter->second);
+                } else {
+                    function->code.add_8(OpcodeDef::Push32);
+                    function->code.add_8(Value::JumpTarget);
+                    unsigned labelPos = function->code.size();
+                    patches.push_back(Backpatch{labelPos, state.here()->text});
+                    function->code.add_32(0xFFFFFFFF);
+                }
             }
             case Token::Integer:
                 bytecode_push_value(function->code, Value::Integer, state.here()->value);
@@ -147,8 +160,15 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
         state.next();
     }
 
-    for (auto iter : labels) {
-        std::cout << iter.first << ": " << iter.second << '\n';
+    for (const Backpatch &patch : patches) {
+        auto labelIter = labels.find(patch.name);
+        if (labelIter != labels.end()) {
+            function->code.overwrite_32(patch.position, labelIter->second);
+        } else {
+            std::stringstream ss;
+            ss << "Unknown symbol " << patch.name << " in function " << function->name << '.';
+            throw BuildError(ss.str());
+        }
     }
 }
 
