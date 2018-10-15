@@ -85,6 +85,25 @@ void test_append() {
     assert_equal(bs1.read_8(7), 251, "test_append: result array has bad eighth value");
 }
 
+void test_overwrite() {
+    ByteStream bs;
+    bs.add_32(0xFFFFFFFF);
+
+    assert_equal(bs.size(), 4, "test_overwrite: stream has badsize");
+
+    bs.overwrite_8(0, 200);
+    assert_equal(bs.size(), 4, "test_overwrite: overwrite_8 changed stream size");
+    assert_equal(bs.read_8(0), 200, "test_overwrite: failed overwrite_8");
+
+    bs.overwrite_16(0, 1000);
+    assert_equal(bs.size(), 4, "test_overwrite: overwrite_16 changed stream size");
+    assert_equal(bs.read_16(0), 1000, "test_overwrite: failed overwrite_16");
+
+    bs.overwrite_32(0, 1000000);
+    assert_equal(bs.size(), 4, "test_overwrite: overwrite_32 changed stream size");
+    assert_equal(bs.read_32(0), 1000000, "test_overwrite: failed overwrite_32");
+}
+
 int main() {
 
     try {
@@ -94,6 +113,7 @@ int main() {
         test_read_middle();
         test_padding();
         test_append();
+        test_overwrite();
     } catch (TestFailed &e) {
         std::cerr << "Test Failed: " << e.what() << '\n';
     }
