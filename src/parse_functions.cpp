@@ -6,7 +6,7 @@
  *
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
-
+#include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <sstream>
@@ -98,20 +98,27 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 ident = gamedata.getStringId(state.here()->text);
                 bytecode_push_value(function->code, Value::String, ident);
                 break;
-            case Token::Identifier:
+            case Token::Identifier: {
                 opcode = getOpcode(state.here()->text);
                 if (opcode) {
                     function->code.add_8(opcode->code);
                     break;
                 }
                 symbol = gamedata.symbols.get(state.here()->text);
-                if (!symbol) {
-                    std::stringstream ss;
-                    ss << "Unknown symbol " << state.here()->text << '.';
-                    throw BuildError(state.here()->origin, ss.str());
+                if (symbol) {
+                    bytecode_push_value(function->code, symbol->value.type, symbol->value.value);
+                    break;
                 }
-                bytecode_push_value(function->code, symbol->value.type, symbol->value.value);
-                break;
+                auto localIter = std::find(function->local_names.begin(), function->local_names.end(), state.here()->text);
+                if (localIter != function->local_names.end()) {
+                    int localNumber = std::distance(function->local_names.begin(), localIter);
+                    bytecode_push_value(function->code, Value::LocalVar, localNumber);
+                    break;
+                }
+                std::stringstream ss;
+                ss << "Unknown symbol " << state.here()->text << '.';
+                throw BuildError(state.here()->origin, ss.str());
+            }
             case Token::Integer:
                 bytecode_push_value(function->code, Value::Integer, state.here()->value);
                 break;

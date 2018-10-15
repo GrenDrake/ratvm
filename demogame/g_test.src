@@ -31,9 +31,10 @@ value map-of-maps {
     {1: 9}: {4: 2}
 };
 
-function main() {
+function main(: test-local) {
     asm
     "Hello World!" say
+    test-local say
     54 say
     map-of-maps return
 }
