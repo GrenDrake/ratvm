@@ -3,6 +3,24 @@
 
 #include "gamedata.h"
 
+static void dump_string(std::ostream &out, const std::string &text) {
+    unsigned length = text.size();
+    bool displayEllipse = false;
+    if (length > 60) {
+        length = 60;
+        displayEllipse = true;
+    }
+
+    for (unsigned i = 0; i < length; ++i) {
+        if (text[i] == '\n') {
+            out << "\\n";
+        } else {
+            out << text[i];
+        }
+    }
+    if (displayEllipse) out << "...";
+}
+
 void dump_gamedata(GameData &gamedata, std::ostream &out) {
     out.fill('0');
     out << "OUTPUT FILE TOC\n       HEADER: 0 (0x00000000)\n" << std::uppercase;
@@ -21,7 +39,9 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
     out << '\n';
 
     for (unsigned i = 0; i < gamedata.stringTable.size(); ++i) {
-        out << "STRING " << i << " ~" << gamedata.stringTable[i].substr(0, 60) << "~\n";
+        out << "STRING " << i << " [" << gamedata.stringTable[i].size() << "] ~";
+        dump_string(out, gamedata.stringTable[i]);
+        out << "~\n";
     }
     out << '\n';
 
