@@ -209,9 +209,14 @@ int parse_object(GameData &gamedata, ParseState &state) {
                         Value{Value::Integer, objectId});
 
     while (!state.matches(Token::Semicolon)) {
-        state.require(Token::Property);
+        unsigned propId = 0;
+        if (state.matches(Token::Identifier)) {
+            propId = gamedata.getPropertyId(state.here()->text);
+        } else {
+            state.require(Token::Property);
+            propId = state.here()->value;
+        }
         const Origin &propOrigin = state.here()->origin;
-        unsigned propId = state.here()->value;
         state.next();
 
         if (state.eof()) {

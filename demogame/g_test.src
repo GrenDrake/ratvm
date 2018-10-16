@@ -1,20 +1,20 @@
 object 3 third_obj
-    $its-me third_obj
-    $an-int 2
-    $a-string "Hello World!\n"
-    $a-map {
+    its-me third_obj
+    an-int 2
+    a-string "Hello World!\n"
+    a-map {
         "another":    5
         third_obj:       "Test"
         $fruit:     $apple
     }
-    $a-list [
+    a-list [
         4 5 8
     ]
-    $test-func function (arg1 arg2 : local1 local2 local3) {
+    test-func function (arg1 arg2 : local1 local2 local3) {
     }
-    $other-func function 9 (an-arg : a-local) {
+    other-func function 9 (an-arg : a-local) {
     }
-    $final-value 66
+    final-value 66
 ;
 
 value an-int 7384;
