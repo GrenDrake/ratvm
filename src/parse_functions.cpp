@@ -26,39 +26,39 @@
 
 struct OpcodeDef {
     enum CodeOpcode {
-        Return       = 0,
-        Push0        = 1,
-        Push1        = 2,
-        PushNeg1     = 3,
-        Push8        = 4,
-        Push16       = 5,
-        Push32       = 6,
-        Store        = 7,
-        Say          = 10,
-        Call         = 17, // call a value as a function
-        CallMethod   = 18, // call an object property as a function
-        Self         = 19, // get object the current function is a property of
-        GetProp      = 20,
-        HasProp      = 21, // check if property is set on object
-        SetProp      = 22, // set object property to value
-        GetItem      = 23, // get item from list (index) or map (key)
-        HasItem      = 24, // check if index (for list) or key (for map) exists
-        GetSize      = 25, // get size of list or map
-        SetItem      = 26, // set item in list (by index) of map (by key)
-        TypeOf       = 27, // get value type
-        Jump         = 30,
-        JumpEq       = 31,
-        JumpNeq      = 32,
-        JumpLt       = 33,
-        JumpLte      = 34,
-        JumpGt       = 35,
-        JumpGte      = 36,
-        JumpTrue     = 37, // jump if value is non-zero (true)
-        JumpFalse    = 38, // jump if value is zero (false)
-        Add          = 40,
-        Sub          = 41,
-        Mult         = 42,
-        Div          = 43,
+        Return      = 0,
+        Push0       = 1,
+        Push1       = 2,
+        PushNeg1    = 3,
+        Push8       = 4,
+        Push16      = 5,
+        Push32      = 6,
+        Store       = 7,
+        Say         = 10,
+        Call        = 17, // call a value as a function
+        CallMethod  = 18, // call an object property as a function
+        Self        = 19, // get object the current function is a property of
+        GetProp     = 20,
+        HasProp     = 21, // check if property is set on object
+        SetProp     = 22, // set object property to value
+        GetItem     = 23, // get item from list (index) or map (key)
+        HasItem     = 24, // check if index (for list) or key (for map) exists
+        GetSize     = 25, // get size of list or map
+        SetItem     = 26, // set item in list (by index) of map (by key)
+        TypeOf      = 27, // get value type
+        Jump        = 30,
+        JumpEq      = 31,
+        JumpNeq     = 32,
+        JumpLt      = 33,
+        JumpLte     = 34,
+        JumpGt      = 35,
+        JumpGte     = 36,
+        JumpTrue    = 37, // jump if value is non-zero (true)
+        JumpFalse   = 38, // jump if value is zero (false)
+        Add         = 40,
+        Sub         = 41,
+        Mult        = 42,
+        Div         = 43,
     };
 
     std::string name;
@@ -68,40 +68,40 @@ struct OpcodeDef {
 
 
 OpcodeDef opcodes[] = {
-    {   "return",       OpcodeDef::Return   },
-    {   "push0",        OpcodeDef::Push0    },
-    {   "push1",        OpcodeDef::Push1    },
-    {   "push-1",       OpcodeDef::PushNeg1 },
-    {   "push8",        OpcodeDef::Push8    },
-    {   "push16",       OpcodeDef::Push16   },
-    {   "push32",       OpcodeDef::Push32   },
-    {   "store",        OpcodeDef::Store    },
-    {   "say",          OpcodeDef::Say      },
-    {   "call",         OpcodeDef::Call     },
-    {   "call-method",  OpcodeDef::CallMethod },
-    {   "self",         OpcodeDef::Self       },
-    {   "get-prop",     OpcodeDef::GetProp  },
-    {   "has-prop",     OpcodeDef::HasProp  },
-    {   "set-prop",     OpcodeDef::SetProp  },
-    {   "get-item",     OpcodeDef::GetItem  },
-    {   "has-item",     OpcodeDef::HasItem  },
-    {   "get-size",     OpcodeDef::GetSize  },
-    {   "set-item",     OpcodeDef::SetItem  },
-    {   "type-of",      OpcodeDef::TypeOf   },
-    {   "jump",         OpcodeDef::Jump     },
-    {   "jump-eq",      OpcodeDef::JumpEq   },
-    {   "jump-neq",     OpcodeDef::JumpNeq  },
-    {   "jump-lt",      OpcodeDef::JumpLt   },
-    {   "jump-lte",     OpcodeDef::JumpLte  },
-    {   "jump-gt",      OpcodeDef::JumpGt   },
-    {   "jump-gte",     OpcodeDef::JumpGte  },
-    {   "jump-true",    OpcodeDef::JumpTrue  },
-    {   "jump-false",   OpcodeDef::JumpFalse },
-    {   "add",          OpcodeDef::Add      },
-    {   "sub",          OpcodeDef::Sub      },
-    {   "mult",         OpcodeDef::Mult     },
-    {   "div",          OpcodeDef::Div      },
-    {   ""                                  }
+    {   "return",       OpcodeDef::Return       },
+    {   "push0",        OpcodeDef::Push0        },
+    {   "push1",        OpcodeDef::Push1        },
+    {   "push-1",       OpcodeDef::PushNeg1     },
+    {   "push8",        OpcodeDef::Push8        },
+    {   "push16",       OpcodeDef::Push16       },
+    {   "push32",       OpcodeDef::Push32       },
+    {   "store",        OpcodeDef::Store        },
+    {   "say",          OpcodeDef::Say          },
+    {   "call",         OpcodeDef::Call         },
+    {   "call-method",  OpcodeDef::CallMethod   },
+    {   "self",         OpcodeDef::Self         },
+    {   "get-prop",     OpcodeDef::GetProp      },
+    {   "has-prop",     OpcodeDef::HasProp      },
+    {   "set-prop",     OpcodeDef::SetProp      },
+    {   "get-item",     OpcodeDef::GetItem      },
+    {   "has-item",     OpcodeDef::HasItem      },
+    {   "get-size",     OpcodeDef::GetSize      },
+    {   "set-item",     OpcodeDef::SetItem      },
+    {   "type-of",      OpcodeDef::TypeOf       },
+    {   "jump",         OpcodeDef::Jump         },
+    {   "jump-eq",      OpcodeDef::JumpEq       },
+    {   "jump-neq",     OpcodeDef::JumpNeq      },
+    {   "jump-lt",      OpcodeDef::JumpLt       },
+    {   "jump-lte",     OpcodeDef::JumpLte      },
+    {   "jump-gt",      OpcodeDef::JumpGt       },
+    {   "jump-gte",     OpcodeDef::JumpGte      },
+    {   "jump-true",    OpcodeDef::JumpTrue     },
+    {   "jump-false",   OpcodeDef::JumpFalse    },
+    {   "add",          OpcodeDef::Add          },
+    {   "sub",          OpcodeDef::Sub          },
+    {   "mult",         OpcodeDef::Mult         },
+    {   "div",          OpcodeDef::Div          },
+    {   ""                                      }
 };
 
 static void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state);
