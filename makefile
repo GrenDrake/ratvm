@@ -26,8 +26,11 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
 
+runner:
+	cd gtrpge-runner && make
+	cp gtrpge-runner/runner .
 
 clean:
 	$(RM) src/*.o tests/*.o $(BUILD) $(FILESCAN)
 
-.PHONY: all clean tests
+.PHONY: all clean tests runner
