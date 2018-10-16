@@ -31,28 +31,40 @@ value map-of-maps {
     {1: 9}: {4: 2}
 };
 
-function main(: counter the-value) {
+
+function test-call() {
     asm
 
-// show a count up loop and calculate 2^10
-    0 counter store
-    1 the-value store
-    loop-start:
-    counter 1 add counter store
-    2 the-value mult the-value store
-    counter say
-    " " say
-    counter 10 loop-start jump-lt
-    "Loop finished!\n" say
-    "Final result: " say
-    the-value say
+    "\n## Testing function calls\n" say
+    "Passing (4, 5). " say
+    5 4 2 test-call-helper call
+    "Passing (4). " say
+    4 1 test-call-helper call
+    "Passing (). " say
+    0 test-call-helper call
+    "Multiply 5 * 5 = " say
+    5 5 2 test-call-helper-multiply call say
     "\n" say
+}
 
-// get and display the value of third_obj.a-string
-    "third_obj.a-string: " say
-    $a-string third_obj get-prop say
+function test-call-helper( arg1 arg2 ) {
+    asm
 
-// test jumps
+    "Received: (" say
+    arg1 say
+    ", " say
+    arg2 say
+    ")\n" say
+}
+
+function test-call-helper-multiply( arg1 arg2 ) {
+    asm arg1 arg2 mult return
+}
+
+function test-jumps() {
+    asm
+
+    "\n## Testing jump opcodes\n" say
     5 5 jump-eq-good jump-eq
     "jump-eq failed\n" say
     after-jump-eq jump
@@ -94,8 +106,12 @@ function main(: counter the-value) {
     jump-gte-good:
     "jump-gte succeeded!\n" say
     after-jump-gte:
+}
 
-// test arithmetic
+function test-math() {
+    asm
+
+    "\n## Testing math opcodes\n" say
     "5+5=" say
     5 5 add say
     "\n" say
@@ -111,6 +127,37 @@ function main(: counter the-value) {
     "40/5=" say
     40 5 div say
     "\n" say
+}
+
+function test-object() {
+    asm
+
+    "\n## Testing object manipulation opcodes\n" say
+    "third_obj.a-string: " say
+    $a-string third_obj get-prop say
+}
+
+function main(: counter the-value) {
+    asm
+
+// show a count up loop and calculate 2^10
+    0 counter store
+    1 the-value store
+    loop-start:
+    counter 1 add counter store
+    2 the-value mult the-value store
+    counter say
+    " " say
+    counter 10 loop-start jump-lt
+    "Loop finished!\n" say
+    "Final result: " say
+    the-value say
+    "\n" say
+
+    0 test-call call
+    0 test-jumps call
+    0 test-math call
+    0 test-object call
 }
 
 value te "";
