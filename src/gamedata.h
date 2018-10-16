@@ -90,6 +90,9 @@ public:
     std::vector<FunctionDef*> functions;
     ByteStream bytecode;
 
+    unsigned stringsStart, listsStart, mapsStart, objectsStart;
+    unsigned functionsStart, bytecodeStart, fileEnd;
+
     int nextAnonymousId;
 };
 

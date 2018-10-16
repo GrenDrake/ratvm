@@ -63,14 +63,14 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     }
 
     // write strings section
-    std::cout << "GenStrings " << out.tellp() << '\n';
+    gamedata.stringsStart = out.tellp();
     write_32(out, gamedata.stringTable.size());
     for (const std::string &string : gamedata.stringTable) {
         write_str(out, string);
     }
 
     // write lists section
-    std::cout << "GenLists " << out.tellp() << '\n';
+    gamedata.listsStart = out.tellp();
     write_32(out, gamedata.lists.size() - 1);
     for (unsigned i = 0; i < gamedata.lists.size(); ++i) {
         const GameList *list = gamedata.lists[i];
@@ -84,7 +84,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     }
 
     // write maps section
-    std::cout << "GenMaps " << out.tellp() << '\n';
+    gamedata.mapsStart = out.tellp();
     write_32(out, gamedata.maps.size() - 1);
     for (unsigned i = 0; i < gamedata.maps.size(); ++i) {
         const GameMap *map = gamedata.maps[i];
@@ -100,7 +100,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     }
 
     // write objects section
-    std::cout << "GenObj " << out.tellp() << '\n';
+    gamedata.objectsStart = out.tellp();
     write_32(out, gamedata.objects.size());
     for (const GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
@@ -114,7 +114,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     }
 
     // write functions section
-    std::cout << "GenFuncs " << out.tellp() << '\n';
+    gamedata.functionsStart = out.tellp();
     write_32(out, gamedata.functions.size() - 1);
     for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
         const FunctionDef *function = gamedata.functions[i];
@@ -126,9 +126,9 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     }
 
     // write bytecode section
-    std::cout << "ByteCode " << out.tellp() << '\n';
+    gamedata.bytecodeStart = out.tellp();
     write_32(out, gamedata.bytecode.size());
     gamedata.bytecode.write(out);
 
-    std::cout << "End of File " << out.tellp() << '\n';
+    gamedata.fileEnd = out.tellp();
 }

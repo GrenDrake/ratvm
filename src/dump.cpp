@@ -1,8 +1,20 @@
 #include <ostream>
+#include <iomanip>
 
 #include "gamedata.h"
 
 void dump_gamedata(GameData &gamedata, std::ostream &out) {
+    out.fill('0');
+    out << "OUTPUT FILE TOC\n       HEADER: 0 (0x00000000)\n" << std::uppercase;
+    out << "      STRINGS: 0x" << std::hex << std::setw(8) << gamedata.stringsStart << " (" << std::dec << gamedata.stringsStart << ")\n";
+    out << "        LISTS: 0x" << std::hex << std::setw(8) << gamedata.listsStart << " (" << std::dec << gamedata.listsStart << ")\n";
+    out << "         MAPS: 0x" << std::hex << std::setw(8) << gamedata.mapsStart << " (" << std::dec << gamedata.mapsStart << ")\n";
+    out << "      OBJECTS: 0x" << std::hex << std::setw(8) << gamedata.objectsStart << " (" << std::dec << gamedata.objectsStart << ")\n";
+    out << "    FUNCTIONS: 0x" << std::hex << std::setw(8) << gamedata.functionsStart << " (" << std::dec << gamedata.functionsStart << ")\n";
+    out << "     BYTECODE: 0x" << std::hex << std::setw(8) << gamedata.bytecodeStart << " (" << std::dec << gamedata.bytecodeStart << ")\n";
+    out << "  END-OF-FILE: 0x" << std::hex << std::setw(8) << gamedata.fileEnd << " (" << std::dec << gamedata.fileEnd << ")\n\n";
+    out << std::dec;
+
     for (unsigned i = 0; i < gamedata.propertyNames.size(); ++i) {
         out << "PROPERTY-ID " << i << " " << gamedata.propertyNames[i] << '\n';
     }
