@@ -35,6 +35,9 @@ struct OpcodeDef {
         Push32      = 6,
         Store       = 7,
         Say         = 10,
+        StackkDup   = 14, // duplicate the top item on the stack
+        StackPeek   = 15, // peek at the stack item X items from the top
+        StackSize   = 16, // get the current size of the stack
         Call        = 17, // call a value as a function
         CallMethod  = 18, // call an object property as a function
         Self        = 19, // get object the current function is a property of
@@ -77,6 +80,9 @@ OpcodeDef opcodes[] = {
     {   "push32",       OpcodeDef::Push32       },
     {   "store",        OpcodeDef::Store        },
     {   "say",          OpcodeDef::Say          },
+    {   "stack-dup",    OpcodeDef::StackkDup    },
+    {   "stack-peek",   OpcodeDef::StackPeek    },
+    {   "stack-size",   OpcodeDef::StackSize    },
     {   "call",         OpcodeDef::Call         },
     {   "call-method",  OpcodeDef::CallMethod   },
     {   "self",         OpcodeDef::Self         },
