@@ -296,19 +296,19 @@ function test-math() {
     asm
 
     "\n## Testing math opcodes\n" say
-    "5+5=" say
+    " 5 + 5 = " say
     5 5 add say
     "\n" say
 
-    "10-5=" say
+    "10 - 5 = " say
     10 5 sub say
     "\n" say
 
-    "5*5=" say
+    " 5 * 5 = " say
     5 5 mult say
     "\n" say
 
-    "40/5=" say
+    "40 / 5 = " say
     40 5 div say
     "\n" say
 }
