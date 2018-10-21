@@ -52,17 +52,15 @@ struct OpcodeDef {
         GetSize     = 25, // get size of list or map
         SetItem     = 26, // set item in list (by index) of map (by key)
         TypeOf      = 27, // get value type
-        CompareTypes = 28, // compare the types of two values and push the result
-        Compare      = 29, // compare two values and push the result
-        Jump        = 30,
-        JumpEq      = 31,
-        JumpNeq     = 32,
-        JumpLt      = 33,
-        JumpLte     = 34,
-        JumpGt      = 35,
-        JumpGte     = 36,
-        JumpTrue    = 37, // jump if value is non-zero (true)
-        JumpFalse   = 38, // jump if value is zero (false)
+        CompareTypes        = 30, // compare the types of two values and push the result
+        Compare             = 31, // compare two values and push the result
+        Jump                = 32, // unconditional jump
+        JumpZero            = 33, // jump if top of stack == 0
+        JumpNotZero         = 34, // jump if top of stack != 0
+        JumpLessThan        = 35, // jump if top of stack < 0
+        JumpLessThanEqual   = 36, // jump if top of stack <= 0
+        JumpGreaterThan     = 37, // jump if top of stack > 0
+        JumpGreaterThanEqual= 38, // jump if top of stack >= 0
         Add         = 40,
         Sub         = 41,
         Mult        = 42,
@@ -102,17 +100,17 @@ OpcodeDef opcodes[] = {
     {   "get-size",     OpcodeDef::GetSize      },
     {   "set-item",     OpcodeDef::SetItem      },
     {   "type-of",      OpcodeDef::TypeOf       },
-    {   "cmp-type",     OpcodeDef::CompareTypes },
-    {   "cmp",          OpcodeDef::Compare      },
-    {   "jump",         OpcodeDef::Jump         },
-    {   "jump-eq",      OpcodeDef::JumpEq       },
-    {   "jump-neq",     OpcodeDef::JumpNeq      },
-    {   "jump-lt",      OpcodeDef::JumpLt       },
-    {   "jump-lte",     OpcodeDef::JumpLte      },
-    {   "jump-gt",      OpcodeDef::JumpGt       },
-    {   "jump-gte",     OpcodeDef::JumpGte      },
-    {   "jump-true",    OpcodeDef::JumpTrue     },
-    {   "jump-false",   OpcodeDef::JumpFalse    },
+    {   "cmp-type",     OpcodeDef::CompareTypes         },
+    {   "cmp",          OpcodeDef::Compare              },
+    {   "jmp",          OpcodeDef::Jump                 },
+    {   "jeq",          OpcodeDef::JumpZero             },
+    {   "jz",           OpcodeDef::JumpZero             },
+    {   "jneq",         OpcodeDef::JumpNotZero          },
+    {   "jnz",          OpcodeDef::JumpNotZero          },
+    {   "jlt",          OpcodeDef::JumpLessThan         },
+    {   "jlte",         OpcodeDef::JumpLessThanEqual    },
+    {   "jgt",          OpcodeDef::JumpGreaterThan      },
+    {   "jgte",         OpcodeDef::JumpGreaterThanEqual },
     {   "add",          OpcodeDef::Add          },
     {   "sub",          OpcodeDef::Sub          },
     {   "mult",         OpcodeDef::Mult         },
