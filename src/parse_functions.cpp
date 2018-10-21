@@ -35,6 +35,8 @@ struct OpcodeDef {
         Push32      = 6,
         Store       = 7,
         Say         = 10,
+        SayUnsigned = 11,
+        SayChar     = 12,
         StackPop    = 13, // remove the top item from the stack
         StackDup    = 14, // duplicate the top item on the stack
         StackPeek   = 15, // peek at the stack item X items from the top
@@ -83,6 +85,8 @@ OpcodeDef opcodes[] = {
     {   "push32",       OpcodeDef::Push32       },
     {   "store",        OpcodeDef::Store        },
     {   "say",          OpcodeDef::Say          },
+    {   "say-unsigned", OpcodeDef::SayUnsigned  },
+    {   "say-char",     OpcodeDef::SayChar      },
     {   "pop",          OpcodeDef::StackPop     },
     {   "stack-dup",    OpcodeDef::StackDup     },
     {   "stack-peek",   OpcodeDef::StackPeek    },
