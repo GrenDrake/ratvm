@@ -50,6 +50,8 @@ struct OpcodeDef {
         GetSize     = 25, // get size of list or map
         SetItem     = 26, // set item in list (by index) of map (by key)
         TypeOf      = 27, // get value type
+        CompareTypes = 28, // compare the types of two values and push the result
+        Compare      = 29, // compare two values and push the result
         Jump        = 30,
         JumpEq      = 31,
         JumpNeq     = 32,
@@ -96,6 +98,8 @@ OpcodeDef opcodes[] = {
     {   "get-size",     OpcodeDef::GetSize      },
     {   "set-item",     OpcodeDef::SetItem      },
     {   "type-of",      OpcodeDef::TypeOf       },
+    {   "cmp-type",     OpcodeDef::CompareTypes },
+    {   "cmp",          OpcodeDef::Compare      },
     {   "jump",         OpcodeDef::Jump         },
     {   "jump-eq",      OpcodeDef::JumpEq       },
     {   "jump-neq",     OpcodeDef::JumpNeq      },
