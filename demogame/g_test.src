@@ -61,51 +61,235 @@ function test-call-helper-multiply( arg1 arg2 ) {
     asm arg1 arg2 mult return
 }
 
-function test-jumps() {
+function test-compare(: test-value) {
     asm
+    "\n## Testing compare opcode\n" say
 
-    "\n## Testing jump opcodes\n" say
-    5 5 jump-eq-good jump-eq
-    "jump-eq failed\n" say
-    after-jump-eq jump
-    jump-eq-good:
-    "jump-eq succeeded!\n" say
-    after-jump-eq:
+    " 5 vs 5 (=   0): " say 5 5  cmp say "\n" say
+    " 2 vs 5 (=  -3): " say 2 5  cmp say "\n" say
+    " 5 vs 2 (=   3): " say 5 2  cmp say "\n" say
+    "-5 vs 5 (= -10): " say -5 5 cmp say "\n" say
+    "5 vs -5 (=  10): " say 5 -5 cmp say "\n" say
 
-    5 10 jump-neq-good jump-neq
-    "jump-neq failed\n" say
-    after-jump-neq jump
-    jump-neq-good:
-    "jump-neq succeeded!\n" say
-    after-jump-neq:
+    "\n[setting \"tv\" to 5 to test local variables in compare.]\n" say
+    5 test-value store
+    " tv vs 5 (=  0): " say test-value 5 cmp say "\n" say
+    " 2 vs tv (= -3): " say 2 test-value cmp say "\n" say
+    " tv vs 2 (=  3): " say test-value 2 cmp say "\n" say
 
-    5 10 jump-lt-good jump-lt
-    "jump-lt failed\n" say
-    after-jump-lt jump
-    jump-lt-good:
-    "jump-lt succeeded!\n" say
-    after-jump-lt:
+}
 
-    10 10 jump-lte-good jump-lte
-    "jump-lte failed\n" say
-    after-jump-lte jump
-    jump-lte-good:
-    "jump-lte succeeded!\n" say
-    after-jump-lte:
+function test-jumps(: test-value) {
+    asm
+    "\n## Testing jump opcodes\n\n[No local variables.]\n" say
 
-    10 5 jump-gt-good jump-gt
-    "jump-gt failed\n" say
-    after-jump-gt jump
-    jump-gt-good:
-    "jump-gt succeeded!\n" say
-    after-jump-gt:
+// jump
+    "jmp      : " say
+    test001 jmp
+    "Failed!\n" say 0 return // abort because the rest of the tests depend on
+                             // the jmp opcode
+    test001: "Succeeded!\n" say
 
-    10 10 jump-gte-good jump-gte
-    "jump-gte failed\n" say
-    after-jump-gte jump
-    jump-gte-good:
-    "jump-gte succeeded!\n" say
-    after-jump-gte:
+// jump zero
+    "jz    (0): " say
+    0 test003 jz
+    "Failed!\n" say test003-after jmp
+    test003: "Succeeded!\n" say
+    test003-after:
+
+    "jz    (1): " say
+    1 test004-failed jz
+    "Succeeded!\n" say test004-after jmp
+    test004-failed: "Failed!\n" say
+    test004-after:
+
+//  jump not zero
+    "jnz   (0): " say
+    0 test005-failed jnz
+    "Succeeded!\n" say test005-after jmp
+    test005-failed: "Failed!\n" say
+    test005-after:
+
+    "jnz   (1): " say
+    1 test006 jnz
+    "Failed!\n" say test006-after jmp
+    test006: "Succeeded!\n" say
+    test006-after:
+
+//  jump less than
+    "jlt   (1): " say
+    1 test007-failed jlt
+    "Succeeded!\n" say test007-after jmp
+    test007-failed: "Failed!\n" say
+    test007-after:
+
+    "jlt   (0): " say
+    0 test008-failed jlt
+    "Succeeded!\n" say test008-after jmp
+    test008-failed: "Failed!\n" say
+    test008-after:
+
+    "jlt  (-1): " say
+    -1 test009 jlt
+    "Failed!\n" say test009-after jmp
+    test009: "Succeeded!\n" say
+    test009-after:
+
+//  jump less than or equal
+    "jlte  (1): " say
+    1 test010-failed jlte
+    "Succeeded!\n" say test010-after jmp
+    test010-failed: "Failed!\n" say
+    test010-after:
+
+    "jlte  (0): " say
+    0 test011 jlte
+    "Failed!\n" say test011-after jmp
+    test011: "Succeeded!\n" say
+    test011-after:
+
+    "jlte (-1): " say
+    -1 test012 jlte
+    "Failed!\n" say test012-after jmp
+    test012: "Succeeded!\n" say
+    test012-after:
+
+//  jump greater than
+    "jgt   (1): " say
+    1 test013 jgt
+    "Failed!\n" say test013-after jmp
+    test013: "Succeeded!\n" say
+    test013-after:
+
+    "jgt   (0): " say
+    0 test014-failed jgt
+    "Succeeded!\n" say test014-after jmp
+    test014-failed: "Failed!\n" say
+    test014-after:
+
+    "jgt  (-1): " say
+    -1 test015-failed jgt
+    "Succeeded!\n" say test015-after jmp
+    test015-failed: "Failed!\n" say
+    test015-after:
+
+//  jump greater than or equal
+    "jgte  (1): " say
+    1 test016 jgte
+    "Failed!\n" say test013-after jmp
+    test016: "Succeeded!\n" say
+    test016-after:
+
+    "jgte  (0): " say
+    0 test017 jgte
+    "Failed!\n" say test017-after jmp
+    test017: "Succeeded!\n" say
+    test017-after:
+
+    "jgte (-1): " say
+    -1 test018-failed jgte
+    "Succeeded!\n" say test018-after jmp
+    test018-failed: "Failed!\n" say
+    test018-after:
+
+
+    "\n[Jump target stored in local variable.]\n" say
+    "jmp: " say
+    test019 test-value store
+    test-value jmp
+    "Failed!\n" say test019-after jmp
+    test019: "Succeeded!\n" say
+    test019-after:
+
+    "jz: " say
+    test020 test-value store
+    0 test-value jz
+    "Failed!\n" say test020-after jmp
+    test020: "Succeeded!\n" say
+    test020-after:
+
+    "jnz: " say
+    test021 test-value store
+    1 test-value jnz
+    "Failed!\n" say test021-after jmp
+    test021: "Succeeded!\n" say
+    test021-after:
+
+    "jlt: " say
+    test022 test-value store
+    -1 test-value jlt
+    "Failed!\n" say test022-after jmp
+    test022: "Succeeded!\n" say
+    test022-after:
+
+    "jlte: " say
+    test023 test-value store
+    -1 test-value jlte
+    "Failed!\n" say test023-after jmp
+    test023: "Succeeded!\n" say
+    test023-after:
+
+    "jgt: " say
+    test024 test-value store
+    1 test-value jgt
+    "Failed!\n" say test024-after jmp
+    test024: "Succeeded!\n" say
+    test024-after:
+
+    "jgte: " say
+    test025 test-value store
+    1 test-value jgte
+    "Failed!\n" say test025-after jmp
+    test025: "Succeeded!\n" say
+    test025-after:
+
+
+    "\n[Test value stored in local variable.]\n" say
+    "jz: " say
+    0 test-value store
+    test-value test026-success jz
+    "Failed!\n" say test026-after jmp
+    test026-success: "Succeeded!\n" say
+    test026-after:
+
+    "jnz: " say
+    1 test-value store
+    test-value test027-success jnz
+    "Failed!\n" say test027-after jmp
+    test027-success: "Succeeded!\n" say
+    test027-after:
+
+    "jlt: " say
+    -1 test-value store
+    test-value test028-success jlt
+    "Failed!\n" say test028-after jmp
+    test028-success: "Succeeded!\n" say
+    test028-after:
+
+    "jlte: " say
+    -1 test-value store
+    test-value test029-success jlte
+    "Failed!\n" say test029-after jmp
+    test029-success: "Succeeded!\n" say
+    test029-after:
+
+    "jgt: " say
+    1 test-value store
+    test-value test030-success jgt
+    "Failed!\n" say test030-after jmp
+    test030-success: "Succeeded!\n" say
+    test030-after:
+
+    "jgte: " say
+    1 test-value store
+    test-value test031-success jgte
+    "Failed!\n" say test031-after jmp
+    test031-success: "Succeeded!\n" say
+    test031-after:
+
+
+    1 return
+
 }
 
 function test-math() {
@@ -137,9 +321,8 @@ function test-object() {
     $a-string third_obj get-prop say
 }
 
-function main(: counter the-value) {
+function test-loop-demo(: counter the-value) {
     asm
-
 // show a count up loop and calculate 2^10
     0 counter store
     1 the-value store
@@ -148,13 +331,19 @@ function main(: counter the-value) {
     2 the-value mult the-value store
     counter say
     " " say
-    counter 10 loop-start jump-lt
+    counter 10 cmp loop-start jlt
     "Loop finished!\n" say
     "Final result: " say
     the-value say
     "\n" say
+}
 
+function main() {
+    asm
+
+    0 test-loop-demo call
     0 test-call call
+    0 test-compare call
     0 test-jumps call
     0 test-math call
     0 test-object call
