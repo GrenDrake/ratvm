@@ -81,7 +81,7 @@ function test-compare(: test-value) {
 
 function test-jumps(: test-value) {
     asm
-    "\n## Testing jump opcodes\n\n[No local variables.]\n" say
+    "\n## Testing jump opcodes\n" say
 
 // jump
     "jmp      : " say
