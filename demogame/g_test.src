@@ -338,15 +338,28 @@ function test-loop-demo(: counter the-value) {
     "\n" say
 }
 
-function main() {
+function main(: key) {
     asm
 
-    0 test-loop-demo call
-    0 test-call call
-    0 test-compare call
-    0 test-jumps call
-    0 test-math call
-    0 test-object call
+    start-loop:
+    "\n1) Loop Demo\n2) Test Call\n3) Test Compare\n4) Test Jumps\n5) Test Math\n6) Test Getting/Setting Properties.\nz) Quit\n\n> " say
+    wait-key key store
+
+    key '1' cmp key-loop-demo jeq
+    key '2' cmp key-call jeq
+    key '3' cmp key-compare jeq
+    key '4' cmp key-jumps jeq
+    key '5' cmp key-math jeq
+    key '6' cmp key-object jeq
+    key 'z' cmp all-done jeq
+
+    key-loop-demo: 0 test-loop-demo call start-loop jmp
+    key-call: 0 test-call call start-loop jmp
+    key-compare: 0 test-compare call start-loop jmp
+    key-jumps: 0 test-jumps call start-loop jmp
+    key-math: 0 test-math call start-loop jmp
+    key-object: 0 test-object call start-loop jmp
+    all-done:
 }
 
 value te "";
