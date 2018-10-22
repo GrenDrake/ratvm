@@ -65,6 +65,7 @@ struct OpcodeDef {
         Sub         = 41,
         Mult        = 42,
         Div         = 43,
+        WaitKey             = 50,
     };
 
     std::string name;
@@ -115,6 +116,7 @@ OpcodeDef opcodes[] = {
     {   "sub",          OpcodeDef::Sub          },
     {   "mult",         OpcodeDef::Mult         },
     {   "div",          OpcodeDef::Div          },
+    {   "wait-key",     OpcodeDef::WaitKey      },
     {   ""                                      }
 };
 
