@@ -219,7 +219,14 @@ std::string readFile(const std::string &file) {
 
 int parseAsInt(const std::string &text) {
     int value = 0;
-    for (char c : text) {
+    bool negative = false;
+    size_t start = 0;
+    if (!text.empty() && text[0] == '-') {
+        negative = true;
+        start = 1;
+    }
+    for (size_t pos = start; pos < text.size(); ++pos) {
+        char c = text[pos];
         if (c >= '0' && c <= '9') {
             value *= 10;
             value += c - '0';
@@ -227,5 +234,6 @@ int parseAsInt(const std::string &text) {
             throw BuildError("invalid integer");
         }
     }
+    if (negative) value = -value;
     return value;
 }
