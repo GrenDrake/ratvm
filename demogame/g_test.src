@@ -31,6 +31,26 @@ value map-of-maps {
     {1: 9}: {4: 2}
 };
 
+function test-stack() {
+    asm
+    2 4 6 8
+
+    "\n## Testing stack manipulation\n" say
+    "Items on Stack: " say
+    stack-size say
+    " (should be 4)\nPopping.\n" say
+    pop
+    "New items on Stack: " say
+    stack-size say
+    " (should be 3)\n" say
+    pop
+
+    stack-dup
+    "Stack-dup: " say say ", " say say " (should be 4, 4)\n" say
+
+    5 6 7 8 2 stack-peek
+    "Stack peek: " say say " (should be 6)\n" say
+}
 
 function test-call() {
     asm
