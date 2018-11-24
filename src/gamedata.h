@@ -31,12 +31,14 @@ struct GameObject {
     std::vector<GameProperty> properties;
     std::string name;
     int ident;
+    int globalId;
 };
 
 struct GameList {
     Origin origin;
     int ident;
     std::vector<Value> items;
+    int globalId;
 };
 
 struct GameMap {
@@ -48,6 +50,7 @@ struct GameMap {
     Origin origin;
     int ident;
     std::vector<MapRow> rows;
+    int globalId;
 };
 
 struct FunctionDef {
@@ -64,6 +67,7 @@ struct FunctionDef {
     std::vector<Token> tokens;
     unsigned codePosition;
     ByteStream code;
+    int globalId;
 };
 
 class GameData {
@@ -71,7 +75,6 @@ public:
     GameData();
     ~GameData();
 
-    int getAnomyousId();
     unsigned getPropertyId(const std::string &name);
     const std::string* getPropertyName(unsigned id) const;
     unsigned getStringId(const std::string &name);

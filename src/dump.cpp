@@ -48,7 +48,8 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
     for (unsigned i = 0; i < gamedata.lists.size(); ++i) {
         const GameList *list = gamedata.lists[i];
         if (list == nullptr) continue;
-        out << "LIST " << list->ident << " @ " << list->origin << "\n   ";
+        out << "LIST " << list->ident << " @   (gid:";
+        out << list->globalId << ") " << list->origin << "\n   ";
         for (unsigned i = 0; i < list->items.size(); ++i) {
             out << ' ' << list->items[i];
         }
@@ -59,7 +60,8 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
     for (unsigned i = 0; i < gamedata.maps.size(); ++i) {
         const GameMap *map = gamedata.maps[i];
         if (map == nullptr) continue;
-        out << "MAP " << map->ident << " @ " << map->origin << "\n";
+        out << "MAP " << map->ident << " (gid:";
+        out << map->globalId << ") @ " << map->origin << "\n";
         for (unsigned i = 0; i < map->rows.size(); ++i) {
             out << "    " << map->rows[i].key << " => " << map->rows[i].value << '\n';
         }
@@ -68,7 +70,8 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
 
     for (const GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
-        out << "OBJECT " << object->ident << " ";
+        out << "OBJECT " << object->ident << " (gid:";
+        out << object->globalId << ") ";
         if (object->name.empty())   out << "(anonymous)";
         else                        out << object->name;
         out << " @ " << object->origin << "\n";
@@ -81,7 +84,8 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
     for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
         const FunctionDef *function = gamedata.functions[i];
         if (function == nullptr) continue;
-        out << "FUNCTION " << function->ident << ' ';
+        out << "FUNCTION " << function->ident << " (gid:";
+        out << function->globalId << ") ";
         if (function->name.empty()) out << "(anonymous)";
         else                        out << function->name;
         out << " @ " << function->origin << "\n";

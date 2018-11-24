@@ -14,10 +14,6 @@
 #include "origin.h"
 #include "token.h"
 
-int GameData::getAnomyousId() {
-    return nextAnonymousId++;
-}
-
 GameData::GameData()
 : nextAnonymousId(firstAnonymousId) {
     getPropertyId("(none)");

@@ -49,6 +49,7 @@ void parse_constant(GameData &gamedata, ParseState &state) {
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a function
 int parse_function(GameData &gamedata, ParseState &state) {
+    static int nextFunctionId = 1;
     const Origin &origin = state.here()->origin;
     state.skip("function");
 
@@ -64,7 +65,7 @@ int parse_function(GameData &gamedata, ParseState &state) {
         }
         state.next();
     } else {
-        functionId = gamedata.getAnomyousId();
+        functionId = 0;
     }
 
     std::string funcName;
@@ -72,7 +73,7 @@ int parse_function(GameData &gamedata, ParseState &state) {
         funcName = state.here()->text;
         gamedata.symbols.add(SymbolDef(origin,
                                         funcName,
-                                        Value{Value::Node, functionId}));
+                                        Value{Value::Node, nextFunctionId}));
         state.next();
     }
     state.skip(Token::OpenParan);
@@ -81,6 +82,7 @@ int parse_function(GameData &gamedata, ParseState &state) {
     function->origin = origin;
     function->name = funcName;
     function->ident = functionId;
+    function->globalId = nextFunctionId++;
     gamedata.functions.push_back(function);
     // arguments / locals
     bool doingLocals = false;
@@ -106,20 +108,21 @@ int parse_function(GameData &gamedata, ParseState &state) {
         state.next();
     }
     state.next();
-    return functionId;
+    return function->globalId;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a list declaration
 int parse_list(GameData &gamedata, ParseState &state) {
-    int listId = gamedata.getAnomyousId();
+    static int nextListId = 1;
     const Origin &origin = state.here()->origin;
     state.skip(Token::OpenSquare);
 
     GameList *list = new GameList;
     gamedata.lists.push_back(list);
     list->origin = origin;
-    list->ident = listId;
+    list->ident = 0;
+    list->globalId = nextListId++;
     while (!state.matches(Token::CloseSquare)) {
         if (state.eof()) {
             delete list;
@@ -130,19 +133,20 @@ int parse_list(GameData &gamedata, ParseState &state) {
     }
 
     state.next();
-    return listId;
+    return list->globalId;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a map declaration
 int parse_map(GameData &gamedata, ParseState &state) {
-    int listId = gamedata.getAnomyousId();
+    static int nextMapId = 1;
     const Origin &origin = state.here()->origin;
 
     GameMap *map = new GameMap;
     gamedata.maps.push_back(map);
     map->origin = origin;
-    map->ident = listId;
+    map->ident = 0;
+    map->globalId = nextMapId++;
     state.skip(Token::OpenBrace);
     while (!state.matches(Token::CloseBrace)) {
         if (state.eof()) {
@@ -157,12 +161,13 @@ int parse_map(GameData &gamedata, ParseState &state) {
     }
 
     state.next();
-    return listId;
+    return map->globalId;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a single object
 int parse_object(GameData &gamedata, ParseState &state) {
+    static int nextObjectId = 1;
     unsigned internalNameId = gamedata.getPropertyId("internal-name");
     unsigned objectIdId = gamedata.getPropertyId("ident");
 
@@ -196,11 +201,12 @@ int parse_object(GameData &gamedata, ParseState &state) {
     object->origin = origin;
     object->name = objectName;
     object->ident = objectId;
+    object->globalId = nextObjectId++;
     gamedata.objects.push_back(object);
     if (!objectName.empty()) {
         gamedata.symbols.add(SymbolDef(origin,
                                         objectName,
-                                        Value{Value::Object, objectId}));
+                                        Value{Value::Object, object->globalId}));
         int nameStringId = gamedata.getStringId(objectName);
         object->addProperty(state.here()->origin, internalNameId,
                             Value{Value::String, nameStringId});
@@ -227,7 +233,7 @@ int parse_object(GameData &gamedata, ParseState &state) {
     }
 
     state.next();
-    return objectId;
+    return object->globalId;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
