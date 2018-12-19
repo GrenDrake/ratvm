@@ -36,7 +36,7 @@ struct FunctionDef {
 
 struct GameData {
     GameData() : gameLoaded(false) { }
-    void load(const std::string filename);
+    void load(const std::string &filename);
     void dump() const;
 
     bool gameLoaded;
@@ -57,7 +57,7 @@ std::string read_str(std::istream &in);
 Value read_value(std::istream &in);
 
 
-void GameData::load(const std::string filename) {
+void GameData::load(const std::string &filename) {
     std::ifstream inf(filename);
     if (!inf) {
         std::cerr << "Could not open ~" << filename << "~.\n";
