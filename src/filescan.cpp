@@ -232,10 +232,21 @@ Value read_value(std::istream &in) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
+    std::string gameFile = "game.bin";
+
+    if (argc == 2)  gameFile = argv[1];
+    if (argc >= 3 || gameFile == "-h" || gameFile == "--help") {
+        std::cerr << "USAGE: ./filedump [game file]\n";
+        return 1;
+    }
+    if (gameFile == "-v" || gameFile == "--version") {
+        std::cerr << "FileDump utility for GTRPGE, V1.0\n";
+        return 0;
+    }
 
     GameData data;
-    data.load("output.bin");
+    data.load(gameFile);
     if (!data.gameLoaded) return 1;
     data.dump();
     return 0;
