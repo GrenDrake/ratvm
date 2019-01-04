@@ -358,12 +358,16 @@ function test-loop-demo(: counter the-value) {
     "\n" say
 }
 
-function main(: key) {
+function show-options() {
     asm
 
-    start-loop:
-    "\n1) Loop Demo\n2) Test Call\n3) Test Compare\n4) Test Jumps\n5) Test Math\n6) Test Getting/Setting Properties.\nz) Quit\n\n> " say
-    wait-key key store
+    clear-screen
+    "\n1) Loop Demo\n2) Test Call\n3) Test Compare\n4) Test Jumps\n5) Test Math\n6) Test Getting/Setting Properties.\n" say
+    "Choose option." do-option get-key
+}
+
+function do-option(key) {
+    asm
 
     key '1' cmp key-loop-demo jeq
     key '2' cmp key-call jeq
@@ -371,15 +375,24 @@ function main(: key) {
     key '4' cmp key-jumps jeq
     key '5' cmp key-math jeq
     key '6' cmp key-object jeq
-    key 'z' cmp all-done jeq
 
-    key-loop-demo: 0 test-loop-demo call start-loop jmp
-    key-call: 0 test-call call start-loop jmp
-    key-compare: 0 test-compare call start-loop jmp
-    key-jumps: 0 test-jumps call start-loop jmp
-    key-math: 0 test-math call start-loop jmp
-    key-object: 0 test-object call start-loop jmp
-    all-done:
+    "Choose option." do-option get-key return
+
+    key-loop-demo: clear-screen 0 test-loop-demo call get-next jmp
+    key-call: clear-screen 0 test-call call get-next jmp
+    key-compare: clear-screen 0 test-compare call get-next jmp
+    key-jumps: clear-screen 0 test-jumps call get-next jmp
+    key-math: clear-screen 0 test-math call get-next jmp
+    key-object: clear-screen 0 test-object call get-next jmp
+
+    get-next:
+    "Press a key to continue..." show-options get-key return
+}
+
+function main(: key) {
+    asm
+
+    0 show-options call
 }
 
 value te "";
