@@ -567,6 +567,7 @@ function show-options() {
     "Test Math"                 test-math           add-option
     "Test Object Properties"    test-object-props   add-option
     "Test Input Methods"        test-inputs         add-option
+    "Test stack commands"       test-stack          add-option
     "Test value types"          test-values         add-option
     dispatcher get-option
 }
