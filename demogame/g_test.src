@@ -1,38 +1,57 @@
+// ////////////////////////////////////////////////////////////////////////////
+// Value Type IDs
+// ////////////////////////////////////////////////////////////////////////////
+value None          0;
+value Integer       1;
+value String        2;
+value List          3;
+value Map           4;
+value Node          5;
+value Object        6;
+value Property      7;
+value LocalVar      8;
+value JumpTarget    9;
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Common strings
+// ////////////////////////////////////////////////////////////////////////////
 value continue-str "Continue";
 
-object 3 third_obj
-    its-me third_obj
+
+// ////////////////////////////////////////////////////////////////////////////
+// Data used for tests
+// ////////////////////////////////////////////////////////////////////////////
+value test-int 7384;
+value test-str "A Name";
+value test-list [ 1 2 3 ];
+value test-map { 1: "The" 2: "End" 3: "Is" 4: "Far" };
+value test-function function test-function-name () {};
+value test-object object test-object-name;; // double semicolon currently required
+value test-property $test-func;
+
+object first_obj
     an-int 2
     a-string "Hello World!"
-    a-map {
-        "another":    5
-        third_obj:       "Test"
-        $fruit:     $apple
-    }
-    a-list [
-        4 5 8
-    ]
-    test-func function (arg1 arg2 : local1 local2 local3) {
-    }
-    other-func function 9 (an-arg : a-local) {
-    }
-    final-value 66
+//    a-map {
+//        "another":    5
+//        third_obj:    "Test"
+//        $fruit:       $apple
+//    }
+//    a-list [
+//        4 5 8
+//    ]
+//    test-func function (arg1 arg2 : local1 local2 local3) {
+//    }
+//    other-func function 9 (an-arg : a-local) {
+//    }
 ;
+object second_obj;
 
-value an-int 7384;
-value a-property $test-func;
-value my-name "A Name";
-value silly-object object 6 silly-object-name;;
-value silly-function function silly-function-name () {};
-value list-of-lists [
-    ["strength" 10]
-    ["dexterity" 20]
-];
-value map-of-maps {
-    {4: 5}: {8: 3}
-    {1: 9}: {4: 2}
-};
 
+// ////////////////////////////////////////////////////////////////////////////
+// Test stack commands
+// ////////////////////////////////////////////////////////////////////////////
 function test-stack() {
     asm
     2 4 6 8
@@ -57,6 +76,10 @@ function test-stack() {
     dispatcher get-option
 }
 
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test function calls and arguments
+// ////////////////////////////////////////////////////////////////////////////
 function test-call() {
     asm
 
@@ -89,6 +112,10 @@ function test-call-helper-multiply( arg1 arg2 ) {
     asm arg1 arg2 mult return
 }
 
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test compare command
+// ////////////////////////////////////////////////////////////////////////////
 function test-compare(: test-value) {
     asm
     "\n## Testing compare opcode\n" say
@@ -109,6 +136,10 @@ function test-compare(: test-value) {
     dispatcher get-option
 }
 
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test jump commands
+// ////////////////////////////////////////////////////////////////////////////
 function test-jumps(: test-value) {
     asm
     "\n## Testing jump opcodes\n" say
@@ -322,6 +353,10 @@ function test-jumps(: test-value) {
     dispatcher get-option
 }
 
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test math commands
+// ////////////////////////////////////////////////////////////////////////////
 function test-math() {
     asm
 
@@ -346,41 +381,49 @@ function test-math() {
     dispatcher get-option
 }
 
-function test-object() {
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test object property commands
+// ////////////////////////////////////////////////////////////////////////////
+function test-object-props() {
     asm
 
     "\n## Testing object manipulation opcodes\n[testing get-prop]\n" say
-    "third_obj.a-string: " say
-    $a-string third_obj get-prop say
+    "first_obj.a-string: " say
+    $a-string first_obj get-prop say
     " (should be \"Hello World!\")\n" say
 
-    "third_obj.an_int: " say
-    $an-int third_obj get-prop say
+    "first_obj.an_int: " say
+    $an-int first_obj get-prop say
     " (should be 2)\n" say
 
-    "silly_object.a-string: " say
-    $a-string silly-object get-prop say
+    "second_obj.a-string: " say
+    $a-string second_obj get-prop say
     " (should be 0)\n" say
 
     "\n[testing has-prop]\n" say
-    "third_obj has property an_int? " say
-    $an-int third_obj has-prop say
+    "first_obj has property an_int? " say
+    $an-int first_obj has-prop say
     " (should be 1)\n" say
 
-    "silly_object has property a-string? " say
-    $a-string silly-object has-prop say
+    "second_obj has property a-string? " say
+    $a-string second_obj has-prop say
     " (should be 0)\n" say
 
     "\n[testing set-prop]\n" say
-    "setting silly-object.apple to \"Fred\" (new property) = " say
-    "Fred" $apple silly-object set-prop
-    $apple silly-object get-prop say
+    "setting second_obj.apple to \"Fred\" (new property) = " say
+    "Fred" $apple second_obj set-prop
+    $apple second_obj get-prop say
     "\n" say
 
     continue-str show-options add-option
     dispatcher get-option
 }
 
+
+// ////////////////////////////////////////////////////////////////////////////
+// Basic looping demo
+// ////////////////////////////////////////////////////////////////////////////
 function test-loop-demo(: counter the-value) {
     asm
 // show a count up loop and calculate 2^10
@@ -401,6 +444,10 @@ function test-loop-demo(: counter the-value) {
     dispatcher get-option
 }
 
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test input commands
+// ////////////////////////////////////////////////////////////////////////////
 function test-inputs() {
     asm
     "This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu." say
@@ -420,18 +467,107 @@ function test-getkey-receive(key) {
     dispatcher get-option
 }
 
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test value types
+// ////////////////////////////////////////////////////////////////////////////
+function test-values(: localvar unusedvar) {
+    asm
+
+    "int value: " say test-int typeof say
+    test-int typeof Integer cmp int_bad jnz
+    " good\n" say tst_string jmp
+    int_bad: " wrong\n" say
+
+    tst_string:
+    "string value: " say test-str typeof say " " say
+    test-str typeof String cmp string_bad jnz
+    " good\n" say tst_list jmp
+    string_bad: "wrong\n" say
+
+    tst_list:
+    "list value: " say test-list typeof say " " say
+    test-list typeof List cmp list_bad jnz
+    " good\n" say tst_map jmp
+    list_bad: "wrong\n" say
+
+    tst_map:
+    "map value: " say test-map typeof say " " say
+    test-map typeof Map cmp map_bad jnz
+    " good\n" say tst_function jmp
+    map_bad: "wrong\n" say
+
+    tst_function:
+    "function value: " say test-function typeof say " " say
+    test-function typeof Node cmp function_bad jnz
+    " good\n" say tst_function_2 jmp
+    function_bad: "wrong\n" say
+    tst_function_2:
+    "value function aliasing:" say
+    test-function test-function-name cmp tst_function_2_bad jnz
+    " good\n" say tst_obj jmp
+    tst_function_2_bad: " wrong\n" say
+
+    tst_obj:
+    "object value: " say test-object typeof say " " say
+    test-object typeof Object cmp obj_bad jnz
+    " good\n" say tst_obj_2 jmp
+    obj_bad: "wrong\n" say
+    tst_obj_2:
+    "value object aliasing:" say
+    test-object test-object-name cmp test_obj_2_bad jnz
+    " good\n" say tst_prop jmp
+    test_obj_2_bad: " wrong\n" say
+
+    tst_prop:
+    "property value: " say test-property typeof say " " say
+    test-property typeof Property cmp prop_bad jnz
+    " good\n" say tst_local jmp
+    prop_bad: "wrong\n" say
+
+    tst_local:
+    "[setting local variable \"localvar\" to 57]\n" say
+    57 localvar store
+    "local variable value: (" say localvar say ") " say localvar typeof say " " say
+    localvar typeof Integer cmp local_bad jnz
+    " good\n" say tst_unused jmp
+    local_bad: "wrong\n" say
+
+    tst_unused:
+    "unused local value: (" say unusedvar say ") " say
+    unusedvar typeof say " " say
+    unusedvar typeof None cmp unused_bad jnz
+    " good\n" say tst_jump jmp
+    unused_bad: "wrong\n" say
+
+    tst_jump:
+    "jump target value: " say tst_jump typeof say
+    tst_jump typeof JumpTarget cmp label_bad jnz
+    " good\n" say all_done jmp
+    label_bad: "wrong\n" say
+
+    all_done:
+    continue-str show-options add-option
+    dispatcher get-option
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test selection
+// ////////////////////////////////////////////////////////////////////////////
 function show-options() {
     asm
 
     "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen." say
 
-    "Loop Demo"                 test-loop-demo  add-option
-    "Test Call"                 test-call       add-option
-    "Test Compare"              test-compare    add-option
-    "Test Jumps"                test-jumps      add-option
-    "Test Math"                 test-math       add-option
-    "Test Object Properties"    test-object     add-option
-    "Test Input Methods"        test-inputs     add-option
+    "Loop Demo"                 test-loop-demo      add-option
+    "Test Call"                 test-call           add-option
+    "Test Compare"              test-compare        add-option
+    "Test Jumps"                test-jumps          add-option
+    "Test Math"                 test-math           add-option
+    "Test Object Properties"    test-object-props   add-option
+    "Test Input Methods"        test-inputs         add-option
+    "Test value types"          test-values         add-option
     dispatcher get-option
 }
 
