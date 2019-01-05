@@ -12,6 +12,13 @@ value Property      7;
 value LocalVar      8;
 value JumpTarget    9;
 
+// ////////////////////////////////////////////////////////////////////////////
+// Info Area IDs
+// ////////////////////////////////////////////////////////////////////////////
+value InfoLeftHeader    0;
+value InfoRightHeader   1;
+value InfoFooter        2;
+value InfoTitle         3;
 
 // ////////////////////////////////////////////////////////////////////////////
 // Common strings
@@ -600,6 +607,22 @@ function test-output() {
     dispatcher get-option
 }
 
+// ////////////////////////////////////////////////////////////////////////////
+// Update info areas
+// ////////////////////////////////////////////////////////////////////////////
+function test-infoarea() {
+    asm
+
+    "The header, footer, and title regions should now be updated. (Unless you already ran this test since starting the program.)" say
+
+    "Good day!"     InfoLeftHeader  set-info
+    "5:00 am"       InfoRightHeader set-info
+    "Fred is Cool"  InfoFooter      set-info
+    "Updated Title" InfoTitle       set-info
+    continue-str show-options add-option
+    dispatcher get-option
+}
+
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
@@ -610,6 +633,7 @@ function show-options() {
     "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen." say
 
     "Loop Demo"                 test-loop-demo      add-option
+    "Test Info Areas"           test-infoarea       add-option
     "Test Call"                 test-call           add-option
     "Test Compare"              test-compare        add-option
     "Test Jumps"                test-jumps          add-option
@@ -633,6 +657,7 @@ function dispatcher(option-func) {
 function main() {
     asm
 
+    "GTRPGE Test Suite" InfoTitle set-info
     0 show-options call
 }
 
