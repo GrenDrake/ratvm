@@ -104,7 +104,7 @@ OpcodeDef opcodes[] = {
     {   "has-item",     OpcodeDef::HasItem      },
     {   "get-size",     OpcodeDef::GetSize      },
     {   "set-item",     OpcodeDef::SetItem      },
-    {   "type-of",      OpcodeDef::TypeOf       },
+    {   "typeof",       OpcodeDef::TypeOf       },
     {   "cmp-type",     OpcodeDef::CompareTypes         },
     {   "cmp",          OpcodeDef::Compare              },
     {   "jmp",          OpcodeDef::Jump                 },
