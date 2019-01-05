@@ -169,27 +169,9 @@ int parse_map(GameData &gamedata, ParseState &state) {
 int parse_object(GameData &gamedata, ParseState &state) {
     static int nextObjectId = 1;
     unsigned internalNameId = gamedata.getPropertyId("internal-name");
-    unsigned objectIdId = gamedata.getPropertyId("ident");
 
     const Origin &origin = state.here()->origin;
     state.next(); // skip "object"
-
-    state.require(Token::Integer);
-    int objectId = state.here()->value;
-    if (objectId == 0) {
-        std::stringstream ss;
-        ss << "Object id " << objectId << " not allowed to be zero.";
-        throw BuildError(origin, ss.str());
-    }
-    GameObject *identOwner = gamedata.objectById(objectId);
-    if (identOwner != nullptr) {
-        std::stringstream ss;
-        ss << "Object id " << objectId << " already in use by object ";
-        ss << identOwner->name << '[' << identOwner->ident << "] @ ";
-        ss << identOwner->origin << '.';
-        throw BuildError(origin, ss.str());
-    }
-    state.next();
 
     std::string objectName = "";
     if (state.matches(Token::Identifier)) {
@@ -200,7 +182,6 @@ int parse_object(GameData &gamedata, ParseState &state) {
     GameObject *object = new GameObject;
     object->origin = origin;
     object->name = objectName;
-    object->ident = objectId;
     object->globalId = nextObjectId++;
     gamedata.objects.push_back(object);
     if (!objectName.empty()) {
@@ -211,8 +192,6 @@ int parse_object(GameData &gamedata, ParseState &state) {
         object->addProperty(state.here()->origin, internalNameId,
                             Value{Value::String, nameStringId});
     }
-    object->addProperty(state.here()->origin, objectIdId,
-                        Value{Value::Integer, objectId});
 
     while (!state.matches(Token::Semicolon)) {
         unsigned propId = 0;
