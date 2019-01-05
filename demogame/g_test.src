@@ -598,7 +598,7 @@ function test-output() {
 
     "This text (and nearly all text in these tests) is output using the \"say\" command.\nSay integer value: " say
     6215 say
-    "\n-1 using say-unsigned (should be ): " say
+    "\n-1 using say-unsigned (should be 4294967295): " say
     -1 say-unsigned
     "\n65 using say-char (should be 'A'): " say
     65 say-char
