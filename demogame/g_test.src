@@ -1,7 +1,9 @@
+value continue-str "Continue";
+
 object 3 third_obj
     its-me third_obj
     an-int 2
-    a-string "Hello World!\n"
+    a-string "Hello World!"
     a-map {
         "another":    5
         third_obj:       "Test"
@@ -50,6 +52,9 @@ function test-stack() {
 
     5 6 7 8 2 stack-peek
     "Stack peek: " say say " (should be 6)\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
 }
 
 function test-call() {
@@ -65,6 +70,9 @@ function test-call() {
     "Multiply 5 * 5 = " say
     5 5 2 test-call-helper-multiply call say
     "\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
 }
 
 function test-call-helper( arg1 arg2 ) {
@@ -97,6 +105,8 @@ function test-compare(: test-value) {
     " 2 vs tv (= -3): " say 2 test-value cmp say "\n" say
     " tv vs 2 (=  3): " say test-value 2 cmp say "\n" say
 
+    continue-str show-options add-option
+    dispatcher get-option
 }
 
 function test-jumps(: test-value) {
@@ -308,8 +318,8 @@ function test-jumps(: test-value) {
     test031-after:
 
 
-    1 return
-
+    continue-str show-options add-option
+    dispatcher get-option
 }
 
 function test-math() {
@@ -331,14 +341,44 @@ function test-math() {
     "40 / 5 = " say
     40 5 div say
     "\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
 }
 
 function test-object() {
     asm
 
-    "\n## Testing object manipulation opcodes\n" say
+    "\n## Testing object manipulation opcodes\n[testing get-prop]\n" say
     "third_obj.a-string: " say
     $a-string third_obj get-prop say
+    " (should be \"Hello World!\")\n" say
+
+    "third_obj.an_int: " say
+    $an-int third_obj get-prop say
+    " (should be 2)\n" say
+
+    "silly_object.a-string: " say
+    $a-string silly-object get-prop say
+    " (should be 0)\n" say
+
+    "\n[testing has-prop]\n" say
+    "third_obj has property an_int? " say
+    $an-int third_obj has-prop say
+    " (should be 1)\n" say
+
+    "silly_object has property a-string? " say
+    $a-string silly-object has-prop say
+    " (should be 0)\n" say
+
+    "\n[testing set-prop]\n" say
+    "setting silly-object.apple to \"Fred\" (new property) = " say
+    "Fred" $apple silly-object set-prop
+    $apple silly-object get-prop say
+    "\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
 }
 
 function test-loop-demo(: counter the-value) {
@@ -356,40 +396,54 @@ function test-loop-demo(: counter the-value) {
     "Final result: " say
     the-value say
     "\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
+}
+
+function test-inputs() {
+    asm
+    "This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu." say
+    "Test key input"        test-getkey     add-option
+    "Return to top menu"    show-options    add-option
+    dispatcher get-option
+}
+function test-getkey() {
+    asm
+    "This will demonstrate and test the get-key input type." say
+    "Try pressing a key." test-getkey-receive get-key
+}
+function test-getkey-receive(key) {
+    asm
+    "Resulting character code: " say key say ".\n" say
+    continue-str test-inputs add-option
+    dispatcher get-option
 }
 
 function show-options() {
     asm
 
-    clear-screen
-    "\n1) Loop Demo\n2) Test Call\n3) Test Compare\n4) Test Jumps\n5) Test Math\n6) Test Getting/Setting Properties.\n" say
-    "Choose option." do-option get-key
+    "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen." say
+
+    "Loop Demo"                 test-loop-demo  add-option
+    "Test Call"                 test-call       add-option
+    "Test Compare"              test-compare    add-option
+    "Test Jumps"                test-jumps      add-option
+    "Test Math"                 test-math       add-option
+    "Test Object Properties"    test-object     add-option
+    "Test Input Methods"        test-inputs     add-option
+    dispatcher get-option
 }
 
-function do-option(key) {
+
+function dispatcher(option-func) {
     asm
 
-    key '1' cmp key-loop-demo jeq
-    key '2' cmp key-call jeq
-    key '3' cmp key-compare jeq
-    key '4' cmp key-jumps jeq
-    key '5' cmp key-math jeq
-    key '6' cmp key-object jeq
-
-    "Choose option." do-option get-key return
-
-    key-loop-demo: clear-screen 0 test-loop-demo call get-next jmp
-    key-call: clear-screen 0 test-call call get-next jmp
-    key-compare: clear-screen 0 test-compare call get-next jmp
-    key-jumps: clear-screen 0 test-jumps call get-next jmp
-    key-math: clear-screen 0 test-math call get-next jmp
-    key-object: clear-screen 0 test-object call get-next jmp
-
-    get-next:
-    "Press a key to continue..." show-options get-key return
+    0 option-func call
+    0 return
 }
 
-function main(: key) {
+function main() {
     asm
 
     0 show-options call
