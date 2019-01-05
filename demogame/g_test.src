@@ -377,6 +377,38 @@ function test-math() {
     40 5 div say
     "\n" say
 
+    "40 % 6 = " say
+    40 6 mod say
+    "\n" say
+
+    "2 ^ 8 = " say
+    2 8 pow say
+    "\n" say
+
+    "1 << 4 = " say
+    1 4 left-shift say
+    "\n" say
+
+    "32 >> 4 = " say
+    32 4 right-shift say
+    "\n" say
+
+    "86 & 90 = " say
+    86 90 bitand say
+    "\n" say
+
+    "30 | 13 = " say
+    30 13 bitor say
+    "\n" say
+
+    "28 xor 23 = " say
+    28 23 bitxor say
+    "\n" say
+
+    "~348 = " say
+    348 bitnot say
+    "\n" say
+
     continue-str show-options add-option
     dispatcher get-option
 }
@@ -551,6 +583,23 @@ function test-values(: localvar unusedvar) {
     dispatcher get-option
 }
 
+// ////////////////////////////////////////////////////////////////////////////
+// Output command tests
+// ////////////////////////////////////////////////////////////////////////////
+function test-output() {
+    asm
+
+    "This text (and nearly all text in these tests) is output using the \"say\" command.\nSay integer value: " say
+    6215 say
+    "\n-1 using say-unsigned (should be ): " say
+    -1 say-unsigned
+    "\n65 using say-char (should be 'A'): " say
+    65 say-char
+    "\n" say
+    continue-str show-options add-option
+    dispatcher get-option
+}
+
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
@@ -569,6 +618,7 @@ function show-options() {
     "Test Input Methods"        test-inputs         add-option
     "Test stack commands"       test-stack          add-option
     "Test value types"          test-values         add-option
+    "Test output"               test-output         add-option
     dispatcher get-option
 }
 
