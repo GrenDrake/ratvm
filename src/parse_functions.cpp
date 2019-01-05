@@ -66,6 +66,9 @@ struct OpcodeDef {
         Mult                = 42,
         Div                 = 43,
         GetKey              = 50,
+        GetOption           = 51,
+        GetLine             = 52,
+        AddOption           = 53,
         ClearScreen         = 60,
     };
 
@@ -118,6 +121,9 @@ OpcodeDef opcodes[] = {
     {   "mult",         OpcodeDef::Mult         },
     {   "div",          OpcodeDef::Div          },
     {   "get-key",      OpcodeDef::GetKey       },
+    {   "get-option",   OpcodeDef::GetOption    },
+    {   "get-line",     OpcodeDef::GetLine      },
+    {   "add-option",   OpcodeDef::AddOption    },
     {   "clear-screen", OpcodeDef::ClearScreen  },
     {   ""                                      }
 };
