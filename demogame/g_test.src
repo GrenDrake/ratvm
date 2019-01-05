@@ -623,6 +623,25 @@ function test-infoarea() {
     dispatcher get-option
 }
 
+// ////////////////////////////////////////////////////////////////////////////
+// Test RNG
+// ////////////////////////////////////////////////////////////////////////////
+function test-random(: counter) {
+    asm
+
+    "This will generate 100 random numbers between 50 and 60 below.\n" say
+
+    100 counter store
+    loop_start:
+    counter loop_done jlte
+    50 60 random say " " say
+    counter 1 sub counter store
+    loop_start jmp
+    loop_done: "\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
+}
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
@@ -635,6 +654,7 @@ function show-options() {
     "Loop Demo"                 test-loop-demo      add-option
     "Test Info Areas"           test-infoarea       add-option
     "Test Call"                 test-call           add-option
+    "Test RNG"                  test-random         add-option
     "Test Compare"              test-compare        add-option
     "Test Jumps"                test-jumps          add-option
     "Test Math"                 test-math           add-option
