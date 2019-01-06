@@ -603,6 +603,13 @@ function test-output() {
     "\n65 using say-char (should be 'A'): " say
     65 say-char
     "\n" say
+
+    "# Testing text formatting:\n" say
+    "bold text: *Lorem ipsum dolor sit amet.*\n" say
+    "italic text: _Lorem ipsum dolor sit amet._\n" say
+    "bold italic: *_Lorem ipsum dolor sit amet._*\n" say
+    "italic bold: _*Lorem ipsum dolor sit amet.*_\n" say
+
     continue-str show-options add-option
     dispatcher get-option
 }
