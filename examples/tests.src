@@ -44,7 +44,13 @@ object first_obj
     an-object object ;
     a-map { $fruit: $apple }
     a-list [ 4 ]
-    test-method function(arg1 arg2) {
+    test-method function(arg1 arg2 arg3) {
+        asm
+        "I am: " say self say "\n" say
+        "My Arguments: " say
+        arg1 say ", " say
+        arg2 say ", " say
+        arg3 say "\n" say
     }
 ;
 object second_obj;
@@ -94,6 +100,9 @@ function test-call() {
     "Multiply 5 * 5 = " say
     5 5 2 test-call-helper-multiply call say
     "\n" say
+
+    "[b]Calling first_obj.test-method...[/b]\n" say
+    3 2 1 3 $test-method first_obj call-method
 
     continue-str show-options add-option
     dispatcher get-option
