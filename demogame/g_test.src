@@ -40,18 +40,12 @@ value test-property $test-func;
 object first_obj
     an-int 2
     a-string "Hello World!"
-//    a-map {
-//        "another":    5
-//        third_obj:    "Test"
-//        $fruit:       $apple
-//    }
-//    a-list [
-//        4 5 8
-//    ]
-//    test-func function (arg1 arg2 : local1 local2 local3) {
-//    }
-//    other-func function 9 (an-arg : a-local) {
-//    }
+    a-property $apple
+    an-object object ;
+    a-map { $fruit: $apple }
+    a-list [ 4 ]
+    test-method function(arg1 arg2) {
+    }
 ;
 object second_obj;
 
@@ -453,6 +447,16 @@ function test-object-props() {
     "setting second_obj.apple to \"Fred\" (new property) = " say
     "Fred" $apple second_obj set-prop
     $apple second_obj get-prop say
+
+    "\n# testing property types:" say
+
+    "\nfirst_obj.an-int (1): "      say $an-int      first_obj get-prop typeof say
+    "\nfirst_obj.a-string (2): "    say $a-string    first_obj get-prop typeof say
+    "\nfirst_obj.a-list (3): "      say $a-list      first_obj get-prop typeof say
+    "\nfirst_obj.a-map (4): "       say $a-map       first_obj get-prop typeof say
+    "\nfirst_obj.test-method (5): " say $test-method first_obj get-prop typeof say
+    "\nfirst_obj.an-object (6): "   say $an-object   first_obj get-prop typeof say
+    "\nfirst_obj.a-property (7): "  say $a-property  first_obj get-prop typeof say
     "\n" say
 
     continue-str show-options add-option
