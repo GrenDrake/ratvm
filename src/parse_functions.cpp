@@ -52,6 +52,8 @@ struct OpcodeDef {
         GetSize             = 25, // get size of list or map
         SetItem             = 26, // set item in list (by index) of map (by key)
         TypeOf              = 27, // get value type
+        DelItem             = 28, // remove an item from a list or a key from a map
+        AddItem             = 29, // add an item to a list (use set-item for maps)
         CompareTypes        = 30, // compare the types of two values and push the result
         Compare             = 31, // compare two values and push the result
         Jump                = 32, // unconditional jump
@@ -74,6 +76,8 @@ struct OpcodeDef {
         BitXor              = 50,
         BitNot              = 51,
         Random              = 52,
+        Inc                 = 53,
+        Dec                 = 54,
         GetKey              = 60,
         GetOption           = 61,
         GetLine             = 62,
@@ -113,6 +117,8 @@ OpcodeDef opcodes[] = {
     {   "has-item",     OpcodeDef::HasItem      },
     {   "get-size",     OpcodeDef::GetSize      },
     {   "set-item",     OpcodeDef::SetItem      },
+    {   "del-item",     OpcodeDef::DelItem      },
+    {   "add-item",     OpcodeDef::AddItem      },
     {   "typeof",       OpcodeDef::TypeOf       },
     {   "cmp-type",     OpcodeDef::CompareTypes         },
     {   "cmp",          OpcodeDef::Compare              },
@@ -138,6 +144,8 @@ OpcodeDef opcodes[] = {
     {   "bitxor",       OpcodeDef::BitXor       },
     {   "bitnot",       OpcodeDef::BitNot       },
     {   "random",       OpcodeDef::Random       },
+    {   "inc",          OpcodeDef::Inc          },
+    {   "dec",          OpcodeDef::Dec          },
     {   "get-key",      OpcodeDef::GetKey       },
     {   "get-option",   OpcodeDef::GetOption    },
     {   "get-line",     OpcodeDef::GetLine      },

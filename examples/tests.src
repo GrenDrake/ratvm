@@ -358,7 +358,7 @@ function test-jumps(: test-value) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test math commands
 // ////////////////////////////////////////////////////////////////////////////
-function test-math() {
+function test-math(: counter) {
     asm
 
     "\n## Testing math opcodes\n" say
@@ -400,15 +400,26 @@ function test-math() {
 
     "30 | 13 = " say
     30 13 bitor say
-    "\n" say
 
-    "28 xor 23 = " say
+    "\n28 xor 23 = " say
     28 23 bitxor say
-    "\n" say
 
-    "~348 = " say
+    "\n~348 = " say
     348 bitnot say
-    "\n" say
+
+    "\nDec test:" say
+    4 counter store
+    dec-test-loop:
+    " " say counter say
+    counter dec counter store
+    counter 0 cmp dec-test-loop jgte
+
+    "\nInc test:" say
+    0 counter store
+    inc-test-loop:
+    " " say counter say
+    counter inc counter store
+    counter 4 cmp inc-test-loop jlte
 
     continue-str show-options add-option
     dispatcher get-option
