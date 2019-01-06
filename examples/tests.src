@@ -668,36 +668,54 @@ function test-random(: counter) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test List Methods
 // ////////////////////////////////////////////////////////////////////////////
+function print-array(theArray : counter length) {
+    asm
+
+    "[b]Array contents:[/b]" say
+    theArray get-size length store
+    0 counter store
+    array-dump-loop:
+    " " say counter theArray get-item say
+    counter inc counter store
+    counter length cmp array-dump-loop jlt
+    " (length: " say length say ")\n" say
+}
+
 function test-lists(: counter) {
     asm
 
     "Test list size (should be 3): " say
-    test-list get-size say
-    "\n" say
+    test-list get-size say "\n" say
+    test-list 1 print-array call
 
-    4 counter store
-    has-item-loop:
-    0 counter cmp done-has-item jgt
-    "item " say counter say ": " say
-    counter test-list has-item say "\n" say
-    counter 1 sub counter store
-    has-item-loop jmp
-    done-has-item:
+    "Adding new item 91 at end...\n" say
+    91 99 test-list add-item "\n" say
+    test-list 1 print-array call
 
-    "Current item #7 (non-existant index): " say
-    7 test-list get-item say
-    "\n" say
+    "Adding new item 4608 in first position...\n" say
+    4608 0 test-list add-item "\n" say
+    test-list 1 print-array call
 
-    "Current item #2: " say
-    2 test-list get-item say
-    "\n" say
+    "Adding new item 44 after second item...\n" say
+    44 2 test-list add-item "\n" say
+    test-list 1 print-array call
 
-    "Updating item #2 to second_obj...\n" say
+    "New test list size (should be 6): " say
+    test-list get-size say "\n" say
+
+    "Deleting index #2...\n" say
+    2 test-list del-item
+    test-list 1 print-array call
+
+    "Trying to get bad index -1: " say
+    -1 test-list get-item say "\n" say
+
+    "Trying to get bad index 99: " say
+    99 test-list get-item say "\n" say
+
+    "Updating index #2 to second_obj...\n" say
     second_obj 2 test-list set-item
-
-    "New item #2: " say
-    2 test-list get-item say
-    "\n" say
+    test-list 1 print-array call
 
     continue-str show-options add-option
     dispatcher get-option
@@ -718,7 +736,7 @@ function test-maps() {
     2 test-map get-item say
     "\n" say
 
-    "Updating item \"2\"..." say
+    "Updating item \"2\"...\n" say
     "Apple" 2 test-map set-item
 
     "New item \"2\" (\"End\"): " say
@@ -731,6 +749,20 @@ function test-maps() {
 
     "Item \"item\" value (\"newkey\"): " say
     "item" test-map get-item say
+    "\n" say
+
+
+    "Has key 2 (yes): " say
+    2 test-map has-item say
+    "\n" say
+
+    "Deleting item \"2\"...\n" say
+    2 test-map del-item
+    "Current item \"2\" (\"End\"): " say
+    2 test-map get-item say "\n" say
+
+    "Has key 2 (no): " say
+    2 test-map has-item say
     "\n" say
 
 
