@@ -644,6 +644,39 @@ function test-random(: counter) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////
+// Test List Methods
+// ////////////////////////////////////////////////////////////////////////////
+function test-lists(: counter) {
+    asm
+
+    "Test list size (should be 3): " say
+    test-list get-size say
+    "\n" say
+
+    4 counter store
+    has-item-loop:
+    0 counter cmp done-has-item jgt
+    "item " say counter say ": " say
+    counter test-list has-item say "\n" say
+    counter 1 sub counter store
+    has-item-loop jmp
+    done-has-item:
+
+    "Current item #2: " say
+    2 test-list get-item say
+    "\n" say
+
+    "Updating item #2 to second_obj...\n" say
+    second_obj 2 test-list set-item
+
+    "New item #2: " say
+    2 test-list get-item say
+    "\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
+}
+// ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
 function show-options() {
@@ -658,6 +691,7 @@ function show-options() {
     "Test Compare"              test-compare        add-option
     "Test Jumps"                test-jumps          add-option
     "Test Math"                 test-math           add-option
+    "Test List Methods"         test-lists          add-option
     "Test Object Properties"    test-object-props   add-option
     "Test Input Methods"        test-inputs         add-option
     "Test stack commands"       test-stack          add-option
