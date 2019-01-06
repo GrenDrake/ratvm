@@ -83,6 +83,7 @@ struct OpcodeDef {
         GetOption           = 61,
         GetLine             = 62,
         AddOption           = 63,
+        AddOptionExtra      = 64,
         SetInfo             = 70,
     };
 
@@ -152,6 +153,7 @@ OpcodeDef opcodes[] = {
     {   "get-option",   OpcodeDef::GetOption    },
     {   "get-line",     OpcodeDef::GetLine      },
     {   "add-option",   OpcodeDef::AddOption    },
+    {   "add-option-ex",OpcodeDef::AddOptionExtra },
     {   "set-info",     OpcodeDef::SetInfo      },
     {   ""                                      }
 };

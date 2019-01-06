@@ -495,7 +495,16 @@ function test-inputs() {
     asm
     "This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu." say
     "Test key input"        test-getkey     add-option
+    "No extra value"        receive-extra   add-option
+    "Extra value 6"         receive-extra   6   add-option-ex
+    "Extra value 73"        receive-extra   73  add-option-ex
     "Return to top menu"    show-options    add-option
+    dispatcher get-option
+}
+function receive-extra(extra) {
+    asm
+    "Option extra value: " say extra say
+    continue-str test-inputs add-option
     dispatcher get-option
 }
 function test-getkey() {
@@ -800,10 +809,10 @@ function show-options() {
 }
 
 
-function dispatcher(option-func) {
+function dispatcher(option-func extra-value) {
     asm
 
-    0 option-func call
+    extra-value 1 option-func call
     0 return
 }
 
