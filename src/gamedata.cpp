@@ -72,27 +72,12 @@ const std::string& GameData::getString(unsigned id) const {
     return stringTable[id];
 }
 
-GameObject* GameData::objectById(int ident) {
-    for (GameObject *object : objects) {
-        if (object != nullptr && object->ident == ident) {
-            return object;
-        }
-    }
-    return nullptr;
-}
 
-
-bool objectSorter(const GameObject *left, const GameObject *right) {
-    if (left == nullptr)  return true;
-    if (right == nullptr) return false;
-    return left->ident < right->ident;
-}
 bool propertySorter(const GameProperty &left, const GameProperty &right) {
     return left.id < right.id;
 }
 
 void GameData::organize() {
-    std::sort(objects.begin(), objects.end(), objectSorter);
     for (GameObject *object : objects) {
         std::sort(object->properties.begin(), object->properties.end(), propertySorter);
     }

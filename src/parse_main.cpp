@@ -184,6 +184,8 @@ int parse_object(GameData &gamedata, ParseState &state) {
     object->name = objectName;
     object->globalId = nextObjectId++;
     gamedata.objects.push_back(object);
+    std::cerr << object->globalId << ' ' << gamedata.objects.size();
+    std::cerr << ' ' << gamedata.objects.back()->globalId << "\n";
     if (!objectName.empty()) {
         gamedata.symbols.add(SymbolDef(origin,
                                         objectName,

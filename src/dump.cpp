@@ -70,8 +70,8 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
 
     for (const GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
-        out << "OBJECT " << object->ident << " (gid:";
-        out << object->globalId << ") ";
+        out << "OBJECT: ";
+        out << object->globalId << ' ';
         if (object->name.empty())   out << "(anonymous)";
         else                        out << object->name;
         out << " @ " << object->origin << "\n";

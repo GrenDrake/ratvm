@@ -30,7 +30,6 @@ struct GameObject {
     Origin origin;
     std::vector<GameProperty> properties;
     std::string name;
-    int ident;
     int globalId;
 };
 
@@ -79,7 +78,6 @@ public:
     const std::string* getPropertyName(unsigned id) const;
     unsigned getStringId(const std::string &name);
     const std::string& getString(unsigned id) const;
-    GameObject* objectById(int ident);
     void organize();
     FunctionDef* functionByName(const std::string &name);
 
