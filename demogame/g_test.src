@@ -669,6 +669,10 @@ function test-lists(: counter) {
     has-item-loop jmp
     done-has-item:
 
+    "Current item #7 (non-existant index): " say
+    7 test-list get-item say
+    "\n" say
+
     "Current item #2: " say
     2 test-list get-item say
     "\n" say
@@ -683,6 +687,50 @@ function test-lists(: counter) {
     continue-str show-options add-option
     dispatcher get-option
 }
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test Map Methods
+// ////////////////////////////////////////////////////////////////////////////
+function test-maps() {
+    asm
+
+    "Current item \"7\" (non-existant key): " say
+    7 test-map get-item say
+    "\n" say
+
+
+    "Current item \"2\" (\"End\"): " say
+    2 test-map get-item say
+    "\n" say
+
+    "Updating item \"2\"..." say
+    "Apple" 2 test-map set-item
+
+    "New item \"2\" (\"End\"): " say
+    2 test-map get-item say
+    "\n" say
+
+
+    "Adding item \"item\"...\n" say
+    "newkey" "item" test-map set-item
+
+    "Item \"item\" value (\"newkey\"): " say
+    "item" test-map get-item say
+    "\n" say
+
+
+    "Has key 3 (yes): " say
+    3 test-map has-item say
+    "\n" say
+
+    "Has key 88 (no): " say
+    88 test-map has-item say
+    "\n" say
+
+    continue-str show-options add-option
+    dispatcher get-option
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
@@ -699,6 +747,7 @@ function show-options() {
     "Test Jumps"                test-jumps          add-option
     "Test Math"                 test-math           add-option
     "Test List Methods"         test-lists          add-option
+    "Test Map Methods"          test-maps           add-option
     "Test Object Properties"    test-object-props   add-option
     "Test Input Methods"        test-inputs         add-option
     "Test stack commands"       test-stack          add-option
