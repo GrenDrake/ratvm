@@ -706,6 +706,13 @@ function test-lists(: counter) {
     second_obj 2 test-list set-item
     test-list 1 print-array call
 
+    "\nSelecting 20 random items from test-list:" say
+    0 counter store
+    random-loop:
+    " [" say test-list get-random say "]" say
+    counter inc counter store
+    20 counter cmp random-loop jgt
+
     continue-str show-options add-option
     dispatcher get-option
 }
