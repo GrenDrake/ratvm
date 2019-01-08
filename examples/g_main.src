@@ -1,143 +1,263 @@
+// ////////////////////////////////////////////////////////////////////////////
+// Core and general game systems
+// ////////////////////////////////////////////////////////////////////////////
 
-object gamedata
-    title   "Forest of the Gnoll"
-    author  "Gren Drake"
-    version "Alpha-0"
+include "system.inc";
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Constant definitions
+// ////////////////////////////////////////////////////////////////////////////
+
+value pro-subject   0;
+value pro-object    1;
+value pro-pos       2;
+value pro-adject    3;
+value pro-reflex    4;
+
+value skill-melee   0;
+value skill-ranged  1;
+value skill-magic   2;
+
+value dt-blunt      "blunt";
+value dt-cutting    "cutting";
+value dt-piercing   "piercing";
+value dt-fire       "fire";
+value dt-air        "air";
+value dt-earth      "earth";
+value dt-water      "water";
+
+// ////////////////////////////////////////////////////////////////////////////
+// Common strings
+// ////////////////////////////////////////////////////////////////////////////
+
+value hours-per-day     1440;
+value minutes-per-hour  60;
+value continue-str      "Continue";
+
+object sex-neuter
+    article             "a "
+    name                "neuter"
+    pronouns            [ "it" "it" "its" "its" "itself" ]
+;
+object sex-male
+    article             "a "
+    name                "male"
+    pronouns            [ "he" "him" "his" "his" "himself" ]
+;
+object sex-female
+    article             "a "
+    name                "female"
+    pronouns            [ "she" "her" "her" "hers" "herself" ]
 ;
 
-include "demogame/g_system.src";
-
-constant turnip-count -66;
-
-object sex-neuter;
-object sex-male;
-object sex-female;
-object spc-human;
-
-object common-helmet;
-object common-sword;
-object loincloth;
-object act-punch;
-object debug-kill;
-object act-fireball;
-
-object character
-    to-lower (c)
-        (do )
-    is-alpha (c)
-        (or (and (gte c 'A') (lte c 'Z')) (and (gte c 'a') (lte c 'z')))
-    is-digit (c)
-        (and (gte c '0') (lte c '9'))
-    is-alnum (c)
-        (or (call character $is-alpha c) (call character $is-digit c))
+object species-human
+    article             "a "
+    name                "human"
+;
+object species-gnoll
+    article             "a "
+    name                "gnoll"
+;
+object species-dragon
+    article             "a "
+    name                "dragon"
 ;
 
-object string
-    compare (str1 str2)
-        (do )
-    to-lower (str)
-        (do )
+object player
+    article             "the "
+    name                "player"
+    sex                 sex-neuter
+    species             species-human
+    faction             0
+    skills {
+        skill-melee:    10
+        skill-ranged:   12
+        skill-magic:    8
+    }
 ;
 
-object tf-potion
-    on-use  "Stuff happens!"
-;
-
-object gnoll-tf-potion : tf-potion
-    article "the "
-    name    "potion of gnoll"
-    plural  "potions of gnoll"
+object world
+    time                720 // start game at noon
+    location            0
+    location-name       0
+    in-location         0
+    new-location        0
 ;
 
 
-object the-player
-    article "the "
-    name    "player"
-    sex     sex-neuter
-    species spc-human
-    faction 0
-    skills [skl-unarmed:    12
-            skl-melee:      4]
-    starting-gear   [common-helmet common-sword loincloth]
-    base-abilities  [act-punch]
-    extra-abilities [debug-kill act-fireball]
-;
+// ////////////////////////////////////////////////////////////////////////////
+// Utility functions
+// ////////////////////////////////////////////////////////////////////////////
+
+function add-continue() {
+    asm
+    continue-str $location world get-prop add-option
+}
+
+function dispatch(event extra : result) {
+    asm
+
+    run-event:
+    extra 1 $body event call-method
+    result store
+    result typeof Object cmp done-event jnz
+    result event store
+    0 extra store
+    run-event jmp
+
+    done-event:
+
+    0 $in-location world set-prop
+    0 $new-location world set-prop
+
+    $location event get-prop result store
+    result 0 cmp end-location jz
+    1 $in-location world set-prop
+    $location world get-prop event cmp is-new-location jnz
+    end-location jmp
+
+    is-new-location:
+    1 $new-location world set-prop
+    event $location world set-prop
+    result $location-name world set-prop
+    result InfoLeftHeader set-info
 
 
-object act-swing
-    name "whirlwind"
-    combat-node
-        [attacker index target my-faction]
-        (say-uf attacker " swings ")
-        (say-pronoun pro-adject attacker)
-        (say " sword! ")
 
-        (set index 0)
-        (set target (combatant 0))
-        (set my-faction (get-property attacker $faction))
+    end-location:
+//    "\nIN LOCATION: " say $in-location world get-prop say
+//    "\nNEW LOCATION: " say $new-location world get-prop say
+//    "\nLOCATION NAME: " say $location-name world get-prop say
+    dispatch get-option
+}
 
-        (loop
-            (if (nq my-faction (get-property target $faction))
-                (proc
-                    (if (opposed-skill-check attacker skl-melee 0 target)
-                        (proc
-                            (say-uf target " is hit! ")
-                            (do-daage target 39 skl-health dt-cutting))
-                        (say-uf target " avoids the strike! "))))
-            (inc index)
-            (set target (combatant index))
-            (if (not target)
-                (break)))
-        (say "\n")
+function main() {
+    asm
 
-;
+    "Caged Gnoll" InfoTitle set-info
+    start 1 dispatch call
+}
 
+function print-obj(theObject) {
+    asm
+    $article theObject get-prop say
+    $name theObject get-prop say
+}
+
+function skill-check(who skill modifier) {
+    asm
+    modifier None cmp-type has-mod jnz
+    0 modifier store
+    has-mod:
+    skill $skills who get-prop get-item
+    "[(" say stack-dup say "+" say modifier say ")=" say
+    modifier add stack-dup say
+    " vs (" say
+
+    1 7 random stack-dup say "+" say
+    1 7 random stack-dup say "+" say add
+    1 7 random stack-dup say ")=" say add
+    stack-dup say
+
+    cmp success jgte
+    " = fail]" say
+    0 return
+
+    success:
+    1 " = success]" say
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Startup and chargen
+// ////////////////////////////////////////////////////////////////////////////
 
 object start
-    location "(not in game)"
-    body
-        (say "Welcome to the game!")
-        (add-option "Create a new character" chargen-sex)
-
+    body function() {
+        asm
+        "Welcome to game!\nYou can select options by clicking on them or (for options up to ten) by pressing the appropriate number key." say
+        "Start game" chargen1 add-option
+    }
 ;
 
-object chargen-sex
-    body
-        (say "What sex is your character?")
-        (add-option "Male" chargen-species sex-male)
-        (add-option "Female" chargen-species sex-female)
+object chargen1
+    body function() {
+        asm
+        "What sex are you?" say
+        "Male"   chargen2   sex-male    add-option-ex
+        "Female" chargen2   sex-female  add-option-ex
+    }
+;
+object chargen2
+    body function(choice) {
+        asm
+        choice $sex player set-prop
 
+        "What species are you?" say
+        "Human"     chargen3    species-human   add-option-ex
+        "Gnoll"     chargen3    species-gnoll   add-option-ex
+        "Dragon"    chargen3    species-dragon  add-option-ex
+    }
+;
+object chargen3
+    body function(choice) {
+        asm
+        choice $species player set-prop
+
+        "You are " say
+        $sex player get-prop 1 print-obj call
+        " " say
+        $name $species player get-prop get-prop say
+        ". Beginning the game now.\n[b]----------------------------------------[/b]\n" say
+        forest-path
+    }
 ;
 
-object chargen-species
-    body  [new-sex]
-        (set-property the-player $sex new-sex)
-        (say "What species is your character?")
-        (add-option push "Human" chargen-done spc-human)
-        (add-option push "Gnoll" chargen-done spc-gnoll)
-        (add-option push "Dragon" chargen-done spc-dragon)
 
+// ////////////////////////////////////////////////////////////////////////////
+// General item definitions
+// ////////////////////////////////////////////////////////////////////////////
+
+object gold
+    article     "a "
+    name        "gold piece"
+    plural      "gold pieces"
+    description "The coin of the realm."
 ;
 
-object chargen-done
-    body (new-species)
-        (do
-            (set-property the-player $species new-species)
-            (add-to-party the-player)
-            (add-to-party the-gnoll)
-
-            (add-item teleport-crystal 20)
-            (add-item gnoll-potion 2)
-            (add-item loincloth)
-            (add-item plate-armour)
-
-            (add-item gold 30)
-
-            (say "You are a "
-                 (get-property the-player $sex)
-                 " "
-                 (get-property the-player $species)
-                 ". Beginning the game now.\n* * * * * * * * * *\n")
-            (start-game)
-            (do-scene forest-path))
+object loincloth
+    article     "a "
+    name        "loincloth"
+    plural      "loincloths"
+    slot        "body"
 ;
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Generic nodes for resting
+// ////////////////////////////////////////////////////////////////////////////
+
+object rest-awhile
+    body function() {
+        asm
+        "How long would you like to rest for?" say
+        "One hour"      rest-awhile-doit    60  add-option-ex
+        "Six hours"     rest-awhile-doit    360 add-option-ex
+        "Twelve hours"  rest-awhile-doit    720 add-option-ex
+        "Don't rest" $location world get-prop add-option
+    }
+;
+
+object rest-awhile-doit
+    body function(length) {
+        asm
+        "You rest for a while. " say
+//        length do-rest
+        0 add-continue call
+    }
+;
+
+
+include "g_forest.inc";
+include "g_town.inc";
