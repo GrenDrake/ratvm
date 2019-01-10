@@ -47,6 +47,20 @@ int main(int argc, char *argv[]) {
 
     std::vector<Token> tokens;
     GameData gamedata;
+    gamedata.symbols.add(SymbolDef(Origin(), "None",            Value{Value::Integer, 0}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Integer",         Value{Value::Integer, 1}));
+    gamedata.symbols.add(SymbolDef(Origin(), "String",          Value{Value::Integer, 2}));
+    gamedata.symbols.add(SymbolDef(Origin(), "List",            Value{Value::Integer, 3}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Map",             Value{Value::Integer, 4}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Function",        Value{Value::Integer, 5}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::Integer, 6}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::Integer, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::Integer, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarLeft",     Value{Value::Integer, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarRight",    Value{Value::Integer, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarFooter",   Value{Value::Integer, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarTitle",    Value{Value::Integer, 7}));
+
     try {
         tokens = lex_file(gamedata, sourceFile);
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }

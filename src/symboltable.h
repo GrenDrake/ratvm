@@ -12,7 +12,7 @@ struct SymbolDef {
         Object, Integer, String
     };
 
-    SymbolDef(const Origin &origin, const std::string name, const Value &value)
+    SymbolDef(const Origin &origin, const std::string &name, const Value &value)
     : origin(origin), name(name), value(value)
     { }
 
