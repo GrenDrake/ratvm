@@ -2,9 +2,6 @@
 // Core and general game systems
 // ////////////////////////////////////////////////////////////////////////////
 
-include "system.inc";
-
-
 // ////////////////////////////////////////////////////////////////////////////
 // Constant definitions
 // ////////////////////////////////////////////////////////////////////////////
@@ -121,7 +118,7 @@ function dispatch(event extra : result) {
     1 $new-location world set-prop
     event $location world set-prop
     result $location-name world set-prop
-    result InfoLeftHeader set-info
+    result InfobarLeft set-info
 
 
 
@@ -135,7 +132,7 @@ function dispatch(event extra : result) {
 function main() {
     asm
 
-    "Caged Gnoll" InfoTitle set-info
+    "Caged Gnoll" InfobarTitle set-info
     start 1 dispatch call
 }
 
