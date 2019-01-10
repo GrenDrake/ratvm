@@ -7,3 +7,4 @@ game.bin
 tokens.txt
 data.txt
 .vscode
+.DS_Store
