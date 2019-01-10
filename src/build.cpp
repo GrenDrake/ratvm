@@ -56,10 +56,10 @@ int main(int argc, char *argv[]) {
     gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::Integer, 6}));
     gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::Integer, 7}));
     gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::Integer, 7}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarLeft",     Value{Value::Integer, 7}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarRight",    Value{Value::Integer, 7}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarFooter",   Value{Value::Integer, 7}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarTitle",    Value{Value::Integer, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarLeft",     Value{Value::Integer, 0}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarRight",    Value{Value::Integer, 1}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarFooter",   Value{Value::Integer, 2}));
+    gamedata.symbols.add(SymbolDef(Origin(), "InfobarTitle",    Value{Value::Integer, 3}));
 
     try {
         tokens = lex_file(gamedata, sourceFile);
