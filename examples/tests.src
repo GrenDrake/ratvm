@@ -615,7 +615,7 @@ function test-output() {
     -1 say-unsigned
     "\n65 using say-char (should be 'A'): " say
     65 say-char
-    "\n" say
+    "\nSay UTF-8 Text: テキストの例\n" say
 
     "# Testing text formatting:\n" say
     "bold text: [b]Lorem ipsum dolor sit amet.[/b]\n" say
