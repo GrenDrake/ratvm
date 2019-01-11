@@ -782,6 +782,87 @@ function test-maps() {
 }
 
 // ////////////////////////////////////////////////////////////////////////////
+// Test Page Commands
+// ////////////////////////////////////////////////////////////////////////////
+function test-pages() {
+    asm
+    "Demo Page" test-page1 'd' add-page
+    "Another Page" other-page 'a' add-page
+    "Page" other-page 'p' add-page
+    "A Long Page Name" other-page 'l' add-page
+    0 test-pages-real call
+}
+function test-pages-real() {
+    asm
+    "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
+    "Remove \"Another Page\"" test-pages-remove-page add-option
+    continue-str test-pages-cleanup add-option
+    dispatcher get-option
+}
+function test-pages-remove-page() {
+    asm
+    "Another Page" del-page
+    0 test-pages-real call
+}
+function test-pages-cleanup() {
+    asm
+    "Demo Page" del-page
+    "Another Page" del-page
+    "Page" del-page
+    "A Long Page Name" del-page
+    0 show-options call
+}
+
+object testpage-data
+    count 1
+    index 0
+;
+function test-page1(key) {
+    asm
+    key Integer cmp-type showpage jz
+    key 32 cmp showkey jnz
+    end-page
+    return
+
+    leftkey:
+    $index testpage-data get-prop dec $index testpage-data set-prop
+    showpage jmp
+    rightkey:
+    $index testpage-data get-prop inc $index testpage-data set-prop
+    showpage jmp
+    upkey:
+    $index testpage-data get-prop 10 mult $index testpage-data set-prop
+    showpage jmp
+    downkey:
+    $index testpage-data get-prop 10 div $index testpage-data set-prop
+    showpage jmp
+
+    showkey:
+    "You pressed: " say key say " (which is not space).\n" say
+    key -1 cmp leftkey jz
+    key -2 cmp rightkey jz
+    key -3 cmp downkey jz
+    key -4 cmp upkey jz
+    showpage:
+    "You have viewed this page " say
+    $count testpage-data get-prop say
+    " times. The index counter is " say
+    $index testpage-data get-prop say
+    ". Use arrow keys to change."
+    "Press space to return." test-page1 get-key
+    $count testpage-data get-prop inc $count testpage-data set-prop
+}
+function other-page() {
+    asm
+    "You selected a page other than the demo page! (Only the demo page has actual content.)" say
+    continue-str test-pages-cleanup add-option
+    end-other-page get-option
+}
+function end-other-page() {
+    asm end-page
+}
+
+// ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
 function show-options() {
@@ -791,6 +872,7 @@ function show-options() {
 
     "Loop Demo"                 test-loop-demo      add-option
     "Test Info Areas"           test-infoarea       add-option
+    "Test Pages"                test-pages          add-option
     "Test Call"                 test-call           add-option
     "Test RNG"                  test-random         add-option
     "Test Compare"              test-compare        add-option

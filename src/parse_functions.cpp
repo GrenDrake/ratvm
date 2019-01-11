@@ -86,6 +86,9 @@ struct OpcodeDef {
         AddOption           = 63,
         AddOptionExtra      = 64,
         SetInfo             = 70,
+        AddPage             = 71,
+        DelPage             = 72,
+        EndPage             = 73,
     };
 
     std::string name;
@@ -157,6 +160,9 @@ OpcodeDef opcodes[] = {
     {   "add-option",   OpcodeDef::AddOption    },
     {   "add-option-ex",OpcodeDef::AddOptionExtra },
     {   "set-info",     OpcodeDef::SetInfo      },
+    {   "add-page",     OpcodeDef::AddPage      },
+    {   "del-page",     OpcodeDef::DelPage      },
+    {   "end-page",     OpcodeDef::EndPage      },
     {   ""                                      }
 };
 
