@@ -1,28 +1,28 @@
 // ////////////////////////////////////////////////////////////////////////////
 // Common strings
 // ////////////////////////////////////////////////////////////////////////////
-value continue-str "Continue";
+value continueStr "Continue";
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Data used for tests
 // ////////////////////////////////////////////////////////////////////////////
-value test-int 7384;
-value test-str "A Name";
-value test-list [ 1 2 3 ];
-value test-map { 1: "The" 2: "End" 3: "Is" 4: "Far" };
-value test-function function test-function-name () {};
-value test-object object test-object-name;; // double semicolon currently required
-value test-property $test-func;
+value testInt 7384;
+value testStr "A Name";
+value testList [ 1 2 3 ];
+value testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" };
+value testFunction function testFunctionName () {};
+value testObject object testObjectName;; // double semicolon currently required
+value testProperty $testFunc;
 
 object first_obj
-    an-int 2
-    a-string "Hello World!"
-    a-property $apple
-    an-object object ;
-    a-map { $fruit: $apple }
-    a-list [ 4 ]
-    test-method function(arg1 arg2 arg3) {
+    anInt 2
+    aString "Hello World!"
+    a_Property $apple
+    anObject object ;
+    aMap { $fruit: $apple }
+    aList [ 4 ]
+    testMethod function(arg1 arg2 arg3) {
         asm
         "I am: " say self say "\n" say
         "My Arguments: " say
@@ -37,56 +37,56 @@ object second_obj;
 // ////////////////////////////////////////////////////////////////////////////
 // Test stack commands
 // ////////////////////////////////////////////////////////////////////////////
-function test-stack() {
+function testStack() {
     asm
     2 4 6 8
 
     "\n## Testing stack manipulation\n" say
     "Items on Stack: " say
-    stack-size say
+    stack_size say
     " (should be 4)\nPopping.\n" say
     pop
     "New items on Stack: " say
-    stack-size say
+    stack_size say
     " (should be 3)\n" say
     pop
 
-    stack-dup
-    "Stack-dup: " say say ", " say say " (should be 4, 4)\n" say
+    stack_dup
+    "Stackdup: " say say ", " say say " (should be 4, 4)\n" say
 
-    5 6 7 8 2 stack-peek
+    5 6 7 8 2 stack_peek
     "Stack peek: " say say " (should be 6)\n" say
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test function calls and arguments
 // ////////////////////////////////////////////////////////////////////////////
-function test-call() {
+function testCall() {
     asm
 
     "\n## Testing function calls\n" say
     "Passing (4, 5). " say
-    5 4 2 test-call-helper call
+    5 4 2 testCallHelper call
     "Passing (4). " say
-    4 1 test-call-helper call
+    4 1 testCallHelper call
     "Passing (). " say
-    0 test-call-helper call
+    0 testCallHelper call
     "Multiply 5 * 5 = " say
-    5 5 2 test-call-helper-multiply call say
+    5 5 2 testCallHelperMultiply call say
     "\n" say
 
-    "[b]Calling first_obj.test-method...[/b]\n" say
-    3 2 1 3 $test-method first_obj call-method
+    "[b]Calling first_obj.testMethod...[/b]\n" say
+    3 2 1 3 $testMethod first_obj call_method
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
-function test-call-helper( arg1 arg2 ) {
+function testCallHelper( arg1 arg2 ) {
     asm
 
     "Received: (" say
@@ -96,7 +96,7 @@ function test-call-helper( arg1 arg2 ) {
     ")\n" say
 }
 
-function test-call-helper-multiply( arg1 arg2 ) {
+function testCallHelperMultiply( arg1 arg2 ) {
     asm arg1 arg2 mult return
 }
 
@@ -104,7 +104,7 @@ function test-call-helper-multiply( arg1 arg2 ) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test compare command
 // ////////////////////////////////////////////////////////////////////////////
-function test-compare(: test-value) {
+function testCompare(: testValue) {
     asm
     "\n## Testing compare opcode\n" say
 
@@ -115,20 +115,20 @@ function test-compare(: test-value) {
     "5 vs -5 (=  10): " say 5 -5 cmp say "\n" say
 
     "\n[setting \"tv\" to 5 to test local variables in compare.]\n" say
-    5 test-value store
-    " tv vs 5 (=  0): " say test-value 5 cmp say "\n" say
-    " 2 vs tv (= -3): " say 2 test-value cmp say "\n" say
-    " tv vs 2 (=  3): " say test-value 2 cmp say "\n" say
+    5 testValue store
+    " tv vs 5 (=  0): " say testValue 5 cmp say "\n" say
+    " 2 vs tv (= -3): " say 2 testValue cmp say "\n" say
+    " tv vs 2 (=  3): " say testValue 2 cmp say "\n" say
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test jump commands
 // ////////////////////////////////////////////////////////////////////////////
-function test-jumps(: test-value) {
+function testJumps(: testValue) {
     asm
     "\n## Testing jump opcodes\n" say
 
@@ -142,210 +142,210 @@ function test-jumps(: test-value) {
 // jump zero
     "jz    (0): " say
     0 test003 jz
-    "Failed!\n" say test003-after jmp
+    "Failed!\n" say test003after jmp
     test003: "Succeeded!\n" say
-    test003-after:
+    test003after:
 
     "jz    (1): " say
-    1 test004-failed jz
-    "Succeeded!\n" say test004-after jmp
-    test004-failed: "Failed!\n" say
-    test004-after:
+    1 test004failed jz
+    "Succeeded!\n" say test004after jmp
+    test004failed: "Failed!\n" say
+    test004after:
 
 //  jump not zero
     "jnz   (0): " say
-    0 test005-failed jnz
-    "Succeeded!\n" say test005-after jmp
-    test005-failed: "Failed!\n" say
-    test005-after:
+    0 test005failed jnz
+    "Succeeded!\n" say test005after jmp
+    test005failed: "Failed!\n" say
+    test005after:
 
     "jnz   (1): " say
     1 test006 jnz
-    "Failed!\n" say test006-after jmp
+    "Failed!\n" say test006after jmp
     test006: "Succeeded!\n" say
-    test006-after:
+    test006after:
 
 //  jump less than
     "jlt   (1): " say
-    1 test007-failed jlt
-    "Succeeded!\n" say test007-after jmp
-    test007-failed: "Failed!\n" say
-    test007-after:
+    1 test007failed jlt
+    "Succeeded!\n" say test007after jmp
+    test007failed: "Failed!\n" say
+    test007after:
 
     "jlt   (0): " say
-    0 test008-failed jlt
-    "Succeeded!\n" say test008-after jmp
-    test008-failed: "Failed!\n" say
-    test008-after:
+    0 test008failed jlt
+    "Succeeded!\n" say test008after jmp
+    test008failed: "Failed!\n" say
+    test008after:
 
     "jlt  (-1): " say
     -1 test009 jlt
-    "Failed!\n" say test009-after jmp
+    "Failed!\n" say test009after jmp
     test009: "Succeeded!\n" say
-    test009-after:
+    test009after:
 
 //  jump less than or equal
     "jlte  (1): " say
-    1 test010-failed jlte
-    "Succeeded!\n" say test010-after jmp
-    test010-failed: "Failed!\n" say
-    test010-after:
+    1 test010failed jlte
+    "Succeeded!\n" say test010after jmp
+    test010failed: "Failed!\n" say
+    test010after:
 
     "jlte  (0): " say
     0 test011 jlte
-    "Failed!\n" say test011-after jmp
+    "Failed!\n" say test011after jmp
     test011: "Succeeded!\n" say
-    test011-after:
+    test011after:
 
     "jlte (-1): " say
     -1 test012 jlte
-    "Failed!\n" say test012-after jmp
+    "Failed!\n" say test012after jmp
     test012: "Succeeded!\n" say
-    test012-after:
+    test012after:
 
 //  jump greater than
     "jgt   (1): " say
     1 test013 jgt
-    "Failed!\n" say test013-after jmp
+    "Failed!\n" say test013after jmp
     test013: "Succeeded!\n" say
-    test013-after:
+    test013after:
 
     "jgt   (0): " say
-    0 test014-failed jgt
-    "Succeeded!\n" say test014-after jmp
-    test014-failed: "Failed!\n" say
-    test014-after:
+    0 test014failed jgt
+    "Succeeded!\n" say test014after jmp
+    test014failed: "Failed!\n" say
+    test014after:
 
     "jgt  (-1): " say
-    -1 test015-failed jgt
-    "Succeeded!\n" say test015-after jmp
-    test015-failed: "Failed!\n" say
-    test015-after:
+    -1 test015failed jgt
+    "Succeeded!\n" say test015after jmp
+    test015failed: "Failed!\n" say
+    test015after:
 
 //  jump greater than or equal
     "jgte  (1): " say
     1 test016 jgte
-    "Failed!\n" say test013-after jmp
+    "Failed!\n" say test013after jmp
     test016: "Succeeded!\n" say
-    test016-after:
+    test016after:
 
     "jgte  (0): " say
     0 test017 jgte
-    "Failed!\n" say test017-after jmp
+    "Failed!\n" say test017after jmp
     test017: "Succeeded!\n" say
-    test017-after:
+    test017after:
 
     "jgte (-1): " say
-    -1 test018-failed jgte
-    "Succeeded!\n" say test018-after jmp
-    test018-failed: "Failed!\n" say
-    test018-after:
+    -1 test018failed jgte
+    "Succeeded!\n" say test018after jmp
+    test018failed: "Failed!\n" say
+    test018after:
 
 
     "\n[Jump target stored in local variable.]\n" say
     "jmp: " say
-    test019 test-value store
-    test-value jmp
-    "Failed!\n" say test019-after jmp
+    test019 testValue store
+    testValue jmp
+    "Failed!\n" say test019after jmp
     test019: "Succeeded!\n" say
-    test019-after:
+    test019after:
 
     "jz: " say
-    test020 test-value store
-    0 test-value jz
-    "Failed!\n" say test020-after jmp
+    test020 testValue store
+    0 testValue jz
+    "Failed!\n" say test020after jmp
     test020: "Succeeded!\n" say
-    test020-after:
+    test020after:
 
     "jnz: " say
-    test021 test-value store
-    1 test-value jnz
-    "Failed!\n" say test021-after jmp
+    test021 testValue store
+    1 testValue jnz
+    "Failed!\n" say test021after jmp
     test021: "Succeeded!\n" say
-    test021-after:
+    test021after:
 
     "jlt: " say
-    test022 test-value store
-    -1 test-value jlt
-    "Failed!\n" say test022-after jmp
+    test022 testValue store
+    -1 testValue jlt
+    "Failed!\n" say test022after jmp
     test022: "Succeeded!\n" say
-    test022-after:
+    test022after:
 
     "jlte: " say
-    test023 test-value store
-    -1 test-value jlte
-    "Failed!\n" say test023-after jmp
+    test023 testValue store
+    -1 testValue jlte
+    "Failed!\n" say test023after jmp
     test023: "Succeeded!\n" say
-    test023-after:
+    test023after:
 
     "jgt: " say
-    test024 test-value store
-    1 test-value jgt
-    "Failed!\n" say test024-after jmp
+    test024 testValue store
+    1 testValue jgt
+    "Failed!\n" say test024after jmp
     test024: "Succeeded!\n" say
-    test024-after:
+    test024after:
 
     "jgte: " say
-    test025 test-value store
-    1 test-value jgte
-    "Failed!\n" say test025-after jmp
+    test025 testValue store
+    1 testValue jgte
+    "Failed!\n" say test025after jmp
     test025: "Succeeded!\n" say
-    test025-after:
+    test025after:
 
 
     "\n[Test value stored in local variable.]\n" say
     "jz: " say
-    0 test-value store
-    test-value test026-success jz
-    "Failed!\n" say test026-after jmp
-    test026-success: "Succeeded!\n" say
-    test026-after:
+    0 testValue store
+    testValue test026success jz
+    "Failed!\n" say test026after jmp
+    test026success: "Succeeded!\n" say
+    test026after:
 
     "jnz: " say
-    1 test-value store
-    test-value test027-success jnz
-    "Failed!\n" say test027-after jmp
-    test027-success: "Succeeded!\n" say
-    test027-after:
+    1 testValue store
+    testValue test027success jnz
+    "Failed!\n" say test027after jmp
+    test027success: "Succeeded!\n" say
+    test027after:
 
     "jlt: " say
-    -1 test-value store
-    test-value test028-success jlt
-    "Failed!\n" say test028-after jmp
-    test028-success: "Succeeded!\n" say
-    test028-after:
+    -1 testValue store
+    testValue test028success jlt
+    "Failed!\n" say test028after jmp
+    test028success: "Succeeded!\n" say
+    test028after:
 
     "jlte: " say
-    -1 test-value store
-    test-value test029-success jlte
-    "Failed!\n" say test029-after jmp
-    test029-success: "Succeeded!\n" say
-    test029-after:
+    -1 testValue store
+    testValue test029success jlte
+    "Failed!\n" say test029after jmp
+    test029success: "Succeeded!\n" say
+    test029after:
 
     "jgt: " say
-    1 test-value store
-    test-value test030-success jgt
-    "Failed!\n" say test030-after jmp
-    test030-success: "Succeeded!\n" say
-    test030-after:
+    1 testValue store
+    testValue test030success jgt
+    "Failed!\n" say test030after jmp
+    test030success: "Succeeded!\n" say
+    test030after:
 
     "jgte: " say
-    1 test-value store
-    test-value test031-success jgte
-    "Failed!\n" say test031-after jmp
-    test031-success: "Succeeded!\n" say
-    test031-after:
+    1 testValue store
+    testValue test031success jgte
+    "Failed!\n" say test031after jmp
+    test031success: "Succeeded!\n" say
+    test031after:
 
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test math commands
 // ////////////////////////////////////////////////////////////////////////////
-function test-math(: counter) {
+function testMath(: counter) {
     asm
 
     "\n## Testing math opcodes\n" say
@@ -374,204 +374,204 @@ function test-math(: counter) {
     "\n" say
 
     "1 << 4 = " say
-    1 4 left-shift say
+    1 4 left_shift say
     "\n" say
 
     "32 >> 4 = " say
-    32 4 right-shift say
+    32 4 right_shift say
     "\n" say
 
     "86 & 90 = " say
-    86 90 bitand say
+    86 90 bit_and say
     "\n" say
 
     "30 | 13 = " say
-    30 13 bitor say
+    30 13 bit_or say
 
     "\n28 xor 23 = " say
-    28 23 bitxor say
+    28 23 bit_xor say
 
     "\n~348 = " say
-    348 bitnot say
+    348 bit_not say
 
     "\nDec test:" say
     4 counter store
-    dec-test-loop:
+    dectestloop:
     " " say counter say
     counter dec counter store
-    counter 0 cmp dec-test-loop jgte
+    counter 0 cmp dectestloop jgte
 
     "\nInc test:" say
     0 counter store
-    inc-test-loop:
+    inctestloop:
     " " say counter say
     counter inc counter store
-    counter 4 cmp inc-test-loop jlte
+    counter 4 cmp inctestloop jlte
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test object property commands
 // ////////////////////////////////////////////////////////////////////////////
-function test-object-props() {
+function testObjectProps() {
     asm
 
-    "\n## Testing object manipulation opcodes\n[testing get-prop]\n" say
-    "first_obj.a-string: " say
-    $a-string first_obj get-prop say
+    "\n## Testing object manipulation opcodes\n[testing get_prop]\n" say
+    "first_obj.aString: " say
+    $aString first_obj get_prop say
     " (should be \"Hello World!\")\n" say
 
-    "first_obj.an_int: " say
-    $an-int first_obj get-prop say
+    "first_obj.anInt: " say
+    $anInt first_obj get_prop say
     " (should be 2)\n" say
 
-    "second_obj.a-string: " say
-    $a-string second_obj get-prop say
+    "second_obj.aString: " say
+    $aString second_obj get_prop say
     " (should be 0)\n" say
 
-    "\n[testing has-prop]\n" say
+    "\n[testing has_prop]\n" say
     "first_obj has property an_int? " say
-    $an-int first_obj has-prop say
+    $anInt first_obj has_prop say
     " (should be 1)\n" say
 
-    "second_obj has property a-string? " say
-    $a-string second_obj has-prop say
+    "second_obj has property aString? " say
+    $aString second_obj has_prop say
     " (should be 0)\n" say
 
-    "\n[testing set-prop]\n" say
+    "\n[testing set_prop]\n" say
     "setting second_obj.apple to \"Fred\" (new property) = " say
-    "Fred" $apple second_obj set-prop
-    $apple second_obj get-prop say
+    "Fred" $apple second_obj set_prop
+    $apple second_obj get_prop say
 
     "\n# testing property types:" say
 
-    "\nfirst_obj.an-int (1): "      say $an-int      first_obj get-prop typeof say
-    "\nfirst_obj.a-string (2): "    say $a-string    first_obj get-prop typeof say
-    "\nfirst_obj.a-list (3): "      say $a-list      first_obj get-prop typeof say
-    "\nfirst_obj.a-map (4): "       say $a-map       first_obj get-prop typeof say
-    "\nfirst_obj.test-method (5): " say $test-method first_obj get-prop typeof say
-    "\nfirst_obj.an-object (6): "   say $an-object   first_obj get-prop typeof say
-    "\nfirst_obj.a-property (7): "  say $a-property  first_obj get-prop typeof say
+    "\nfirst_obj.anInt (1): "      say $anInt      first_obj get_prop typeof say
+    "\nfirst_obj.aString (2): "    say $aString    first_obj get_prop typeof say
+    "\nfirst_obj.aList (3): "      say $aList      first_obj get_prop typeof say
+    "\nfirst_obj.aMap (4): "       say $aMap       first_obj get_prop typeof say
+    "\nfirst_obj.testMethod (5): " say $testMethod first_obj get_prop typeof say
+    "\nfirst_obj.anObject (6): "   say $anObject   first_obj get_prop typeof say
+    "\nfirst_obj.aProperty (7): "  say $aProperty  first_obj get_prop typeof say
     "\n" say
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Basic looping demo
 // ////////////////////////////////////////////////////////////////////////////
-function test-loop-demo(: counter the-value) {
+function testLoopDemo(: counter theValue) {
     asm
 // show a count up loop and calculate 2^10
     0 counter store
-    1 the-value store
-    loop-start:
+    1 theValue store
+    loopstart:
     counter 1 add counter store
-    2 the-value mult the-value store
+    2 theValue mult theValue store
     counter say
     " " say
-    counter 10 cmp loop-start jlt
+    counter 10 cmp loopstart jlt
     "Loop finished!\n" say
     "Final result: " say
-    the-value say
+    theValue say
     "\n" say
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test input commands
 // ////////////////////////////////////////////////////////////////////////////
-function test-inputs() {
+function testInputs() {
     asm
     "This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu." say
-    "Test key input"        test-getkey     add-option
-    "No extra value"        receive-extra   add-option
-    "Extra value 6"         receive-extra   6   add-option-ex
-    "Extra value 73"        receive-extra   73  add-option-ex
-    "Return to top menu"    show-options    add-option
-    dispatcher get-option
+    "Test key input"        testGetkey     add_option
+    "No extra value"        receiveExtra   add_option
+    "Extra value 6"         receiveExtra   6   add_option_x
+    "Extra value 73"        receiveExtra   73  add_option_x
+    "Return to top menu"    showOptions    add_option
+    dispatcher get_option
 }
-function receive-extra(extra) {
+function receiveExtra(extra) {
     asm
     "Option extra value: " say extra say
-    continue-str test-inputs add-option
-    dispatcher get-option
+    continueStr testInputs add_option
+    dispatcher get_option
 }
-function test-getkey() {
+function testGetkey() {
     asm
-    "This will demonstrate and test the get-key input type." say
-    "Try pressing a key." test-getkey-receive get-key
+    "This will demonstrate and test the get_key input type." say
+    "Try pressing a key." testGetkeyReceive get_key
 }
-function test-getkey-receive(key) {
+function testGetkeyReceive(key) {
     asm
     "Resulting character code: " say key say ".\n" say
-    continue-str test-inputs add-option
-    dispatcher get-option
+    continueStr testInputs add_option
+    dispatcher get_option
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test value types
 // ////////////////////////////////////////////////////////////////////////////
-function test-values(: localvar unusedvar) {
+function testValues(: localvar unusedvar) {
     asm
 
-    "int value: " say test-int typeof say
-    test-int typeof Integer cmp int_bad jnz
+    "int value: " say testInt typeof say
+    testInt typeof Integer cmp int_bad jnz
     " good\n" say tst_string jmp
     int_bad: " wrong\n" say
 
     tst_string:
-    "string value: " say test-str typeof say " " say
-    test-str typeof String cmp string_bad jnz
+    "string value: " say testStr typeof say " " say
+    testStr typeof String cmp string_bad jnz
     " good\n" say tst_list jmp
     string_bad: "wrong\n" say
 
     tst_list:
-    "list value: " say test-list typeof say " " say
-    test-list typeof List cmp list_bad jnz
+    "list value: " say testList typeof say " " say
+    testList typeof List cmp list_bad jnz
     " good\n" say tst_map jmp
     list_bad: "wrong\n" say
 
     tst_map:
-    "map value: " say test-map typeof say " " say
-    test-map typeof Map cmp map_bad jnz
+    "map value: " say testMap typeof say " " say
+    testMap typeof Map cmp map_bad jnz
     " good\n" say tst_function jmp
     map_bad: "wrong\n" say
 
     tst_function:
-    "function value: " say test-function typeof say " " say
-    test-function typeof Function cmp function_bad jnz
+    "function value: " say testFunction typeof say " " say
+    testFunction typeof Function cmp function_bad jnz
     " good\n" say tst_function_2 jmp
     function_bad: "wrong\n" say
     tst_function_2:
     "value function aliasing:" say
-    test-function test-function-name cmp tst_function_2_bad jnz
+    testFunction testFunctionName cmp tst_function_2_bad jnz
     " good\n" say tst_obj jmp
     tst_function_2_bad: " wrong\n" say
 
     tst_obj:
-    "object value: " say test-object typeof say " " say
-    test-object typeof Object cmp obj_bad jnz
+    "object value: " say testObject typeof say " " say
+    testObject typeof Object cmp obj_bad jnz
     " good\n" say tst_obj_2 jmp
     obj_bad: "wrong\n" say
     tst_obj_2:
     "value object aliasing:" say
-    test-object test-object-name cmp test_obj_2_bad jnz
+    testObject testObjectName cmp test_obj_2_bad jnz
     " good\n" say tst_prop jmp
     test_obj_2_bad: " wrong\n" say
 
     tst_prop:
-    "property value: " say test-property typeof say " " say
-    test-property typeof Property cmp prop_bad jnz
+    "property value: " say testProperty typeof say " " say
+    testProperty typeof Property cmp prop_bad jnz
     " good\n" say tst_local jmp
     prop_bad: "wrong\n" say
 
@@ -597,22 +597,22 @@ function test-values(: localvar unusedvar) {
     label_bad: "wrong\n" say
 
     all_done:
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Output command tests
 // ////////////////////////////////////////////////////////////////////////////
-function test-output() {
+function testOutput() {
     asm
 
     "This text (and nearly all text in these tests) is output using the \"say\" command.\nSay integer value: " say
     6215 say
-    "\n-1 using say-unsigned (should be 4294967295): " say
-    -1 say-unsigned
-    "\n65 using say-char (should be 'A'): " say
-    65 say-char
+    "\n-1 using say_unsigned (should be 4294967295): " say
+    -1 say_unsigned
+    "\n65 using say_char (should be 'A'): " say
+    65 say_char
     "\nSay UTF-8 Text: テキストの例\n" say
 
     "# Testing text formatting:\n" say
@@ -621,30 +621,30 @@ function test-output() {
     "bold italic: [b][i]Lorem ipsum dolor sit amet.[/i][/b]\n" say
     "italic bold: [i][b]Lorem ipsum dolor sit amet.[/b][/i]\n" say
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Update info areas
 // ////////////////////////////////////////////////////////////////////////////
-function test-infoarea() {
+function testInfoarea() {
     asm
 
     "The header, footer, and title regions should now be updated. (Unless you already ran this test since starting the program.)" say
 
-    "Good day!"     InfobarLeft     set-info
-    "5:00 am"       InfobarRight    set-info
-    "Fred is Cool"  InfobarFooter   set-info
-    "Updated Title" InfobarTitle    set-info
-    continue-str show-options add-option
-    dispatcher get-option
+    "Good day!"     InfobarLeft     set_info
+    "5:00 am"       InfobarRight    set_info
+    "Fred is Cool"  InfobarFooter   set_info
+    "Updated Title" InfobarTitle    set_info
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test RNG
 // ////////////////////////////////////////////////////////////////////////////
-function test-random(: counter) {
+function testRandom(: counter) {
     asm
 
     "This will generate 100 random numbers between 50 and 60 below.\n" say
@@ -657,184 +657,184 @@ function test-random(: counter) {
     loop_start jmp
     loop_done: "\n" say
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test List Methods
 // ////////////////////////////////////////////////////////////////////////////
-function print-array(theArray : counter length) {
+function printArray(theArray : counter length) {
     asm
 
     "[b]Array contents:[/b]" say
-    theArray get-size length store
+    theArray get_size length store
     0 counter store
-    array-dump-loop:
-    " " say counter theArray get-item say
+    arraydumploop:
+    " " say counter theArray get_item say
     counter inc counter store
-    counter length cmp array-dump-loop jlt
+    counter length cmp arraydumploop jlt
     " (length: " say length say ")\n" say
 }
 
-function test-lists(: counter) {
+function testLists(: counter) {
     asm
 
     "Test list size (should be 3): " say
-    test-list get-size say "\n" say
-    test-list 1 print-array call
+    testList get_size say "\n" say
+    testList 1 printArray call
 
     "Adding new item 91 at end...\n" say
-    91 99 test-list add-item "\n" say
-    test-list 1 print-array call
+    91 99 testList add_item "\n" say
+    testList 1 printArray call
 
     "Adding new item 4608 in first position...\n" say
-    4608 0 test-list add-item "\n" say
-    test-list 1 print-array call
+    4608 0 testList add_item "\n" say
+    testList 1 printArray call
 
     "Adding new item 44 after second item...\n" say
-    44 2 test-list add-item "\n" say
-    test-list 1 print-array call
+    44 2 testList add_item "\n" say
+    testList 1 printArray call
 
     "New test list size (should be 6): " say
-    test-list get-size say "\n" say
+    testList get_size say "\n" say
 
     "Deleting index #2...\n" say
-    2 test-list del-item
-    test-list 1 print-array call
+    2 testList del_item
+    testList 1 printArray call
 
     "Trying to get bad index -1: " say
-    -1 test-list get-item say "\n" say
+    -1 testList get_item say "\n" say
 
     "Trying to get bad index 99: " say
-    99 test-list get-item say "\n" say
+    99 testList get_item say "\n" say
 
     "Updating index #2 to second_obj...\n" say
-    second_obj 2 test-list set-item
-    test-list 1 print-array call
+    second_obj 2 testList set_item
+    testList 1 printArray call
 
-    "\nSelecting 20 random items from test-list:" say
+    "\nSelecting 20 random items from testList:" say
     0 counter store
-    random-loop:
-    " [" say test-list get-random say "]" say
+    randomloop:
+    " [" say testList get_random say "]" say
     counter inc counter store
-    20 counter cmp random-loop jgt
+    20 counter cmp randomloop jgt
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test Map Methods
 // ////////////////////////////////////////////////////////////////////////////
-function test-maps() {
+function testMaps() {
     asm
 
     "Current item \"7\" (non-existant key): " say
-    7 test-map get-item say
+    7 testMap get_item say
     "\n" say
 
 
     "Current item \"2\" (\"End\"): " say
-    2 test-map get-item say
+    2 testMap get_item say
     "\n" say
 
     "Updating item \"2\"...\n" say
-    "Apple" 2 test-map set-item
+    "Apple" 2 testMap set_item
 
     "New item \"2\" (\"End\"): " say
-    2 test-map get-item say
+    2 testMap get_item say
     "\n" say
 
 
     "Adding item \"item\"...\n" say
-    "newkey" "item" test-map set-item
+    "newkey" "item" testMap set_item
 
     "Item \"item\" value (\"newkey\"): " say
-    "item" test-map get-item say
+    "item" testMap get_item say
     "\n" say
 
 
     "Has key 2 (yes): " say
-    2 test-map has-item say
+    2 testMap has_item say
     "\n" say
 
     "Deleting item \"2\"...\n" say
-    2 test-map del-item
+    2 testMap del_item
     "Current item \"2\" (\"End\"): " say
-    2 test-map get-item say "\n" say
+    2 testMap get_item say "\n" say
 
     "Has key 2 (no): " say
-    2 test-map has-item say
+    2 testMap has_item say
     "\n" say
 
 
     "Has key 3 (yes): " say
-    3 test-map has-item say
+    3 testMap has_item say
     "\n" say
 
     "Has key 88 (no): " say
-    88 test-map has-item say
+    88 testMap has_item say
     "\n" say
 
-    continue-str show-options add-option
-    dispatcher get-option
+    continueStr showOptions add_option
+    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test Page Commands
 // ////////////////////////////////////////////////////////////////////////////
-function test-pages() {
+function testPages() {
     asm
-    "Demo Page" test-page1 'd' add-page
-    "Another Page" other-page 'a' add-page
-    "Page" other-page 'p' add-page
-    "A Long Page Name" other-page 'l' add-page
-    0 test-pages-real call
+    "Demo Page" testPage1 'd' add_page
+    "Another Page" otherPage 'a' add_page
+    "Page" otherPage 'p' add_page
+    "A Long Page Name" otherPage 'l' add_page
+    0 testPagesReal call
 }
-function test-pages-real() {
+function testPagesReal() {
     asm
     "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
-    "Remove \"Another Page\"" test-pages-remove-page add-option
-    continue-str test-pages-cleanup add-option
-    dispatcher get-option
+    "Remove \"Another Page\"" testPagesRemovePage add_option
+    continueStr testPagesCleanup add_option
+    dispatcher get_option
 }
-function test-pages-remove-page() {
+function testPagesRemovePage() {
     asm
-    "Another Page" del-page
-    0 test-pages-real call
+    "Another Page" del_page
+    0 testPagesReal call
 }
-function test-pages-cleanup() {
+function testPagesCleanup() {
     asm
-    "Demo Page" del-page
-    "Another Page" del-page
-    "Page" del-page
-    "A Long Page Name" del-page
-    0 show-options call
+    "Demo Page" del_page
+    "Another Page" del_page
+    "Page" del_page
+    "A Long Page Name" del_page
+    0 showOptions call
 }
 
-object testpage-data
+object testpageData
     count 1
     index 0
 ;
-function test-page1(key) {
+function testPage1(key) {
     asm
-    key Integer cmp-type showpage jz
+    key Integer cmptype showpage jz
     key 32 cmp showkey jnz
-    end-page
+    end_page
     return
 
     leftkey:
-    $index testpage-data get-prop dec $index testpage-data set-prop
+    $index testpageData get_prop dec $index testpageData set_prop
     showpage jmp
     rightkey:
-    $index testpage-data get-prop inc $index testpage-data set-prop
+    $index testpageData get_prop inc $index testpageData set_prop
     showpage jmp
     upkey:
-    $index testpage-data get-prop 10 mult $index testpage-data set-prop
+    $index testpageData get_prop 10 mult $index testpageData set_prop
     showpage jmp
     downkey:
-    $index testpage-data get-prop 10 div $index testpage-data set-prop
+    $index testpageData get_prop 10 div $index testpageData set_prop
     showpage jmp
 
     showkey:
@@ -845,62 +845,62 @@ function test-page1(key) {
     key -4 cmp upkey jz
     showpage:
     "You have viewed this page " say
-    $count testpage-data get-prop say
+    $count testpageData get_prop say
     " times. The index counter is " say
-    $index testpage-data get-prop say
+    $index testpageData get_prop say
     ". Use arrow keys to change."
-    "Press space to return." test-page1 get-key
-    $count testpage-data get-prop inc $count testpage-data set-prop
+    "Press space to return." testPage1 get_key
+    $count testpageData get_prop inc $count testpageData set_prop
 }
-function other-page() {
+function otherPage() {
     asm
     "You selected a page other than the demo page! (Only the demo page has actual content.)" say
-    continue-str test-pages-cleanup add-option
-    end-other-page get-option
+    continueStr testPagesCleanup add_option
+    endOtherPage get_option
 }
-function end-other-page() {
-    asm end-page
+function endOtherPage() {
+    asm end_page
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
-function show-options() {
+function showOptions() {
     asm
 
     "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen." say
 
-    "Loop Demo"                 test-loop-demo      add-option
-    "Test Info Areas"           test-infoarea       add-option
-    "Test Pages"                test-pages          add-option
-    "Test Call"                 test-call           add-option
-    "Test RNG"                  test-random         add-option
-    "Test Compare"              test-compare        add-option
-    "Test Jumps"                test-jumps          add-option
-    "Test Math"                 test-math           add-option
-    "Test List Methods"         test-lists          add-option
-    "Test Map Methods"          test-maps           add-option
-    "Test Object Properties"    test-object-props   add-option
-    "Test Input Methods"        test-inputs         add-option
-    "Test stack commands"       test-stack          add-option
-    "Test value types"          test-values         add-option
-    "Test output"               test-output         add-option
-    dispatcher get-option
+    "Loop Demo"                 testLoopDemo       add_option
+    "Test Info Areas"           testInfoarea       add_option
+    "Test Pages"                testPages          add_option
+    "Test Call"                 testCall           add_option
+    "Test RNG"                  testRandom         add_option
+    "Test Compare"              testCompare        add_option
+    "Test Jumps"                testJumps          add_option
+    "Test Math"                 testMath           add_option
+    "Test List Methods"         testLists          add_option
+    "Test Map Methods"          testMaps           add_option
+    "Test Object Properties"    testObjectProps    add_option
+    "Test Input Methods"        testInputs         add_option
+    "Test stack commands"       testStack          add_option
+    "Test value types"          testValues         add_option
+    "Test output"               testOutput         add_option
+    dispatcher get_option
 }
 
 
-function dispatcher(option-func extra-value) {
+function dispatcher(optionFunc extraValue) {
     asm
 
-    extra-value 1 option-func call
+    extraValue 1 optionFunc call
     0 return
 }
 
 function main() {
     asm
 
-    "GTRPGE Test Suite" InfobarTitle set-info
-    0 show-options call
+    "GTRPGE Test Suite" InfobarTitle set_info
+    0 showOptions call
 }
 
 value te "";

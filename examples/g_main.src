@@ -6,80 +6,80 @@
 // Constant definitions
 // ////////////////////////////////////////////////////////////////////////////
 
-value pro-subject   0;
-value pro-object    1;
-value pro-pos       2;
-value pro-adject    3;
-value pro-reflex    4;
+value proSubject    0;
+value proObject     1;
+value proPos        2;
+value proAdject     3;
+value proReflex     4;
 
-value skill-melee   0;
-value skill-ranged  1;
-value skill-magic   2;
+value skillMelee    0;
+value skillRanged   1;
+value skillMagic    2;
 
-value dt-blunt      "blunt";
-value dt-cutting    "cutting";
-value dt-piercing   "piercing";
-value dt-fire       "fire";
-value dt-air        "air";
-value dt-earth      "earth";
-value dt-water      "water";
+value dtBlunt       "blunt";
+value dtCutting     "cutting";
+value dtPiercing    "piercing";
+value dtFire        "fire";
+value dtAir         "air";
+value dtEarth       "earth";
+value dtWater       "water";
 
 // ////////////////////////////////////////////////////////////////////////////
 // Common strings
 // ////////////////////////////////////////////////////////////////////////////
 
-value hours-per-day     1440;
-value minutes-per-hour  60;
-value continue-str      "Continue";
+value hoursPerDay       1440;
+value minutesPerHour    60;
+value continueStr       "Continue";
 
-object sex-neuter
+object sexNeuter
     article             "a "
     name                "neuter"
     pronouns            [ "it" "it" "its" "its" "itself" ]
 ;
-object sex-male
+object sexMale
     article             "a "
     name                "male"
     pronouns            [ "he" "him" "his" "his" "himself" ]
 ;
-object sex-female
+object sexFemale
     article             "a "
     name                "female"
     pronouns            [ "she" "her" "her" "hers" "herself" ]
 ;
 
-object species-human
+object speciesHuman
     article             "a "
     name                "human"
 ;
-object species-gnoll
+object speciesGnoll
     article             "a "
     name                "gnoll"
 ;
-object species-dragon
+object speciesDragon
     article             "a "
     name                "dragon"
 ;
 
-object player
+object thePlayer
     article             "the "
     name                "player"
-    sex                 sex-neuter
-    species             species-human
+    sex                 sexNeuter
+    species             speciesHuman
     faction             0
     skills {
-        skill-melee:    10
-        skill-ranged:   12
-        skill-magic:    8
+        skillMelee:     10
+        skillRanged:    12
+        skillMagic:     8
     }
 ;
 
 object world
     time                720 // start game at noon
     location            0
-    location-name       0
-    in-location         0
-    new-location        0
+    locationName        0
+    inLocation          0
+    newLocation         0
 ;
 
 
@@ -87,75 +87,75 @@ object world
 // Utility functions
 // ////////////////////////////////////////////////////////////////////////////
 
-function add-continue() {
+function addContinue() {
     asm
-    continue-str $location world get-prop add-option
+    continueStr $location world get_prop add_option
 }
 
 function dispatch(event extra : result) {
     asm
 
-    run-event:
-    extra 1 $body event call-method
+    runevent:
+    extra 1 $body event call_method
     result store
-    result typeof Object cmp done-event jnz
+    result typeof Object cmp doneevent jnz
     result event store
     0 extra store
-    run-event jmp
+    runevent jmp
 
-    done-event:
+    doneevent:
 
-    0 $in-location world set-prop
-    0 $new-location world set-prop
+    0 $inLocation world set_prop
+    0 $newLocation world set_prop
 
-    $location event get-prop result store
-    result 0 cmp end-location jz
-    1 $in-location world set-prop
-    $location world get-prop event cmp is-new-location jnz
-    end-location jmp
+    $location event get_prop result store
+    result 0 cmp endlocation jz
+    1 $inLocation world set_prop
+    $location world get_prop event cmp isnewlocation jnz
+    endlocation jmp
 
-    is-new-location:
-    1 $new-location world set-prop
-    event $location world set-prop
-    result $location-name world set-prop
-    result InfobarLeft set-info
+    isnewlocation:
+    1 $newLocation world set_prop
+    event $location world set_prop
+    result $locationName world set_prop
+    result InfobarLeft set_info
 
 
 
-    end-location:
-//    "\nIN LOCATION: " say $in-location world get-prop say
-//    "\nNEW LOCATION: " say $new-location world get-prop say
-//    "\nLOCATION NAME: " say $location-name world get-prop say
-    dispatch get-option
+    endlocation:
+//    "\nIN LOCATION: " say $inLocation world get_prop say
+//    "\nNEW LOCATION: " say $newLocation world get_prop say
+//    "\nLOCATION NAME: " say $locationName world get_prop say
+    dispatch get_option
 }
 
 function main() {
     asm
 
-    "Caged Gnoll" InfobarTitle set-info
+    "Caged Gnoll" InfobarTitle set_info
     start 1 dispatch call
 }
 
-function print-obj(theObject) {
+function printObj(theObject) {
     asm
-    $article theObject get-prop say
-    $name theObject get-prop say
+    $article theObject get_prop say
+    $name theObject get_prop say
 }
 
-function skill-check(who skill modifier) {
+function skillCheck(who skill modifier) {
     asm
-    modifier None cmp-type has-mod jnz
+    modifier None cmptype hasmod jnz
     0 modifier store
-    has-mod:
-    skill $skills who get-prop get-item
-    "[(" say stack-dup say "+" say modifier say ")=" say
-    modifier add stack-dup say
+    hasmod:
+    skill $skills who get_prop get_item
+    "[(" say stack_dup say "+" say modifier say ")=" say
+    modifier add stack_dup say
     " vs (" say
 
-    1 7 random stack-dup say "+" say
-    1 7 random stack-dup say "+" say add
-    1 7 random stack-dup say ")=" say add
-    stack-dup say
+    1 7 random stack_dup say "+" say
+    1 7 random stack_dup say "+" say add
+    1 7 random stack_dup say ")=" say add
+    stack_dup say
 
     cmp success jgte
     " = fail]" say
@@ -174,7 +174,7 @@ object start
     body function() {
         asm
         "Welcome to game!\nYou can select options by clicking on them or (for options up to ten) by pressing the appropriate number key." say
-        "Start game" chargen1 add-option
+        "Start game" chargen1 add_option
     }
 ;
 
@@ -182,32 +182,32 @@ object chargen1
     body function() {
         asm
         "What sex are you?" say
-        "Male"   chargen2   sex-male    add-option-ex
-        "Female" chargen2   sex-female  add-option-ex
+        "Male"   chargen2   sexMale    add_option_x
+        "Female" chargen2   sexFemale  add_option_x
     }
 ;
 object chargen2
     body function(choice) {
         asm
-        choice $sex player set-prop
+        choice $sex thePlayer set_prop
 
         "What species are you?" say
-        "Human"     chargen3    species-human   add-option-ex
-        "Gnoll"     chargen3    species-gnoll   add-option-ex
-        "Dragon"    chargen3    species-dragon  add-option-ex
+        "Human"     chargen3    speciesHuman   add_option_x
+        "Gnoll"     chargen3    speciesGnoll   add_option_x
+        "Dragon"    chargen3    speciesDragon  add_option_x
     }
 ;
 object chargen3
     body function(choice) {
         asm
-        choice $species player set-prop
+        choice $species thePlayer set_prop
 
         "You are " say
-        $sex player get-prop 1 print-obj call
+        $sex thePlayer get_prop 1 printObj call
         " " say
-        $name $species player get-prop get-prop say
+        $name $species thePlayer get_prop get_prop say
         ". Beginning the game now.\n[b]----------------------------------------[/b]\n" say
-        forest-path
+        forestPath
     }
 ;
 
@@ -235,23 +235,23 @@ object loincloth
 // Generic nodes for resting
 // ////////////////////////////////////////////////////////////////////////////
 
-object rest-awhile
+object restAwhile
     body function() {
         asm
         "How long would you like to rest for?" say
-        "One hour"      rest-awhile-doit    60  add-option-ex
-        "Six hours"     rest-awhile-doit    360 add-option-ex
-        "Twelve hours"  rest-awhile-doit    720 add-option-ex
-        "Don't rest" $location world get-prop add-option
+        "One hour"      restAwhileDoit    60  add_option_x
+        "Six hours"     restAwhileDoit    360 add_option_x
+        "Twelve hours"  restAwhileDoit    720 add_option_x
+        "Don't rest" $location world get_prop add_option
     }
 ;
 
-object rest-awhile-doit
+object restAwhileDoit
     body function(length) {
         asm
         "You rest for a while. " say
-//        length do-rest
-        0 add-continue call
+//        length do_rest
+        0 addContinue call
     }
 ;
 

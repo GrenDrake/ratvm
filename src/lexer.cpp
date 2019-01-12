@@ -64,7 +64,7 @@ int next(LexerState &state) {
 bool isValidIdentifier(int c) {
     if (c == 0) return false;
     if (isalnum(c)) return true;
-    if (c == '-' || c == '_') {
+    if (c == '_') {
         return true;
     }
     return false;
@@ -166,6 +166,26 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             next(state);
             continue;
 
+        } else if (isdigit(c) || c == '-') {
+            Origin origin = state.origin;
+            bool isNegative = false;
+            if (c == '-') {
+                isNegative = true;
+                next(state);
+            }
+            size_t start = state.pos;
+            while (isdigit(here(state))) {
+                next(state);
+            }
+            if (state.pos == start) {
+                gamedata.errors.push_back(Error{state.origin, "Numbers must consist of at least one digit."});
+            }
+            std::string text = state.text.substr(start, state.pos - start);
+            int value = parseAsInt(text);
+            if (isNegative) value = -value;
+            tokens.push_back(Token(origin, Token::Integer, value));
+            continue;
+
         } else if (c == '"' || c == '\'') {
             Origin origin = state.origin;
             int quote_char = c;
@@ -220,12 +240,7 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
                 next(state);
             }
             std::string text = state.text.substr(start, state.pos - start);
-            try {
-                int value = parseAsInt(text);
-                tokens.push_back(Token(origin, Token::Integer, value));
-            } catch (BuildError &e) {
-                tokens.push_back(Token(origin, Token::Identifier, text));
-            }
+            tokens.push_back(Token(origin, Token::Identifier, text));
             continue;
 
         } else {
