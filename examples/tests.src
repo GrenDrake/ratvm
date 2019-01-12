@@ -827,7 +827,7 @@ object testpageData
 ;
 function testPage1(key) {
     asm
-    key Integer cmptype showpage jz
+    key typeof Integer cmp showpage jnz
     key 32 cmp showkey jnz
     end_page
     return

@@ -144,7 +144,7 @@ function printObj(theObject) {
 
 function skillCheck(who skill modifier) {
     asm
-    modifier None cmptype hasmod jnz
+    modifier typeof None cmp hasmod jnz
     0 modifier store
     hasmod:
     skill $skills who get_prop get_item
