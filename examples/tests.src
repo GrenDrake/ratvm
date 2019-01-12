@@ -534,48 +534,48 @@ function testValues(: localvar unusedvar) {
 
     "int value: " say testInt typeof say
     testInt typeof Integer cmp int_bad jnz
-    " good\n" say tst_string jmp
-    int_bad: " wrong\n" say
+    " good[br]" say tst_string jmp
+    int_bad: " wrong[br]" say
 
     tst_string:
     "string value: " say testStr typeof say " " say
     testStr typeof String cmp string_bad jnz
-    " good\n" say tst_list jmp
-    string_bad: "wrong\n" say
+    " good[br]" say tst_list jmp
+    string_bad: "wrong[br]" say
 
     tst_list:
     "list value: " say testList typeof say " " say
     testList typeof List cmp list_bad jnz
-    " good\n" say tst_map jmp
-    list_bad: "wrong\n" say
+    " good[br]" say tst_map jmp
+    list_bad: "wrong[br]" say
 
     tst_map:
     "map value: " say testMap typeof say " " say
     testMap typeof Map cmp map_bad jnz
-    " good\n" say tst_function jmp
-    map_bad: "wrong\n" say
+    " good[br]" say tst_function jmp
+    map_bad: "wrong[br]" say
 
     tst_function:
     "function value: " say testFunction typeof say " " say
     testFunction typeof Function cmp function_bad jnz
-    " good\n" say tst_function_2 jmp
-    function_bad: "wrong\n" say
+    " good[br]" say tst_function_2 jmp
+    function_bad: "wrong[br]" say
     tst_function_2:
     "value function aliasing:" say
     testFunction testFunctionName cmp tst_function_2_bad jnz
-    " good\n" say tst_obj jmp
-    tst_function_2_bad: " wrong\n" say
+    " good[br]" say tst_obj jmp
+    tst_function_2_bad: " wrong[br]" say
 
     tst_obj:
     "object value: " say testObject typeof say " " say
     testObject typeof Object cmp obj_bad jnz
-    " good\n" say tst_obj_2 jmp
-    obj_bad: "wrong\n" say
+    " good[br]" say tst_obj_2 jmp
+    obj_bad: "wrong[br]" say
     tst_obj_2:
     "value object aliasing:" say
     testObject testObjectName cmp test_obj_2_bad jnz
-    " good\n" say tst_prop jmp
-    test_obj_2_bad: " wrong\n" say
+    " good[br]" say tst_prop jmp
+    test_obj_2_bad: " wrong[br]" say
 
     tst_prop:
     "property value: " say testProperty typeof say " " say
@@ -584,25 +584,31 @@ function testValues(: localvar unusedvar) {
     prop_bad: "wrong\n" say
 
     tst_local:
-    "[setting local variable \"localvar\" to 57]\n" say
+    "[b][setting local variable \"localvar\" to 57][/b][br]" say
     57 localvar store
     "local variable value: (" say localvar say ") " say localvar typeof say " " say
     localvar typeof Integer cmp local_bad jnz
-    " good\n" say tst_unused jmp
-    local_bad: "wrong\n" say
+    " good[br]" say tst_unused jmp
+    local_bad: "wrong[br]" say
 
     tst_unused:
     "unused local value: (" say unusedvar say ") " say
     unusedvar typeof say " " say
     unusedvar typeof None cmp unused_bad jnz
-    " good\n" say tst_jump jmp
-    unused_bad: "wrong\n" say
+    " good[br]" say tst_jump jmp
+    unused_bad: "wrong[br]" say
 
     tst_jump:
     "jump target value: " say tst_jump typeof say
     tst_jump typeof Label cmp label_bad jnz
     " good\n" say all_done jmp
     label_bad: "wrong\n" say
+
+    "[b][type coercion][/b][br]" say
+    7 localvar store
+    "Initial value: " say localvar say " and type: " say localvar typeof say "[br]" say
+    String localvar astype localvar store
+    "New value: \"" say localvar say "\" and type: " say localvar typeof say "[br]" say
 
     all_done:
     continueStr showOptions add_option

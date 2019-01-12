@@ -55,6 +55,7 @@ struct OpcodeDef {
         TypeOf              = 27, // get value type
         DelItem             = 28, // remove an item from a list or a key from a map
         AddItem             = 29, // add an item to a list (use set-item for maps)
+        AsType              = 30, // type conversion
         Compare             = 31, // compare two values and push the result
         Jump                = 32, // unconditional jump
         JumpZero            = 33, // jump if top of stack == 0
@@ -129,6 +130,7 @@ OpcodeDef opcodes[] = {
     {   "del_item",     OpcodeDef::DelItem      },
     {   "add_item",     OpcodeDef::AddItem      },
     {   "typeof",       OpcodeDef::TypeOf       },
+    {   "astype",       OpcodeDef::AsType       },
     {   "cmp",          OpcodeDef::Compare              },
     {   "jmp",          OpcodeDef::Jump                 },
     {   "jeq",          OpcodeDef::JumpZero             },
