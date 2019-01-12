@@ -83,8 +83,7 @@ void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionAsm, bool
     for (unsigned i = 0; i < gamedata.lists.size(); ++i) {
         const GameList *list = gamedata.lists[i];
         if (list == nullptr) continue;
-        out << "LIST " << list->ident << " @   (gid:";
-        out << list->globalId << ") " << list->origin << "\n   ";
+        out << "LIST " << list->globalId << ": @ " << list->origin << "\n   ";
         for (unsigned i = 0; i < list->items.size(); ++i) {
             out << ' ' << list->items[i];
         }
@@ -95,8 +94,7 @@ void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionAsm, bool
     for (unsigned i = 0; i < gamedata.maps.size(); ++i) {
         const GameMap *map = gamedata.maps[i];
         if (map == nullptr) continue;
-        out << "MAP " << map->ident << " (gid:";
-        out << map->globalId << ") @ " << map->origin << "\n";
+        out << "MAP " << map->globalId << ": @ " << map->origin << "\n";
         for (unsigned i = 0; i < map->rows.size(); ++i) {
             out << "    " << map->rows[i].key << " => " << map->rows[i].value << '\n';
         }
