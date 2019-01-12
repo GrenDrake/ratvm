@@ -9,26 +9,22 @@
 const int FILETYPE_ID = 0x47505254;
 
 struct StringDef {
-    int ident;
+    unsigned ident;
     std::string text;
 };
 struct ListDef {
-    int ident;
     std::vector<Value> items;
 };
 struct MapDef {
     struct Row {
         Value key, value;
     };
-    int ident;
     std::vector<Row> rows;
 };
 struct ObjectDef {
-    int ident;
     std::map<unsigned, Value> properties;
 };
 struct FunctionDef {
-    int ident;
     int arg_count;
     int local_count;
     unsigned position;
@@ -89,7 +85,6 @@ void GameData::load(const std::string &filename) {
     count = read_32(inf);
     for (unsigned i = 0; i < count; ++i) {
         ListDef def;
-        def.ident = read_32(inf);
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             Value value;
@@ -97,13 +92,12 @@ void GameData::load(const std::string &filename) {
             value.value = read_32(inf);
             def.items.push_back(value);
         }
-        lists.insert(std::make_pair(def.ident, def));
+        lists.insert(std::make_pair(i + 1, def));
     }
 
     count = read_32(inf);
     for (unsigned i = 0; i < count; ++i) {
         MapDef def;
-        def.ident = read_32(inf);
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             Value v1, v2;
@@ -113,13 +107,12 @@ void GameData::load(const std::string &filename) {
             v2.value = read_32(inf);
             def.rows.push_back(MapDef::Row{v1,v2});
         }
-        maps.insert(std::make_pair(def.ident, def));
+        maps.insert(std::make_pair(i + 1, def));
     }
 
     count = read_32(inf);
     for (unsigned i = 0; i < count; ++i) {
         ObjectDef def;
-        def.ident = read_32(inf);
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             unsigned propId = read_16(inf);
@@ -128,17 +121,16 @@ void GameData::load(const std::string &filename) {
             value.value = read_32(inf);
             def.properties.insert(std::make_pair(propId, value));
         }
-        objects.insert(std::make_pair(def.ident, def));
+        objects.insert(std::make_pair(i + 1, def));
     }
 
     count = read_32(inf);
     for (unsigned i = 0; i < count; ++i) {
         FunctionDef def;
-        def.ident = read_32(inf);
         def.arg_count = read_16(inf);
         def.local_count = read_16(inf);
         def.position = read_32(inf);
-        functions.insert(std::make_pair(def.ident, def));
+        functions.insert(std::make_pair(i + 1, def));
     }
 
     count = read_32(inf);
@@ -149,16 +141,15 @@ void GameData::load(const std::string &filename) {
 }
 
 void GameData::dump() const {
-
     std::cout << "\n## Strings\n";
     for (const auto &stringDef : strings) {
-        std::cout << '[' << stringDef.second.ident << "] ~";
+        std::cout << '[' << stringDef.first << "] ~";
         std::cout << stringDef.second.text << "~\n";
     }
 
     std::cout << "\n## Lists\n";
     for (const auto &listDef : lists) {
-        std::cout << '[' << listDef.second.ident << "] {";
+        std::cout << '[' << listDef.first << "] {";
         for (const Value &value : listDef.second.items) {
             std::cout << ' ' << value;
         }
@@ -167,7 +158,7 @@ void GameData::dump() const {
 
     std::cout << "\n## Maps\n";
     for (const auto &mapDef : maps) {
-        std::cout << '[' << mapDef.second.ident << "] {";
+        std::cout << '[' << mapDef.first << "] {";
         for (const MapDef::Row &row : mapDef.second.rows) {
             std::cout << " (" << row.key << ", " << row.value << ")";
         }
@@ -176,7 +167,7 @@ void GameData::dump() const {
 
     std::cout << "\n## Objects\n";
     for (const auto &objectDef : objects) {
-        std::cout << '[' << objectDef.second.ident << "] {";
+        std::cout << '[' << objectDef.first << "] {";
         for (const auto &property : objectDef.second.properties) {
             std::cout << " (" << property.first << ", " << property.second << ")";
         }
@@ -185,7 +176,7 @@ void GameData::dump() const {
 
     std::cout << "\n## Function Headers\n";
     for (const auto &functionDef : functions) {
-        std::cout << '[' << functionDef.second.ident << "] args: ";
+        std::cout << '[' << functionDef.first << "] args: ";
         std::cout << functionDef.second.arg_count << " locals: ";
         std::cout << functionDef.second.local_count << " position: ";
         std::cout << functionDef.second.position << "\n";

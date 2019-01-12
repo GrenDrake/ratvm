@@ -53,21 +53,6 @@ int parse_function(GameData &gamedata, ParseState &state) {
     const Origin &origin = state.here()->origin;
     state.skip("function");
 
-    int functionId = 0;
-    if (state.matches(Token::Integer)) {
-        functionId = state.here()->value;
-        if (functionId >= firstAnonymousId) {
-            std::cerr << origin << " WARNING object IDs over ";
-            std::cerr << firstAnonymousId;
-            std::cerr << " are reserved for anonymous objects.\n";
-        } else if (functionId == 0) {
-            std::cerr << origin << " WARNING object ID 0 is reserved.\n";
-        }
-        state.next();
-    } else {
-        functionId = 0;
-    }
-
     std::string funcName;
     if (state.matches(Token::Identifier)) {
         funcName = state.here()->text;
@@ -81,7 +66,6 @@ int parse_function(GameData &gamedata, ParseState &state) {
     FunctionDef *function = new FunctionDef;
     function->origin = origin;
     function->name = funcName;
-    function->ident = functionId;
     function->globalId = nextFunctionId++;
     gamedata.functions.push_back(function);
     // arguments / locals
@@ -121,7 +105,6 @@ int parse_list(GameData &gamedata, ParseState &state) {
     GameList *list = new GameList;
     gamedata.lists.push_back(list);
     list->origin = origin;
-    list->ident = 0;
     list->globalId = nextListId++;
     while (!state.matches(Token::CloseSquare)) {
         if (state.eof()) {
@@ -145,7 +128,6 @@ int parse_map(GameData &gamedata, ParseState &state) {
     GameMap *map = new GameMap;
     gamedata.maps.push_back(map);
     map->origin = origin;
-    map->ident = 0;
     map->globalId = nextMapId++;
     state.skip(Token::OpenBrace);
     while (!state.matches(Token::CloseBrace)) {

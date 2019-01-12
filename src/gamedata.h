@@ -36,7 +36,6 @@ struct GameObject {
 
 struct GameList {
     Origin origin;
-    int ident;
     std::vector<Value> items;
     int globalId;
 };
@@ -48,7 +47,6 @@ struct GameMap {
     };
 
     Origin origin;
-    int ident;
     std::vector<MapRow> rows;
     int globalId;
 };
@@ -59,7 +57,6 @@ struct FunctionDef {
     { }
 
     Origin origin;
-    int ident;
     int argument_count;
     int local_count;
     std::vector<std::string> local_names;
