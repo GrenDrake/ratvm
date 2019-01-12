@@ -88,6 +88,9 @@ struct OpcodeDef {
         AddPage             = 71,
         DelPage             = 72,
         EndPage             = 73,
+        New                 = 74,
+        Delete              = 75,
+        IsStatic            = 76,
     };
 
     std::string name;
@@ -161,6 +164,9 @@ OpcodeDef opcodes[] = {
     {   "add_page",     OpcodeDef::AddPage      },
     {   "del_page",     OpcodeDef::DelPage      },
     {   "end_page",     OpcodeDef::EndPage      },
+    {   "new",          OpcodeDef::New          },
+    {   "delete",       OpcodeDef::Delete       },
+    {   "is_static",    OpcodeDef::IsStatic     },
     {   ""                                      }
 };
 

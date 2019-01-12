@@ -870,6 +870,59 @@ function endOtherPage() {
     asm end_page
 }
 
+function testDynamic(: newObj newStr newList newMap) {
+    asm
+
+    "[b]Creating data...[/b]\n" say
+    "Creating new object...\n" say
+    Object new newObj store
+    "Created type:" say newObj typeof say "\n" say
+
+    "Initial anInt property: " say
+    $anInt newObj get_prop say "\n" say
+    66 $anInt newObj set_prop
+    "anInt property after update: " say
+    $anInt newObj get_prop say "\n" say
+
+    "Creating new string...\n" say
+    String new newStr store
+    "Created type:" say newStr typeof say "\n(string manipulation functions tested seperately)\n" say
+
+    "Creating new map...\n" say
+    Map new newMap store
+    "Created type:" say newMap typeof say "\n" say
+    "Initial value of key: " say "key" newMap get_item say "\n" say
+    "New Map Value" "key" newMap set_item
+    "Updated value of key: " say "key" newMap get_item say "\n" say
+
+    "Creating new list...\n" say
+    List new newList store
+    "Created type:" say newList typeof say "\n" say
+    "Initial size: " say newList get_size say "\n" say
+    "New List Item" 0 newList add_item
+    "New size: " say newList get_size say "\n" say
+    "Item 0: " say 0 newList get_item say "\n" say
+
+    "[b]testing isStatic[/b]\n" say
+    "testDynamic (1): " say testDynamic is_static say "\n" say
+    "\"Fred\" (1): " say "Fred" is_static say "\n" say
+    "testList (1): " say testList is_static say "\n" say
+    "newObj (0):" say newObj is_static say "\n" say
+    "newStr (0):" say newStr is_static say "\n" say
+
+    "[b]Deleting dynamic data...[/b]\n" say
+    newObj delete
+    newStr delete
+    newList delete
+    newMap delete
+
+    "[b]Creating and deleting new string...[/b]\n" say
+    String new delete
+
+    continueStr testPagesCleanup add_option
+    dispatcher get_option
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
@@ -882,6 +935,7 @@ function showOptions() {
     "Test Info Areas"           testInfoarea       add_option
     "Test Pages"                testPages          add_option
     "Test Call"                 testCall           add_option
+    "Test Dynamic Objects"      testDynamic        add_option
     "Test RNG"                  testRandom         add_option
     "Test Compare"              testCompare        add_option
     "Test Jumps"                testJumps          add_option
