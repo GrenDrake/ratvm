@@ -268,9 +268,17 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
         if (state.matches("value")) {
             parse_constant(gamedata, state);
         } else if (state.matches("object")) {
-            parse_object(gamedata, state);
+            int objectId = parse_object(gamedata, state);
+            GameObject *object = gamedata.objects[objectId - 1];
+            if (object->name.empty()) {
+                gamedata.errors.push_back(Error{object->origin, "Anonymous object at top level"});
+            }
         } else if (state.matches("function")) {
-            parse_function(gamedata, state);
+            int functionId = parse_function(gamedata, state);
+            FunctionDef *function = gamedata.functions[functionId];
+            if (function->name.empty()) {
+                gamedata.errors.push_back(Error{function->origin, "Anonymous function at top level"});
+            }
         } else {
             const Token *token = state.here();
             std::stringstream ss;
