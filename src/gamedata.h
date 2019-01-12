@@ -6,6 +6,7 @@
 #include "symboltable.h"
 #include "token.h"
 #include "value.h"
+#include <map>
 #include <string>
 #include <vector>
 #include <iosfwd>
@@ -62,6 +63,7 @@ struct FunctionDef {
     int argument_count;
     int local_count;
     std::vector<std::string> local_names;
+    std::map<std::string, unsigned> labels;
     std::string name;
     std::vector<Token> tokens;
     unsigned codePosition;

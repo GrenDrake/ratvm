@@ -204,6 +204,11 @@ void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) 
 bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &name, int localId) {
     if (getOpcode(name)) return true;
     if (gamedata.symbols.get(name)) return true;
+    for (const auto &labelIter : function->labels) {
+        if (labelIter.first == name) {
+            return true;
+        }
+    }
     for (unsigned i = 0; i < function->local_names.size(); ++i) {
         if (i == localId) continue;
         if (name == function->local_names[i]) {
@@ -220,18 +225,7 @@ struct Backpatch {
 void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
     const OpcodeDef *opcode;
     const SymbolDef *symbol;
-    std::map<std::string, unsigned> labels;
     std::vector<Backpatch> patches;
-
-    for (unsigned i = 0; i < function->local_names.size(); ++i) {
-        const std::string &name = function->local_names[i];
-        if (nameInUse(gamedata, function, name, i)) {
-            std::stringstream ss;
-            ss << "Local name \"" << name << "\" already in use.";
-            throw BuildError(function->origin, ss.str());
-        }
-    }
-
 
     while (!state.at_end()) {
         int ident;
@@ -243,13 +237,12 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
             case Token::Identifier: {
                 // is label
                 if (state.peek() && state.peek()->type == Token::Colon) {
-                    auto labelIter = labels.find(state.here()->text);
-                    if (labelIter != labels.end() || nameInUse(gamedata, function, state.here()->text, -1)) {
+                    if (nameInUse(gamedata, function, state.here()->text, -1)) {
                         std::stringstream ss;
                         ss << "Symbol \"" << state.here()->text << "\" already defined.";
                         throw BuildError(state.here()->origin, ss.str());
                     }
-                    labels.insert(std::make_pair(state.here()->text, function->code.size()));
+                    function->labels.insert(std::make_pair(state.here()->text, function->code.size()));
                     state.next();
                     break;
                 }
@@ -273,8 +266,8 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     break;
                 }
                 // presume its a label
-                auto labelIter = labels.find(state.here()->text);
-                if (labelIter != labels.end()) {
+                auto labelIter = function->labels.find(state.here()->text);
+                if (labelIter != function->labels.end()) {
                     bytecode_push_value(function->code, Value::JumpTarget, labelIter->second);
                 } else {
                     function->code.add_8(OpcodeDef::Push32);
@@ -298,8 +291,8 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
     }
 
     for (const Backpatch &patch : patches) {
-        auto labelIter = labels.find(patch.name);
-        if (labelIter != labels.end()) {
+        auto labelIter = function->labels.find(patch.name);
+        if (labelIter != function->labels.end()) {
             function->code.overwrite_32(patch.position, labelIter->second);
         } else {
             std::stringstream ss;
@@ -317,6 +310,15 @@ int parse_functions(GameData &gamedata) {
             function->tokens,
             function->tokens.cbegin()
         };
+
+        for (unsigned i = 0; i < function->local_names.size(); ++i) {
+            const std::string &name = function->local_names[i];
+            if (nameInUse(gamedata, function, name, i)) {
+                std::stringstream ss;
+                ss << "Local name \"" << name << "\" already in use.";
+                throw BuildError(function->origin, ss.str());
+            }
+        }
 
         function->codePosition = gamedata.bytecode.size();
         if (state.at_end()) {
