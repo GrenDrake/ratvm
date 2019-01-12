@@ -101,7 +101,7 @@ public:
 
 std::ostream& operator<<(std::ostream &out, const Value &property);
 
-void dump_gamedata(GameData &gamedata, std::ostream &out);
+void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionAsm, bool functionBytecode, bool bytecode);
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out);
 
 #endif

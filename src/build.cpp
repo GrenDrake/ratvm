@@ -25,11 +25,17 @@ int main(int argc, char *argv[]) {
     std::string outputFile = "game.bin";
     bool dump_tokens = false;
     bool dump_data = false;
+    bool dump_bytecode = false;
+    bool dump_functionBytecode = false;
     int next_filename = 0;
 
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-data") == 0) {
             dump_data = true;
+        } else if (strcmp(argv[i], "-full-bytecode") == 0) {
+            dump_bytecode = true;
+        } else if (strcmp(argv[i], "-bytecode") == 0) {
+            dump_functionBytecode = true;
         } else if (strcmp(argv[i], "-tokens") == 0) {
             dump_tokens = true;
         } else if (next_filename < 2) {
@@ -70,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     if (dump_data) {
         std::ofstream dataFile("data.txt");
-        dump_gamedata(gamedata, dataFile);
+        dump_gamedata(gamedata, dataFile, true, dump_functionBytecode, dump_bytecode);
     }
     if (dump_tokens) {
         std::ofstream tokenFile("tokens.txt");

@@ -21,17 +21,52 @@ static void dump_string(std::ostream &out, const std::string &text) {
     if (displayEllipse) out << "...";
 }
 
-void dump_gamedata(GameData &gamedata, std::ostream &out) {
+void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionAsm, bool functionBytecode, bool bytecode) {
+    out << "      SECTION  START      DECIMAL      SIZE (BYTES)\n"
+           "  ------------ ---------- ------------ ------------\n"
+           "       HEADER: 0x00000000 0            12\n" << std::uppercase;
+    out << "      STRINGS: 0x";
     out.fill('0');
-    out << "OUTPUT FILE TOC\n       HEADER: 0 (0x00000000)\n" << std::uppercase;
-    out << "      STRINGS: 0x" << std::hex << std::setw(8) << gamedata.stringsStart << " (" << std::dec << gamedata.stringsStart << ")\n";
-    out << "        LISTS: 0x" << std::hex << std::setw(8) << gamedata.listsStart << " (" << std::dec << gamedata.listsStart << ")\n";
-    out << "         MAPS: 0x" << std::hex << std::setw(8) << gamedata.mapsStart << " (" << std::dec << gamedata.mapsStart << ")\n";
-    out << "      OBJECTS: 0x" << std::hex << std::setw(8) << gamedata.objectsStart << " (" << std::dec << gamedata.objectsStart << ")\n";
-    out << "    FUNCTIONS: 0x" << std::hex << std::setw(8) << gamedata.functionsStart << " (" << std::dec << gamedata.functionsStart << ")\n";
-    out << "     BYTECODE: 0x" << std::hex << std::setw(8) << gamedata.bytecodeStart << " (" << std::dec << gamedata.bytecodeStart << ")\n";
-    out << "  END-OF-FILE: 0x" << std::hex << std::setw(8) << gamedata.fileEnd << " (" << std::dec << gamedata.fileEnd << ")\n\n";
-    out << std::dec;
+    out << std::right << std::hex << std::setw(8) << gamedata.stringsStart;
+    out.fill(' ');
+    out << ' ' << std::left << std::setw(12) << std::dec << gamedata.stringsStart;
+    out << ' ' << gamedata.listsStart - gamedata.stringsStart << '\n';
+    out << "        LISTS: 0x";
+    out.fill('0');
+    out << std::right << std::hex << std::setw(8) << gamedata.listsStart;
+    out.fill(' ');
+    out << ' ' << std::left << std::setw(12) << std::dec << gamedata.listsStart;
+    out << ' ' << gamedata.mapsStart - gamedata.listsStart << '\n';
+    out << "         MAPS: 0x";
+    out.fill('0');
+    out << std::right << std::hex << std::setw(8) << gamedata.mapsStart;
+    out.fill(' ');
+    out << ' ' << std::left << std::setw(12) << std::dec << gamedata.mapsStart;
+    out << ' ' << gamedata.objectsStart - gamedata.mapsStart << '\n';
+    out << "      OBJECTS: 0x";
+    out.fill('0');
+    out << std::right << std::hex << std::setw(8) << gamedata.objectsStart;
+    out.fill(' ');
+    out << ' ' << std::left << std::setw(12) << std::dec << gamedata.objectsStart;
+    out << ' ' << gamedata.functionsStart - gamedata.objectsStart << '\n';
+    out << "    FUNCTIONS: 0x";
+    out.fill('0');
+    out << std::right << std::hex << std::setw(8) << gamedata.functionsStart;
+    out.fill(' ');
+    out << ' ' << std::left << std::setw(12) << std::dec << gamedata.functionsStart;
+    out << ' ' << gamedata.bytecodeStart - gamedata.functionsStart << '\n';
+    out << "     BYTECODE: 0x";
+    out.fill('0');
+    out << std::right << std::hex << std::setw(8) << gamedata.bytecodeStart;
+    out.fill(' ');
+    out << ' ' << std::left << std::setw(12) << std::dec << gamedata.bytecodeStart;
+    out << ' ' << gamedata.fileEnd - gamedata.bytecodeStart << '\n';
+    out << "  END-OF-FILE: 0x";
+    out.fill('0');
+    out << std::right << std::hex << std::setw(8) << gamedata.fileEnd;
+    out.fill(' ');
+    out << ' ' << std::left << std::dec << gamedata.fileEnd << "\n\n";
+    out << std::right << std::dec;
 
     for (unsigned i = 0; i < gamedata.propertyNames.size(); ++i) {
         out << "PROPERTY-ID " << i << " " << gamedata.propertyNames[i] << '\n';
@@ -84,8 +119,7 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
     for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
         const FunctionDef *function = gamedata.functions[i];
         if (function == nullptr) continue;
-        out << "FUNCTION " << function->ident << " (gid:";
-        out << function->globalId << ") ";
+        out << "FUNCTION " << function->globalId << ": ";
         if (function->name.empty()) out << "(anonymous)";
         else                        out << function->name;
         out << " @ " << function->origin << "\n";
@@ -100,8 +134,12 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
         out << "\n    TOKEN COUNT: " << function->tokens.size();
         out << "\n    CODE POSITION: " << function->codePosition << " (0x";
         out << std::hex << function->codePosition << std::dec << ')';
-        out << "\n    BYTE CODE:";
-        function->code.dump(out, 8);
+        if (functionBytecode) {
+            out << "\n    BYTE CODE:";
+            function->code.dump(out, 8);
+        } else {
+            out << '\n';
+        }
     }
     out << '\n';
 
@@ -110,8 +148,12 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
         out << " @ " << symbol.origin << '\n';
     }
 
-    out << "\nBYTECODE SEGMENT SIZE: " << gamedata.bytecode.size();
-    gamedata.bytecode.dump(out, 0);
+    if (bytecode) {
+        out << "\nBYTECODE SEGMENT SIZE: " << gamedata.bytecode.size();
+        gamedata.bytecode.dump(out, 0);
+    } else {
+        out << '\n';
+    }
 }
 
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out) {
