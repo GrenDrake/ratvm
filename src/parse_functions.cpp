@@ -207,7 +207,7 @@ void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) 
     }
 }
 
-bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &name, int localId) {
+bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &name, unsigned localId) {
     if (getOpcode(name)) return true;
     if (gamedata.symbols.get(name)) return true;
     for (const auto &labelIter : function->labels) {
