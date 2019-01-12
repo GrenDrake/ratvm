@@ -177,11 +177,14 @@ int parse_object(GameData &gamedata, ParseState &state) {
 
     while (!state.matches(Token::Semicolon)) {
         unsigned propId = 0;
+        std::string propName;
         if (state.matches(Token::Identifier)) {
-            propId = gamedata.getPropertyId(state.here()->text);
+            propName = state.here()->text;
+            propId = gamedata.getPropertyId(propName);
         } else {
             state.require(Token::Property);
             propId = state.here()->value;
+            propName = state.here()->text;
         }
         const Origin &propOrigin = state.here()->origin;
         state.next();
@@ -190,6 +193,12 @@ int parse_object(GameData &gamedata, ParseState &state) {
             throw BuildError(propOrigin, "Unexpected end of file in object property definition");
         }
         Value value = parse_value(gamedata, state);
+        if (value.type == Value::Node) {
+            FunctionDef *function = gamedata.functions[value.value];
+            if (function->name.empty()) {
+                function->name = objectName + "." + propName;
+            }
+        }
         object->addProperty(propOrigin, propId, value);
     }
 
