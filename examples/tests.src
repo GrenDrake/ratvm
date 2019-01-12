@@ -106,19 +106,27 @@ function testCallHelperMultiply( arg1 arg2 ) {
 // ////////////////////////////////////////////////////////////////////////////
 function testCompare(: testValue) {
     asm
-    "\n## Testing compare opcode\n" say
+    "\n# Testing compare opcode\n" say
 
+    "[i][comparing integer values][/i]\n" say
     " 5 vs 5 (=   0): " say 5 5  cmp say "\n" say
     " 2 vs 5 (=  -3): " say 2 5  cmp say "\n" say
     " 5 vs 2 (=   3): " say 5 2  cmp say "\n" say
     "-5 vs 5 (= -10): " say -5 5 cmp say "\n" say
     "5 vs -5 (=  10): " say 5 -5 cmp say "\n" say
 
-    "\n[setting \"tv\" to 5 to test local variables in compare.]\n" say
+    "\n[i][comparing non-integer values][/i]\n" say
+    "none vs none (= 0): " say testValue none cmp say "\n" say
+    "string vs none (= 1): " say "\n" none cmp say "\n" say
+    "string vs function (= 1): " say "\n" testCompare cmp say "\n" say
+    "string vs same string (= 0): " say "\n" "\n" cmp say "\n" say
+    "string vs other string (= 1): " say "\n" "" cmp say "\n" say
+
+    "\n[i][testing integer comparisons using local variables][/i]\n" say
     5 testValue store
-    " tv vs 5 (=  0): " say testValue 5 cmp say "\n" say
-    " 2 vs tv (= -3): " say 2 testValue cmp say "\n" say
-    " tv vs 2 (=  3): " say testValue 2 cmp say "\n" say
+    " var vs 5 (=  0): " say testValue 5 cmp say "\n" say
+    " 2 vs var (= -3): " say 2 testValue cmp say "\n" say
+    " var vs 2 (=  3): " say testValue 2 cmp say "\n" say
 
     continueStr showOptions add_option
     dispatcher get_option
