@@ -64,6 +64,7 @@ struct OpcodeDef {
         JumpLessThanEqual   = 36, // jump if top of stack <= 0
         JumpGreaterThan     = 37, // jump if top of stack > 0
         JumpGreaterThanEqual= 38, // jump if top of stack >= 0
+        Not                 = 39,
         Add                 = 40,
         Sub                 = 41,
         Mult                = 42,
@@ -141,6 +142,7 @@ OpcodeDef opcodes[] = {
     {   "jlte",         OpcodeDef::JumpLessThanEqual    },
     {   "jgt",          OpcodeDef::JumpGreaterThan      },
     {   "jgte",         OpcodeDef::JumpGreaterThanEqual },
+    {   "not",          OpcodeDef::Not                  },
     {   "add",          OpcodeDef::Add          },
     {   "sub",          OpcodeDef::Sub          },
     {   "mult",         OpcodeDef::Mult         },

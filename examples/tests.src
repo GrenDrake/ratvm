@@ -409,12 +409,20 @@ function testMath(: counter) {
     counter dec counter store
     counter 0 cmp dectestloop jgte
 
-    "\nInc test:" say
+    "[br]Inc test:" say
     0 counter store
     inctestloop:
     " " say counter say
     counter inc counter store
     counter 4 cmp inctestloop jlte
+
+    "\nNot 0: " say 0 not say "[br]" say
+    "Not 1: " say 1 not say "[br]" say
+    "Not 37: " say 37 not say "[br]" say
+    "Not -9: " say -9 not say "[br]" say
+    "Not \"Fred\": " say "Fred" not say "[br]" say
+    "Not testMath: " say testMath not say "[br]" say
+    "Not none: " say none not say "[br]" say
 
     continueStr showOptions add_option
     dispatcher get_option
