@@ -81,11 +81,13 @@ struct OpcodeDef {
         Inc                 = 53,
         Dec                 = 54,
         GetRandom           = 55,
+        /* Unused opcodes: 56 - 59 */
         GetKey              = 60,
         GetOption           = 61,
         GetLine             = 62,
         AddOption           = 63,
         AddOptionExtra      = 64,
+        /* Unused opcodes: 65 - 69 */
         SetInfo             = 70,
         AddPage             = 71,
         DelPage             = 72,
