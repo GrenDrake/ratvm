@@ -695,7 +695,7 @@ function printArray(theArray : counter length) {
     arraydumploop:
     " " say counter theArray get_item say
     counter inc counter store
-    counter length cmp arraydumploop jlt
+    length counter cmp arraydumploop jlt
     " (length: " say length say ")\n" say
 }
 
@@ -749,7 +749,7 @@ function testLists(: counter) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test Map Methods
 // ////////////////////////////////////////////////////////////////////////////
-function testMaps() {
+function testMaps(: keys) {
     asm
 
     "Current item \"7\" (non-existant key): " say
@@ -797,7 +797,12 @@ function testMaps() {
 
     "Has key 88 (no): " say
     88 testMap has_item say
-    "[br]" say
+    "\n" say
+
+    testMap get_keys keys store
+    "Converting testMap keys to list...[br]" say
+    keys 1 printArray call
+    keys delete
 
     continueStr showOptions add_option
     dispatcher get_option

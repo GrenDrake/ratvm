@@ -81,7 +81,8 @@ struct OpcodeDef {
         Inc                 = 53,
         Dec                 = 54,
         GetRandom           = 55,
-        /* Unused opcodes: 56 - 59 */
+        GetKeys             = 56,
+        /* Unused opcodes: 57 - 59 */
         GetKey              = 60,
         GetOption           = 61,
         GetLine             = 62,
@@ -161,6 +162,7 @@ OpcodeDef opcodes[] = {
     {   "inc",          OpcodeDef::Inc          },
     {   "dec",          OpcodeDef::Dec          },
     {   "get_random",   OpcodeDef::GetRandom    },
+    {   "get_keys",     OpcodeDef::GetKeys      },
     {   "get_key",      OpcodeDef::GetKey       },
     {   "get_option",   OpcodeDef::GetOption    },
     {   "get_line",     OpcodeDef::GetLine      },
