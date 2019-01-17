@@ -18,7 +18,7 @@ value testProperty $testFunc;
 object first_obj
     anInt 2
     aString "Hello World!"
-    a_Property $apple
+    aProperty $apple
     anObject object ;
     aMap { $fruit: $apple }
     aList [ 4 ]
@@ -435,43 +435,41 @@ function testMath(: counter) {
 function testObjectProps() {
     asm
 
-    "\n## Testing object manipulation opcodes\n[testing get_prop]\n" say
+    "\n# Testing object manipulation opcodes\n[b][testing get_prop][/b][br]" say
     "first_obj.aString: " say
     $aString first_obj get_prop say
-    " (should be \"Hello World!\")\n" say
+    " (should be \"Hello World!\")[br]" say
 
     "first_obj.anInt: " say
     $anInt first_obj get_prop say
-    " (should be 2)\n" say
+    " (should be 2)[br]" say
 
     "second_obj.aString: " say
     $aString second_obj get_prop say
-    " (should be 0)\n" say
+    " (should be 0)[br]" say
 
-    "\n[testing has_prop]\n" say
-    "first_obj has property an_int? " say
+    "\n[b][testing has_prop][/b][br]" say
+    "first_obj has property anInt? " say
     $anInt first_obj has_prop say
-    " (should be 1)\n" say
+    " (should be 1)[br]" say
 
     "second_obj has property aString? " say
     $aString second_obj has_prop say
-    " (should be 0)\n" say
+    " (should be 0)[br]" say
 
-    "\n[testing set_prop]\n" say
-    "setting second_obj.apple to \"Fred\" (new property) = " say
+    "\n[b][testing set_prop][/b][br]" say
+    "setting second_obj.apple to \"Fred\"[br]second_obj.apple now equals " say
     "Fred" $apple second_obj set_prop
     $apple second_obj get_prop say
 
-    "\n# testing property types:" say
-
-    "\nfirst_obj.anInt (1): "      say $anInt      first_obj get_prop typeof say
-    "\nfirst_obj.aString (2): "    say $aString    first_obj get_prop typeof say
-    "\nfirst_obj.aList (3): "      say $aList      first_obj get_prop typeof say
-    "\nfirst_obj.aMap (4): "       say $aMap       first_obj get_prop typeof say
-    "\nfirst_obj.testMethod (5): " say $testMethod first_obj get_prop typeof say
-    "\nfirst_obj.anObject (6): "   say $anObject   first_obj get_prop typeof say
-    "\nfirst_obj.aProperty (7): "  say $aProperty  first_obj get_prop typeof say
-    "\n" say
+    "\n[b][testing property types][/b]" say
+    "[br]first_obj.anInt (1): "      say $anInt      first_obj get_prop typeof say
+    "[br]first_obj.aString (2): "    say $aString    first_obj get_prop typeof say
+    "[br]first_obj.aList (3): "      say $aList      first_obj get_prop typeof say
+    "[br]first_obj.aMap (4): "       say $aMap       first_obj get_prop typeof say
+    "[br]first_obj.testMethod (5): " say $testMethod first_obj get_prop typeof say
+    "[br]first_obj.anObject (6): "   say $anObject   first_obj get_prop typeof say
+    "[br]first_obj.aProperty (7): "  say $aProperty  first_obj get_prop typeof say
 
     continueStr showOptions add_option
     dispatcher get_option
@@ -549,25 +547,25 @@ function testValues(: localvar unusedvar) {
     "string value: " say testStr typeof say " " say
     testStr typeof String cmp string_bad jnz
     " good[br]" say tst_list jmp
-    string_bad: "wrong[br]" say
+    string_bad: " wrong[br]" say
 
     tst_list:
     "list value: " say testList typeof say " " say
     testList typeof List cmp list_bad jnz
     " good[br]" say tst_map jmp
-    list_bad: "wrong[br]" say
+    list_bad: " wrong[br]" say
 
     tst_map:
     "map value: " say testMap typeof say " " say
     testMap typeof Map cmp map_bad jnz
     " good[br]" say tst_function jmp
-    map_bad: "wrong[br]" say
+    map_bad: " wrong[br]" say
 
     tst_function:
     "function value: " say testFunction typeof say " " say
     testFunction typeof Function cmp function_bad jnz
     " good[br]" say tst_function_2 jmp
-    function_bad: "wrong[br]" say
+    function_bad: " wrong[br]" say
     tst_function_2:
     "value function aliasing:" say
     testFunction testFunctionName cmp tst_function_2_bad jnz
@@ -578,7 +576,7 @@ function testValues(: localvar unusedvar) {
     "object value: " say testObject typeof say " " say
     testObject typeof Object cmp obj_bad jnz
     " good[br]" say tst_obj_2 jmp
-    obj_bad: "wrong[br]" say
+    obj_bad: " wrong[br]" say
     tst_obj_2:
     "value object aliasing:" say
     testObject testObjectName cmp test_obj_2_bad jnz
@@ -589,7 +587,7 @@ function testValues(: localvar unusedvar) {
     "property value: " say testProperty typeof say " " say
     testProperty typeof Property cmp prop_bad jnz
     " good\n" say tst_local jmp
-    prop_bad: "wrong\n" say
+    prop_bad: " wrong\n" say
 
     tst_local:
     "[b][setting local variable \"localvar\" to 57][/b][br]" say
@@ -597,20 +595,20 @@ function testValues(: localvar unusedvar) {
     "local variable value: (" say localvar say ") " say localvar typeof say " " say
     localvar typeof Integer cmp local_bad jnz
     " good[br]" say tst_unused jmp
-    local_bad: "wrong[br]" say
+    local_bad: " wrong[br]" say
 
     tst_unused:
     "unused local value: (" say unusedvar say ") " say
     unusedvar typeof say " " say
     unusedvar typeof None cmp unused_bad jnz
     " good[br]" say tst_jump jmp
-    unused_bad: "wrong[br]" say
+    unused_bad: " wrong[br]" say
 
     tst_jump:
     "jump target value: " say tst_jump typeof say
     tst_jump typeof Label cmp label_bad jnz
     " good\n" say all_done jmp
-    label_bad: "wrong\n" say
+    label_bad: " wrong\n" say
 
     "[b][type coercion][/b][br]" say
     7 localvar store
