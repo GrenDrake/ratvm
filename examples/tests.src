@@ -489,7 +489,7 @@ function testLoopDemo(: counter theValue) {
     2 theValue mult theValue store
     counter say
     " " say
-    counter 10 cmp loopstart jlt
+    counter 10 cmp loopstart jgt
     "Loop finished!\n" say
     "Final result: " say
     theValue say
