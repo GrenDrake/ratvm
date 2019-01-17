@@ -108,24 +108,29 @@ function testCompare(: testValue) {
     asm
     "\n# Testing compare opcode\n" say
 
-    "[i][comparing integer values][/i]\n" say
-    " 5 vs 5 (=   0): " say 5 5  cmp say "\n" say
-    " 2 vs 5 (=  -3): " say 2 5  cmp say "\n" say
-    " 5 vs 2 (=   3): " say 5 2  cmp say "\n" say
-    "-5 vs 5 (= -10): " say -5 5 cmp say "\n" say
+    "[b][comparing integer values][/b][br]" say
+    " 5 vs 5 (=   0): " say 5 5  cmp say "[br]" say
+    " 2 < 5: " say 2 5 cmp testLTgood jlt
+        " [b]failed[/b][br]" say testGT jmp
+        testLTgood: " passed[br]" say
+    testGT:
+    " 5 < 2: " say 5 2 cmp testGTgood jgt
+        " [b]failed[/b][br]" say testGT jmp
+        testGTgood: " passed[br]" say
+    "-5 vs 5 (= -10): " say -5 5 cmp say "[br]" say
     "5 vs -5 (=  10): " say 5 -5 cmp say "\n" say
 
-    "\n[i][comparing non-integer values][/i]\n" say
-    "none vs none (= 0): " say testValue none cmp say "\n" say
-    "string vs none (= 1): " say "\n" none cmp say "\n" say
-    "string vs function (= 1): " say "\n" testCompare cmp say "\n" say
-    "string vs same string (= 0): " say "\n" "\n" cmp say "\n" say
+    "\n[b][comparing non-integer values][/b][br]" say
+    "none vs none (= 0): " say testValue none cmp say "[br]" say
+    "string vs none (= 1): " say "\n" none cmp say "[br]" say
+    "string vs function (= 1): " say "\n" testCompare cmp say "[br]" say
+    "string vs same string (= 0): " say "\n" "\n" cmp say "[br]" say
     "string vs other string (= 1): " say "\n" "" cmp say "\n" say
 
-    "\n[i][testing integer comparisons using local variables][/i]\n" say
+    "\n[b][testing integer comparisons using local variables][/b][br]" say
     5 testValue store
-    " var vs 5 (=  0): " say testValue 5 cmp say "\n" say
-    " 2 vs var (= -3): " say 2 testValue cmp say "\n" say
+    " var vs 5 (=  0): " say testValue 5 cmp say "[br]" say
+    " 2 vs var (= -3): " say 2 testValue cmp say "[br]" say
     " var vs 2 (=  3): " say testValue 2 cmp say "\n" say
 
     continueStr showOptions add_option
@@ -489,7 +494,7 @@ function testLoopDemo(: counter theValue) {
     2 theValue mult theValue store
     counter say
     " " say
-    counter 10 cmp loopstart jgt
+    counter 10 cmp loopstart jlt
     "Loop finished!\n" say
     "Final result: " say
     theValue say
