@@ -640,6 +640,8 @@ function testOutput() {
     65 say_char
     "[br]Say UTF-8 Text: テキストの例\n" say
 
+    "Horizontal rule below this:\n---\nTest below horizontal rule.\n" say
+
     "# Testing text formatting:\n" say
     "bold text: [b]Lorem ipsum dolor sit amet.[/b][br]" say
     "italic text: [i]Lorem ipsum dolor sit amet.[/i][br]" say
