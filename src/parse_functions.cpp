@@ -94,7 +94,7 @@ struct OpcodeDef {
         DelPage             = 72,
         EndPage             = 73,
         New                 = 74,
-        Delete              = 75,
+        /* Unused opcode: 75 */
         IsStatic            = 76,
     };
 
@@ -173,7 +173,6 @@ OpcodeDef opcodes[] = {
     {   "del_page",     OpcodeDef::DelPage      },
     {   "end_page",     OpcodeDef::EndPage      },
     {   "new",          OpcodeDef::New          },
-    {   "delete",       OpcodeDef::Delete       },
     {   "is_static",    OpcodeDef::IsStatic     },
     {   ""                                      }
 };

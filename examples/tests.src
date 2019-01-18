@@ -698,7 +698,7 @@ function printArray(theArray : counter length) {
     arraydumploop:
     " " say counter theArray get_item say
     counter inc counter store
-    length counter cmp arraydumploop jlt
+    length counter cmp arraydumploop jgt
     " (length: " say length say ")\n" say
 }
 
@@ -767,7 +767,7 @@ function testMaps(: keys) {
     "Updating item \"2\"...[br]" say
     "Apple" 2 testMap set_item
 
-    "New item \"2\" (\"End\"): " say
+    "New item \"2\" (\"Apple\"): " say
     2 testMap get_item say
     "\n" say
 
@@ -805,7 +805,6 @@ function testMaps(: keys) {
     testMap get_keys keys store
     "Converting testMap keys to list...[br]" say
     keys 1 printArray call
-    keys delete
 
     continueStr showOptions add_option
     dispatcher get_option
@@ -933,14 +932,7 @@ function testDynamic(: newObj newStr newList newMap) {
     "newObj (0):" say newObj is_static say "[br]" say
     "newStr (0):" say newStr is_static say "\n" say
 
-    "[b]Deleting dynamic data...[/b]\n" say
-    newObj delete
-    newStr delete
-    newList delete
-    newMap delete
-
-    "[b]Creating and deleting new string...[/b]\n" say
-    String new delete
+    List new List new List new say
 
     continueStr testPagesCleanup add_option
     dispatcher get_option
