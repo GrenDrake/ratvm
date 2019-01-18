@@ -114,7 +114,7 @@ function testCompare(: testValue) {
         " [b]failed[/b][br]" say testGT jmp
         testLTgood: " passed[br]" say
     testGT:
-    " 5 < 2: " say 5 2 cmp testGTgood jgt
+    " 5 > 2: " say 5 2 cmp testGTgood jgt
         " [b]failed[/b][br]" say testGT jmp
         testGTgood: " passed[br]" say
     "-5 vs 5 (= -10): " say -5 5 cmp say "[br]" say
