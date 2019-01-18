@@ -938,6 +938,30 @@ function testDynamic(: newObj newStr newList newMap) {
     dispatcher get_option
 }
 
+function testStringManipulation(: testString) {
+    asm
+
+    String new testString store
+    "Length of new string (0): " say testString strlen say "[br]" say
+    "Fred" testString strcpy
+    "String is now: \"" say testString say "\" (\"Fred\")[br]" say
+    "Length of string \"Fred\" (4): " say testString strlen say "[br]" say
+
+    "static \"Fred\" == dynamic \"Fred\" (no): " say testString "Fred" cmp not say "[br]" say
+    "strcmp above: " say "Fred" testString strcmp not say "[br]" say
+    "strcmp \"Fred\" vs \"Joe\": " say "Joe" testString strcmp not say "[br]" say
+
+    " Lives!" testString strcat
+    "After appending: \"" say testString say "\" (\"Fred Lives!\")[br]" say
+    "New length (11): " say testString say "[br]" say
+
+    continueStr testPagesCleanup add_option
+    dispatcher get_option
+
+//    strcpy strcat strlen strcmp
+}
+
+
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
@@ -950,6 +974,7 @@ function showOptions() {
     "Test Info Areas"           testInfoarea       add_option
     "Test Pages"                testPages          add_option
     "Test Call"                 testCall           add_option
+    "Test String Manipulation"  testStringManipulation  add_option
     "Test Dynamic Objects"      testDynamic        add_option
     "Test RNG"                  testRandom         add_option
     "Test Compare"              testCompare        add_option

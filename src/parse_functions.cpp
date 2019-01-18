@@ -88,7 +88,11 @@ struct OpcodeDef {
         GetLine             = 62,
         AddOption           = 63,
         AddOptionExtra      = 64,
-        /* Unused opcodes: 65 - 69 */
+        StringCopy          = 65,
+        StringAppend        = 66,
+        StringLength        = 67,
+        StringCompare       = 68,
+        /* Unused opcode: 69 */
         SetInfo             = 70,
         AddPage             = 71,
         DelPage             = 72,
@@ -168,6 +172,10 @@ OpcodeDef opcodes[] = {
     {   "get_line",     OpcodeDef::GetLine      },
     {   "add_option",   OpcodeDef::AddOption    },
     {   "add_option_x", OpcodeDef::AddOptionExtra },
+    {   "strcpy",       OpcodeDef::StringCopy   },
+    {   "strcat",       OpcodeDef::StringAppend },
+    {   "strlen",       OpcodeDef::StringLength },
+    {   "strcmp",       OpcodeDef::StringCompare },
     {   "set_info",     OpcodeDef::SetInfo      },
     {   "add_page",     OpcodeDef::AddPage      },
     {   "del_page",     OpcodeDef::DelPage      },
