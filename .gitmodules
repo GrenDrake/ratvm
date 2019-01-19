@@ -1,6 +1,0 @@
-[submodule "gtrpge-runner"]
-	path = gtrpge-runner
-	url = git@github.com:GrenDrake/gtrpge-runner.git
-[submodule "gtrpge-javascript"]
-	path = gtrpge-javascript
-	url = git@github.com:GrenDrake/gtrpge-javascript.git
