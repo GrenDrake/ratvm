@@ -118,7 +118,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
 
     // write objects section
     gamedata.objectsStart = out.tellp();
-    write_32(out, gamedata.objects.size());
+    write_32(out, gamedata.objects.size() - 1);
     for (const GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
         write_16(out, object->properties.size());
