@@ -25,6 +25,7 @@
 // Parse function declarations
 
 static void parse_constant(GameData &gamedata, ParseState &state);
+static int parse_flags(GameData &gamedata, ParseState &state);
 static int parse_function(GameData &gamedata, ParseState &state);
 static int parse_list(GameData &gamedata, ParseState &state);
 static int parse_map(GameData &gamedata, ParseState &state);
@@ -44,6 +45,35 @@ void parse_constant(GameData &gamedata, ParseState &state) {
                                     constantName,
                                     value));
     state.skip(Token::Semicolon);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Parse a set of flags
+int parse_flags(GameData &gamedata, ParseState &state) {
+    static int nextFlagsId = 0;
+    const Origin &origin = state.here()->origin;
+    state.skip("flags");
+    state.skip(Token::OpenParan);
+
+    FlagSet flagset;
+    flagset.origin = origin;
+    flagset.globalId = nextFlagsId++;
+    // values
+    while (!state.eof() && !state.matches(Token::CloseParan)) {
+        if (state.here()->type == Token::Integer) {
+            flagset.values.push_back(Value{Value::Integer, state.here()->value});
+        } else if (state.here()->type == Token::Identifier) {
+            flagset.values.push_back(Value{Value::Symbol, 0, state.here()->text});
+        } else {
+            std::stringstream ss;
+            ss << "Invalid token " << state.here()->type << " in flags.";
+            gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+        }
+        state.next();
+    }
+    gamedata.flagsets.push_back(flagset);
+    state.next();
+    return flagset.globalId;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -222,6 +252,9 @@ Value parse_value(GameData &gamedata, ParseState &state) {
     } else if (state.matches("object")) {
         int newId = parse_object(gamedata, state);
         value = Value{Value::Object, newId};
+    } else if (state.matches("flags")) {
+        int newId = parse_flags(gamedata, state);
+        value = Value{Value::FlagSet, newId};
     } else if (state.matches("function")) {
         int newId = parse_function(gamedata, state);
         value = Value{Value::Node, newId};

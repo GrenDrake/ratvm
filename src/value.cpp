@@ -40,6 +40,9 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::Property:
             out << "Property";
             break;
+        case Value::FlagSet:
+            out << "FlagSet";
+            break;
         default:
             out << "(unhandled type)";
     }

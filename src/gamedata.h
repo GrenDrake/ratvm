@@ -51,6 +51,13 @@ struct GameMap {
     int globalId;
 };
 
+struct FlagSet {
+    Origin origin;
+    int globalId;
+    std::vector<Value> values;
+    unsigned finalValue;
+};
+
 struct FunctionDef {
     FunctionDef()
     : argument_count(0), local_count(0)
@@ -89,6 +96,7 @@ public:
     std::vector<GameList*> lists;
     std::vector<GameMap*> maps;
     std::vector<FunctionDef*> functions;
+    std::vector<FlagSet> flagsets;
     ByteStream bytecode;
 
     unsigned stringsStart, listsStart, mapsStart, objectsStart;

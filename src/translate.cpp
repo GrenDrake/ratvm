@@ -36,6 +36,11 @@ void add_default_constants(GameData &gamedata) {
 }
 
 void translate_value(GameData &gamedata, Value &value) {
+    if (value.type == Value::FlagSet) {
+        value.type = Value::Integer;
+        value.value = gamedata.flagsets[value.value].finalValue;
+        return;
+    }
     if (value.type != Value::Symbol) return;
     const SymbolDef *symbol = gamedata.symbols.get(value.text);
     if (!symbol) {
@@ -48,6 +53,19 @@ void translate_value(GameData &gamedata, Value &value) {
 }
 
 void translate_symbols(GameData &gamedata) {
+    for (FlagSet &flagset : gamedata.flagsets) {
+        unsigned result = 0;
+        for (Value &value : flagset.values) {
+            translate_value(gamedata, value);
+            if (value.type == Value::Integer) {
+                result |= value.value;
+            } else {
+                gamedata.errors.push_back(Error{flagset.origin, "Flag values must be integers."});
+            }
+        }
+        flagset.finalValue = result;
+    }
+
     for (GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
         for (GameProperty &property : object->properties) {
