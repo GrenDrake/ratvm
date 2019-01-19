@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
     bool dump_data = false;
     bool dump_bytecode = false;
     bool dump_functionBytecode = false;
+    bool skipIdentCheck = false;
     int next_filename = 0;
 
     for (int i = 1; i < argc; ++i) {
@@ -38,6 +39,8 @@ int main(int argc, char *argv[]) {
             dump_functionBytecode = true;
         } else if (strcmp(argv[i], "-tokens") == 0) {
             dump_tokens = true;
+        } else if (strcmp(argv[i], "-skip-ident-check") == 0) {
+            skipIdentCheck = true;
         } else if (next_filename < 2) {
             if (next_filename == 0) {
                 sourceFile = argv[i];
@@ -51,6 +54,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    int nextIdent = -1;
     std::vector<Token> tokens;
     GameData gamedata;
     add_default_constants(gamedata);
@@ -65,6 +69,10 @@ int main(int argc, char *argv[]) {
         translate_symbols(gamedata);
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
         gamedata.organize();
+        if (!skipIdentCheck) {
+            nextIdent = gamedata.checkObjectIdents();
+        }
+        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
         parse_functions(gamedata);
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
         generate(gamedata, outputFile);
@@ -72,6 +80,10 @@ int main(int argc, char *argv[]) {
     } catch (BuildError &e) {
         std::cerr << "Error: " << e.what() << '\n';
         return 1;
+    }
+
+    if (nextIdent > 0) {
+        std::cerr << "[next available ident: " << nextIdent << "]\n";
     }
 
     if (dump_data) {

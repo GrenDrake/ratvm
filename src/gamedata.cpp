@@ -5,6 +5,7 @@
  * **************************************************************************/
 #include <algorithm>
 #include <fstream>
+#include <map>
 #include <string>
 #include <sstream>
 
@@ -89,4 +90,60 @@ FunctionDef* GameData::functionByName(const std::string &name) {
         }
     }
     return nullptr;
+}
+
+int GameData::checkObjectIdents() {
+    const unsigned pIdent = getPropertyId("ident");
+    const unsigned pSave = getPropertyId("save");
+    const unsigned pLoad = getPropertyId("load");
+
+    std::map<int, GameObject*> usedIdents;
+    int nextIdent = -1;
+
+    for (GameObject *object : objects) {
+        if (!object) continue;
+        const GameProperty *ident = object->getProperty(pIdent);
+        const GameProperty *save = object->getProperty(pSave);
+        const GameProperty *load = object->getProperty(pLoad);
+
+        if (ident) {
+            if (ident->value.type != Value::Integer || ident->value.value <= 0) {
+                errors.push_back(Error{object->origin, "Object ident property must positive integer."});
+            } else {
+                auto existingObject = usedIdents.find(ident->value.value);
+                if (existingObject != usedIdents.end()) {
+                    std::stringstream ss;
+                    ss << "Object ident " << ident->value.value << " already in use by object \"";
+                    ss << existingObject->second->name << "\" @ " << existingObject->second->origin << '.';
+                    errors.push_back(Error{object->origin, ss.str()});
+                } else {
+                    usedIdents.insert(std::make_pair(ident->value.value, object));
+                    if (ident->value.value >= nextIdent) {
+                        nextIdent = ident->value.value + 1;
+                    }
+                }
+            }
+        }
+
+        if (!ident && save) {
+            errors.push_back(Error{object->origin, "Object has save property but no ident property."});
+        }
+        if (!ident && load) {
+            errors.push_back(Error{object->origin, "Object has load property but no ident property."});
+        }
+        if (!load && save) {
+            errors.push_back(Error{object->origin, "Object has save property but no load property."});
+        }
+        if (!save && load) {
+            errors.push_back(Error{object->origin, "Object has load property but no save property."});
+        }
+        if (load && load->value.type != Value::Node) {
+            errors.push_back(Error{object->origin, "Object load property must be function."});
+        }
+        if (save && save->value.type != Value::Node) {
+            errors.push_back(Error{object->origin, "Object save property must be function."});
+        }
+    }
+
+    return nextIdent;
 }

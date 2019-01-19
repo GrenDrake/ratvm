@@ -79,6 +79,7 @@ public:
     const std::string& getString(unsigned id) const;
     void organize();
     FunctionDef* functionByName(const std::string &name);
+    int checkObjectIdents();
 
     std::vector<Error> errors;
     SymbolTable symbols;
