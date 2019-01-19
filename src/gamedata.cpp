@@ -16,6 +16,7 @@
 
 GameData::GameData()
 : nextAnonymousId(firstAnonymousId) {
+    objects.push_back(nullptr);
     lists.push_back(nullptr);
     maps.push_back(nullptr);
     functions.push_back(nullptr);
@@ -76,6 +77,7 @@ bool propertySorter(const GameProperty &left, const GameProperty &right) {
 
 void GameData::organize() {
     for (GameObject *object : objects) {
+        if (!object) continue;
         std::sort(object->properties.begin(), object->properties.end(), propertySorter);
     }
 }

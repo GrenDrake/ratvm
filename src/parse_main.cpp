@@ -275,7 +275,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
         } else if (state.matches("object")) {
             int objectId = parse_object(gamedata, state);
             if (objectId > 0) {
-                GameObject *object = gamedata.objects[objectId - 1];
+                GameObject *object = gamedata.objects[objectId];
                 if (object && object->name.empty()) {
                     gamedata.errors.push_back(Error{object->origin, "Anonymous object at top level"});
                 }
