@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
             }
             ++next_filename;
         } else {
-            fprintf(stderr, "Unexpected argument %s\n", argv[i]);
+            std::cerr << "Unexpected argument " << argv[i] << ".\n";
             return 1;
         }
     }
