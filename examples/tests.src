@@ -14,6 +14,7 @@ value testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" };
 value testFunction function testFunctionName () {};
 value testObject object testObjectName;; // double semicolon currently required
 value testProperty $testFunc;
+value testFlags flags( 6 7 8 testInt );
 
 object first_obj
     anInt 2
@@ -591,8 +592,14 @@ function testValues(: localvar unusedvar) {
     tst_prop:
     "property value: " say testProperty typeof say " " say
     testProperty typeof Property cmp prop_bad jnz
+    " good[br]" say tst_flags jmp
+    prop_bad: " wrong[br]" say
+
+    tst_flags:
+    "flagset value: " say testFlags typeof say " " say
+    testFlags typeof Integer cmp flags_bad jnz
     " good\n" say tst_local jmp
-    prop_bad: " wrong\n" say
+    flags_bad: " wrong\n" say
 
     tst_local:
     "[b][setting local variable \"localvar\" to 57][/b][br]" say
