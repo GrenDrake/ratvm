@@ -66,6 +66,16 @@ void translate_symbols(GameData &gamedata) {
         flagset.finalValue = result;
     }
 
+    for (SymbolDef &symbol : gamedata.symbols.symbols) {
+        if (symbol.value.type == Value::FlagSet) {
+            translate_value(gamedata, symbol.value);
+            if (symbol.value.type != Value::Integer) {
+                gamedata.errors.push_back(Error{symbol.origin, "Invalid value in flag set."});
+            }
+        }
+    }
+
+
     for (GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
         for (GameProperty &property : object->properties) {
