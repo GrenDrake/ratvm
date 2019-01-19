@@ -1,20 +1,20 @@
 // ////////////////////////////////////////////////////////////////////////////
 // Common strings
 // ////////////////////////////////////////////////////////////////////////////
-value continueStr "Continue";
+value continueStr "Continue"
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Data used for tests
 // ////////////////////////////////////////////////////////////////////////////
-value testInt 7384;
-value testStr "A Name";
-value testList [ 1 2 3 ];
-value testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" };
-value testFunction function testFunctionName () {};
-value testObject object testObjectName;; // double semicolon currently required
-value testProperty $testFunc;
-value testFlags flags( 6 7 8 testInt );
+value testInt 7384
+value testStr "A Name"
+value testList [ 1 2 3 ]
+value testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" }
+value testFunction function testFunctionName () {}
+value testObject object testObjectName;
+value testProperty $testFunc
+value testFlags flags( 6 7 8 testInt )
 
 object first_obj
     anInt 2
@@ -1014,4 +1014,4 @@ function main() {
     0 showOptions call
 }
 
-value te "";
+value te ""

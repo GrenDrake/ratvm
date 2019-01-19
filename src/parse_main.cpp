@@ -44,7 +44,7 @@ void parse_constant(GameData &gamedata, ParseState &state) {
     gamedata.symbols.add(SymbolDef(origin,
                                     constantName,
                                     value));
-    state.skip(Token::Semicolon);
+    // state.skip(Token::Semicolon);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
