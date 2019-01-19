@@ -59,7 +59,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     if (mainFunction) {
         write_32(out, mainFunction->globalId);
     } else {
-        throw BuildError("Function ~main~ not defined.");
+        gamedata.errors.push_back(Error{Origin(outputFile,0,0), "Function \"main\" not defined."});
     }
 
     // write strings section

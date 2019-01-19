@@ -240,6 +240,7 @@ bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &nam
 struct Backpatch {
     unsigned position;
     std::string name;
+    Origin origin;
 };
 void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
     const OpcodeDef *opcode;
@@ -259,7 +260,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     if (nameInUse(gamedata, function, state.here()->text, -1)) {
                         std::stringstream ss;
                         ss << "Symbol \"" << state.here()->text << "\" already defined.";
-                        throw BuildError(state.here()->origin, ss.str());
+                        gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
                     }
                     function->labels.insert(std::make_pair(state.here()->text, function->code.size()));
                     state.next();
@@ -292,7 +293,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     function->code.add_8(OpcodeDef::Push32);
                     function->code.add_8(Value::JumpTarget);
                     unsigned labelPos = function->code.size();
-                    patches.push_back(Backpatch{labelPos, state.here()->text});
+                    patches.push_back(Backpatch{labelPos, state.here()->text,state.here()->origin});
                     function->code.add_32(0xFFFFFFFF);
                 }
                 break;
@@ -303,8 +304,11 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
             case Token::Property:
                 bytecode_push_value(function->code, Value::Property, state.here()->value);
                 break;
-            default:
-                throw BuildError(state.here()->origin, "Unexpected token in function.");
+            default: {
+                std::stringstream ss;
+                ss << "Unexpected token " << state.here()->type << " in asm function body.";
+                gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+                }
         }
         state.next();
     }
@@ -316,7 +320,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
         } else {
             std::stringstream ss;
             ss << "Unknown symbol " << patch.name << " in function " << function->name << '.';
-            throw BuildError(ss.str());
+            gamedata.errors.push_back(Error{patch.origin, ss.str()});
         }
     }
 }
@@ -335,7 +339,7 @@ int parse_functions(GameData &gamedata) {
             if (nameInUse(gamedata, function, name, i)) {
                 std::stringstream ss;
                 ss << "Local name \"" << name << "\" already in use.";
-                throw BuildError(function->origin, ss.str());
+                gamedata.errors.push_back(Error{function->origin, ss.str()});
             }
         }
 
@@ -346,7 +350,7 @@ int parse_functions(GameData &gamedata) {
             state.next();
             parse_asm_function(gamedata, function, state);
         } else {
-            throw BuildError(function->origin, "Unknown function type.");
+            gamedata.errors.push_back(Error{function->origin, "Unknown function type."});
         }
         function->code.add_8(OpcodeDef::Return);
         function->code.padTo(4);
