@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 
     std::vector<Token> tokens;
     GameData gamedata;
+    add_default_constants(gamedata);
 
     try {
         tokens = lex_file(gamedata, sourceFile);
@@ -61,7 +62,6 @@ int main(int argc, char *argv[]) {
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
         parse_tokens(gamedata, tokens);
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
-        add_default_constants(gamedata);
         translate_symbols(gamedata);
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
         gamedata.organize();

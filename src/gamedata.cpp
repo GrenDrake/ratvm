@@ -16,9 +16,6 @@
 
 GameData::GameData()
 : nextAnonymousId(firstAnonymousId) {
-    getPropertyId("(none)");
-    getPropertyId("internal-name");
-    getPropertyId("ident");
     lists.push_back(nullptr);
     maps.push_back(nullptr);
     functions.push_back(nullptr);

@@ -28,6 +28,11 @@ void add_default_constants(GameData &gamedata) {
     gamedata.symbols.add(SymbolDef(Origin(), "InfobarFooter",   Value{Value::Integer, 2}));
     gamedata.symbols.add(SymbolDef(Origin(), "InfobarTitle",    Value{Value::Integer, 3}));
     gamedata.symbols.add(SymbolDef(Origin(), "none",            Value{Value::None,    0}));
+    gamedata.getPropertyId("(invalid)");
+    gamedata.getPropertyId("internal_name");
+    gamedata.getPropertyId("ident");
+    gamedata.getPropertyId("save");
+    gamedata.getPropertyId("load");
 }
 
 void translate_value(GameData &gamedata, Value &value) {
