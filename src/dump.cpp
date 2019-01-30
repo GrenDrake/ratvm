@@ -16,7 +16,7 @@ static void dump_string(std::ostream &out, const std::string &text) {
     }
 }
 
-void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode) {
+void dump_gamedata(GameData &gamedata, std::ostream &out) {
     out << "      SECTION  START      DECIMAL      SIZE (BYTES)\n"
            "  ------------ ---------- ------------ ------------\n"
            "       HEADER: 0x00000000 0            12\n" << std::uppercase;
@@ -102,36 +102,6 @@ void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode)
     }
     out << '\n';
 
-    for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
-        const FunctionDef *function = gamedata.functions[i];
-        if (function == nullptr) continue;
-        out << "FUNCTION " << function->globalId << ": ";
-        if (function->name.empty()) out << "(anonymous)";
-        else                        out << function->name;
-        out << " @ " << function->origin << "\n";
-        out << "    ARGUMENTS:";
-        for (int i = 0; i < function->argument_count; ++i) {
-            out << ' ' << function->local_names[i];
-        }
-        out << "\n    LOCALS:";
-        for (int i = 0; i < function->local_count; ++i) {
-            out << ' ' << function->local_names[i + function->argument_count];
-        }
-        out << "\n    TOKEN COUNT: " << function->tokens.size();
-        out << "\n    CODE POSITION: " << function->codePosition << " (0x";
-        out << std::hex << function->codePosition << std::dec << ')';
-        out << "\n    CODE SIZE: " << function->codeEndPosition - function->codePosition;
-        out << "\n    CODE END POSITION: " << function->codeEndPosition << " (0x";
-        out << std::hex << function->codeEndPosition << std::dec << ')';
-        if (functionBytecode) {
-            out << "\n    BYTE CODE:";
-            function->code.dump(out, 8);
-        } else {
-            out << '\n';
-        }
-    }
-    out << '\n';
-
     for (const SymbolDef &symbol : gamedata.symbols.symbols) {
         out << "SYMBOL " << symbol.name << " = " << symbol.value;
         out << " @ " << symbol.origin << '\n';
@@ -211,6 +181,44 @@ void dump_asm(GameData &gamedata, std::ostream &out) {
     for (unsigned int i = 0; !opcodes[i].name.empty(); ++i) {
         out << "    " << std::setw(longestOpcodeName) << opcodes[i].name << ' ' << opcodes[i].count << '\n';
     }
+}
+
+void dump_functions(GameData &gamedata, std::ostream &out, bool functionBytecode) {
+    for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
+        const FunctionDef *function = gamedata.functions[i];
+        if (function == nullptr) continue;
+        if (function->name.empty()) out << "(anonymous)";
+        else                        out << function->name;
+        out << " (#" << function->globalId << ')';
+        out << " @ " << function->origin;
+        out << "\n        ARGUMENTS:";
+        if (function->argument_count == 0) {
+            out << " (none)";
+        } else for (int i = 0; i < function->argument_count; ++i) {
+            out << ' ' << function->local_names[i];
+        }
+        out << "\n           LOCALS:";
+        if (function->local_count == 0) {
+            out << " (none)";
+        } else for (int i = 0; i < function->local_count; ++i) {
+            out << ' ' << function->local_names[i + function->argument_count];
+        }
+        out << "\n      TOKEN COUNT: " << function->tokens.size();
+        out << "\n    CODE POSITION: " << function->codePosition << " (0x";
+        out << std::hex << function->codePosition << std::dec << ')';
+        out << "\n        CODE SIZE: " << function->codeEndPosition - function->codePosition;
+        out << "\n         CODE END: " << function->codeEndPosition << " (0x";
+        out << std::hex << function->codeEndPosition << std::dec << ')';
+        if (functionBytecode) {
+            out << "\n--- BYTE CODE ------------------------------------------------------------------";
+            function->code.dump(out, 8);
+            out << "--------------------------------------------------------------------------------\n";
+        } else {
+            out << '\n';
+        }
+        out << '\n';
+    }
+    out << '\n';
 }
 
 void dump_fullBytecode(GameData &gamedata, std::ostream &out) {

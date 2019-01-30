@@ -6,6 +6,7 @@ test_bytestream
 game.bin
 tokens.txt
 strings.txt
+functions.txt
 data.txt
 bytecode.txt
 asm.txt

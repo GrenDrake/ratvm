@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
     bool dump_tokens = false;
     bool dump_data = false;
     bool dump_bytecode = false;
+    bool dump_functionHeaders = false;
     bool dump_functionBytecode = false;
     bool dump_strings = false;
     bool dump_asmCode = false;
@@ -39,9 +40,11 @@ int main(int argc, char *argv[]) {
             dump_bytecode = true;
         } else if (strcmp(argv[i], "-bytecode") == 0) {
             dump_functionBytecode = true;
-            dump_data = true;
+            dump_functionHeaders = true;
         } else if (strcmp(argv[i], "-tokens") == 0) {
             dump_tokens = true;
+        } else if (strcmp(argv[i], "-functions") == 0) {
+            dump_functionHeaders = true;
         } else if (strcmp(argv[i], "-asm") == 0) {
             dump_asmCode = true;
         } else if (strcmp(argv[i], "-strings") == 0) {
@@ -95,7 +98,11 @@ int main(int argc, char *argv[]) {
 
     if (dump_data) {
         std::ofstream dataFile("data.txt");
-        dump_gamedata(gamedata, dataFile, dump_functionBytecode);
+        dump_gamedata(gamedata, dataFile);
+    }
+    if (dump_functionHeaders) {
+        std::ofstream functionsFile("functions.txt");
+        dump_functions(gamedata, functionsFile, dump_functionBytecode);
     }
     if (dump_asmCode) {
         std::ofstream asmFile("asm.txt");
