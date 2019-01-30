@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
             dump_bytecode = true;
         } else if (strcmp(argv[i], "-bytecode") == 0) {
             dump_functionBytecode = true;
+            dump_data = true;
         } else if (strcmp(argv[i], "-tokens") == 0) {
             dump_tokens = true;
         } else if (strcmp(argv[i], "-asm") == 0) {
