@@ -22,6 +22,7 @@ void add_default_constants(GameData &gamedata) {
     gamedata.symbols.add(SymbolDef(Origin(), "Function",        Value{Value::Integer, 5}));
     gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::Integer, 6}));
     gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::Integer, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Stream",          Value{Value::Integer, 8}));
     gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::Integer, 9}));
     gamedata.symbols.add(SymbolDef(Origin(), "InfobarLeft",     Value{Value::Integer, 0}));
     gamedata.symbols.add(SymbolDef(Origin(), "InfobarRight",    Value{Value::Integer, 1}));
