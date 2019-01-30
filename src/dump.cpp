@@ -23,7 +23,7 @@ static void dump_string(std::ostream &out, const std::string &text) {
     if (displayEllipse) out << "...";
 }
 
-void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode, bool bytecode) {
+void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode) {
     out << "      SECTION  START      DECIMAL      SIZE (BYTES)\n"
            "  ------------ ---------- ------------ ------------\n"
            "       HEADER: 0x00000000 0            12\n" << std::uppercase;
@@ -147,13 +147,6 @@ void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode,
         out << "SYMBOL " << symbol.name << " = " << symbol.value;
         out << " @ " << symbol.origin << '\n';
     }
-
-    if (bytecode) {
-        out << "\nBYTECODE SEGMENT SIZE: " << gamedata.bytecode.size();
-        gamedata.bytecode.dump(out, 0);
-    } else {
-        out << '\n';
-    }
 }
 
 void dump_asm(GameData &gamedata, std::ostream &out) {
@@ -229,6 +222,11 @@ void dump_asm(GameData &gamedata, std::ostream &out) {
     for (unsigned int i = 0; !opcodes[i].name.empty(); ++i) {
         out << "    " << std::setw(longestOpcodeName) << opcodes[i].name << ' ' << opcodes[i].count << '\n';
     }
+}
+
+void dump_fullBytecode(GameData &gamedata, std::ostream &out) {
+    out << "BYTECODE SEGMENT SIZE: " << gamedata.bytecode.size() << '\n';
+    gamedata.bytecode.dump(out, 0);
 }
 
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out) {

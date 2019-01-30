@@ -91,11 +91,15 @@ int main(int argc, char *argv[]) {
 
     if (dump_data) {
         std::ofstream dataFile("data.txt");
-        dump_gamedata(gamedata, dataFile, dump_functionBytecode, dump_bytecode);
+        dump_gamedata(gamedata, dataFile, dump_functionBytecode);
     }
     if (dump_asmCode) {
         std::ofstream asmFile("asm.txt");
         dump_asm(gamedata, asmFile);
+    }
+    if (dump_bytecode) {
+        std::ofstream bytecodeFile("bytecode.txt");
+        dump_fullBytecode(gamedata, bytecodeFile);
     }
     if (dump_tokens) {
         std::ofstream tokenFile("tokens.txt");
