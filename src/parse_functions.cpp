@@ -84,6 +84,7 @@ OpcodeDef opcodes[] = {
     {   "dec",          OpcodeDef::Dec          },
     {   "get_random",   OpcodeDef::GetRandom    },
     {   "get_keys",     OpcodeDef::GetKeys      },
+    {   "stack_swap",   OpcodeDef::StackSwap    },
     {   "get_key",      OpcodeDef::GetKey       },
     {   "get_option",   OpcodeDef::GetOption    },
     {   "get_line",     OpcodeDef::GetLine      },

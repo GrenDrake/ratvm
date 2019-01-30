@@ -61,7 +61,8 @@ struct OpcodeDef {
         Dec                 = 54,
         GetRandom           = 55,
         GetKeys             = 56,
-        /* Unused opcodes: 57 - 59 */
+        StackSwap           = 57,
+        /* Unused opcodes: 58 - 59 */
         GetKey              = 60,
         GetOption           = 61,
         GetLine             = 62,
