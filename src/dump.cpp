@@ -102,9 +102,22 @@ void dump_gamedata(GameData &gamedata, std::ostream &out) {
     }
     out << '\n';
 
+    unsigned longestValue = 20;
+    unsigned longestSymbol = 0;
     for (const SymbolDef &symbol : gamedata.symbols.symbols) {
-        out << "SYMBOL " << symbol.name << " = " << symbol.value;
-        out << " @ " << symbol.origin << '\n';
+        if (symbol.name.size() > longestSymbol) {
+            longestSymbol = symbol.name.size();
+        }
+    }
+    ++longestSymbol;
+    if (longestSymbol < 12) longestSymbol = 12;
+    out << std::left << std::setw(longestSymbol) << "SYMBOL NAME";
+    out << ' ' << std::setw(longestValue) << "VALUE";
+    out << " ORIGIN\n";
+    for (const SymbolDef &symbol : gamedata.symbols.symbols) {
+        out << std::setw(longestSymbol) << symbol.name << ' ';
+        out << std::setw(longestValue) << symbol.value << ' ';
+        out << symbol.origin << '\n';
     }
 }
 
