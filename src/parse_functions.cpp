@@ -279,6 +279,7 @@ int parse_functions(GameData &gamedata) {
         function->code.add_8(OpcodeDef::Return);
         function->code.padTo(4);
         gamedata.bytecode.append(function->code);
+        function->codeEndPosition = gamedata.bytecode.size();
     }
 
     return 1;

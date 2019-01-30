@@ -70,7 +70,7 @@ struct FunctionDef {
     std::map<std::string, unsigned> labels;
     std::string name;
     std::vector<Token> tokens;
-    unsigned codePosition;
+    unsigned codePosition, codeEndPosition;
     ByteStream code;
     int globalId;
 };

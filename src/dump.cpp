@@ -120,6 +120,9 @@ void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode)
         out << "\n    TOKEN COUNT: " << function->tokens.size();
         out << "\n    CODE POSITION: " << function->codePosition << " (0x";
         out << std::hex << function->codePosition << std::dec << ')';
+        out << "\n    CODE SIZE: " << function->codeEndPosition - function->codePosition;
+        out << "\n    CODE END POSITION: " << function->codeEndPosition << " (0x";
+        out << std::hex << function->codeEndPosition << std::dec << ')';
         if (functionBytecode) {
             out << "\n    BYTE CODE:";
             function->code.dump(out, 8);
