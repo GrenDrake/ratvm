@@ -7,6 +7,7 @@
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
 #include <fstream>
+#include <sstream>
 #include <string>
 
 #include "value.h"
@@ -53,14 +54,14 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
 }
 
 std::ostream& operator<<(std::ostream &out, const Value &value) {
-    out << '<' << value.type;
+    std::stringstream ss;
+    ss << '<' << value.type;
     if (value.type == Value::Symbol) {
-        out << " ~" << value.text << '~';
-    } else if (value.type == Value::None) {
-        // nothing
-    } else {
-        out << ' ' << value.value;
+        ss << " ~" << value.text << '~';
+    } else if (value.type != Value::None) {
+        ss << ' ' << value.value;
     }
-    out << '>';
+    ss << '>';
+    out << ss.str();
     return out;
 }
