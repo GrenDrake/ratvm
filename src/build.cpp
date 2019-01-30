@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
     bool dump_data = false;
     bool dump_bytecode = false;
     bool dump_functionBytecode = false;
+    bool dump_strings = false;
     bool dump_asmCode = false;
     bool skipIdentCheck = false;
     int next_filename = 0;
@@ -43,6 +44,8 @@ int main(int argc, char *argv[]) {
             dump_tokens = true;
         } else if (strcmp(argv[i], "-asm") == 0) {
             dump_asmCode = true;
+        } else if (strcmp(argv[i], "-strings") == 0) {
+            dump_strings = true;
         } else if (strcmp(argv[i], "-skip-ident-check") == 0) {
             skipIdentCheck = true;
         } else if (next_filename < 2) {
@@ -101,6 +104,10 @@ int main(int argc, char *argv[]) {
     if (dump_bytecode) {
         std::ofstream bytecodeFile("bytecode.txt");
         dump_fullBytecode(gamedata, bytecodeFile);
+    }
+    if (dump_strings) {
+        std::ofstream stringFile("strings.txt");
+        dump_stringtable(gamedata, stringFile);
     }
     if (dump_tokens) {
         std::ofstream tokenFile("tokens.txt");

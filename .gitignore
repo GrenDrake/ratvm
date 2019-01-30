@@ -5,6 +5,7 @@ runner
 test_bytestream
 game.bin
 tokens.txt
+strings.txt
 data.txt
 bytecode.txt
 asm.txt

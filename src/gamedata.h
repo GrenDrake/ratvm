@@ -110,6 +110,7 @@ std::ostream& operator<<(std::ostream &out, const Value &property);
 void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode);
 void dump_asm(GameData &gamedata, std::ostream &out);
 void dump_fullBytecode(GameData &gamedata, std::ostream &out);
+void dump_stringtable(GameData &gamedata, std::ostream &out);
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out);
 
 #endif

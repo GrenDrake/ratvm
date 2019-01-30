@@ -6,13 +6,7 @@
 #include "opcode.h"
 
 static void dump_string(std::ostream &out, const std::string &text) {
-    unsigned length = text.size();
-    bool displayEllipse = false;
-    if (length > 60) {
-        length = 60;
-        displayEllipse = true;
-    }
-
+    const unsigned length = text.size();
     for (unsigned i = 0; i < length; ++i) {
         if (text[i] == '\n') {
             out << "\\n";
@@ -20,7 +14,6 @@ static void dump_string(std::ostream &out, const std::string &text) {
             out << text[i];
         }
     }
-    if (displayEllipse) out << "...";
 }
 
 void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode) {
@@ -72,13 +65,6 @@ void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode)
 
     for (unsigned i = 0; i < gamedata.propertyNames.size(); ++i) {
         out << "PROPERTY-ID " << i << " " << gamedata.propertyNames[i] << '\n';
-    }
-    out << '\n';
-
-    for (unsigned i = 0; i < gamedata.stringTable.size(); ++i) {
-        out << "STRING " << i << " [" << gamedata.stringTable[i].size() << "] ~";
-        dump_string(out, gamedata.stringTable[i]);
-        out << "~\n";
     }
     out << '\n';
 
@@ -227,6 +213,14 @@ void dump_asm(GameData &gamedata, std::ostream &out) {
 void dump_fullBytecode(GameData &gamedata, std::ostream &out) {
     out << "BYTECODE SEGMENT SIZE: " << gamedata.bytecode.size() << '\n';
     gamedata.bytecode.dump(out, 0);
+}
+
+void dump_stringtable(GameData &gamedata, std::ostream &out) {
+    for (unsigned i = 0; i < gamedata.stringTable.size(); ++i) {
+        out << i << " [" << gamedata.stringTable[i].size() << "] ~";
+        dump_string(out, gamedata.stringTable[i]);
+        out << "~\n";
+    }
 }
 
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out) {
