@@ -6,5 +6,6 @@ test_bytestream
 game.bin
 tokens.txt
 data.txt
+asm.txt
 .vscode
 .DS_Store

@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <ostream>
 #include <iomanip>
 
 #include "gamedata.h"
+#include "opcode.h"
 
 static void dump_string(std::ostream &out, const std::string &text) {
     unsigned length = text.size();
@@ -21,7 +23,7 @@ static void dump_string(std::ostream &out, const std::string &text) {
     if (displayEllipse) out << "...";
 }
 
-void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionAsm, bool functionBytecode, bool bytecode) {
+void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionBytecode, bool bytecode) {
     out << "      SECTION  START      DECIMAL      SIZE (BYTES)\n"
            "  ------------ ---------- ------------ ------------\n"
            "       HEADER: 0x00000000 0            12\n" << std::uppercase;
@@ -151,6 +153,81 @@ void dump_gamedata(GameData &gamedata, std::ostream &out, bool functionAsm, bool
         gamedata.bytecode.dump(out, 0);
     } else {
         out << '\n';
+    }
+}
+
+void dump_asm(GameData &gamedata, std::ostream &out) {
+    out << std::left;
+    unsigned lastOpcodeEntry = 0;
+    unsigned longestOpcodeName = 0;
+    while(!opcodes[lastOpcodeEntry].name.empty()) {
+        if (opcodes[lastOpcodeEntry].name.size() > longestOpcodeName) {
+            longestOpcodeName = opcodes[lastOpcodeEntry].name.size();
+        }
+        ++lastOpcodeEntry;
+    }
+
+
+    for (const FunctionDef *function : gamedata.functions) {
+        if (!function) continue;
+        out << function->name << " (#" << function->globalId << ") Arguments: ";
+        out << function->argument_count << " Locals: " << function->local_count;
+        out << " Total: " << function->argument_count + function->local_count << '\n';
+        for (unsigned int i = 0; i < function->code.size();) {
+            int opcode = function->code.read_8(i++);
+            OpcodeDef *def = getOpcodeByCode(opcode);
+            ++def->count;
+            if (def == nullptr) {
+                out << "    (unknown opcode " << opcode << ")\n";
+            } else {
+                out << "    " << std::setw(longestOpcodeName) << def->name;
+                int type = 0, value = 0;
+                switch(opcode) {
+                    case OpcodeDef::Push0:
+                        type = function->code.read_8(i++);
+                        out << ' ' << static_cast<Value::Type>(type);
+                        break;
+                    case OpcodeDef::Push1:
+                        type = function->code.read_8(i++);
+                        out << ' ' << static_cast<Value::Type>(type);
+                        break;
+                    case OpcodeDef::PushNeg1:
+                        type = function->code.read_8(i++);
+                        out << ' ' << static_cast<Value::Type>(type);
+                        break;
+                    case OpcodeDef::Push8:
+                        type = function->code.read_8(i++);
+                        value = function->code.read_8(i++);
+                        out << ' ' << value;
+                        out << ": " << static_cast<Value::Type>(type);
+                        break;
+                    case OpcodeDef::Push16:
+                        type = function->code.read_8(i++);
+                        value = function->code.read_16(i);
+                        i += 2;
+                        out << ' ' << value;
+                        out << ": " << static_cast<Value::Type>(type);
+                        break;
+                    case OpcodeDef::Push32:
+                        type = function->code.read_8(i++);
+                        value = function->code.read_32(i);
+                        i += 4;
+                        out << ' ' << value;
+                        out << ": " << static_cast<Value::Type>(type);
+                        break;
+                }
+                out << "\n";
+            }
+        }
+        out << "\n";
+    }
+
+    out << "OPCODE FREQUENCY:\n";
+    std::sort(opcodes, &opcodes[lastOpcodeEntry],
+            [](const OpcodeDef &l, const OpcodeDef &r)
+                -> bool { return l.count > r.count; });
+    for (unsigned int i = 0; !opcodes[i].name.empty(); ++i) {
+        out << "    " << std::setw(longestOpcodeName) << opcodes[i].name << ' ' << opcodes[i].count << '\n';
     }
 }
 

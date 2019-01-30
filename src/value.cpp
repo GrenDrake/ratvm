@@ -43,8 +43,11 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::FlagSet:
             out << "FlagSet";
             break;
+        case Value::LocalVar:
+            out << "LocalVar";
+            break;
         default:
-            out << "(unhandled type)";
+            out << "(unhandled type " << static_cast<int>(type) << ")";
     }
     return out;
 }
