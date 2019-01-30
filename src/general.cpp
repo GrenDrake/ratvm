@@ -135,9 +135,7 @@ std::ostream& operator<<(std::ostream &out, const Token &token) {
  * ************************************************************************** */
 std::ostream& operator<<(std::ostream &out, const Origin &origin) {
     out << origin.file << std::dec;
-    if (origin.line <= 0 && origin.column <= 0) {
-        out << ':';
-    } else {
+    if (origin.line > 0 && origin.column > 0) {
         if (origin.line > 0)    out << ':' << origin.line;
         if (origin.column > 0)  out << ':' << origin.column;
     }
