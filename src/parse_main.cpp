@@ -183,7 +183,7 @@ int parse_map(GameData &gamedata, ParseState &state) {
 // Parse a single object
 int parse_object(GameData &gamedata, ParseState &state) {
     static int nextObjectId = 1;
-    unsigned internalNameId = gamedata.getPropertyId("internal-name");
+    unsigned internalNameId = gamedata.getPropertyId("internal_name");
 
     const Origin &origin = state.here()->origin;
     state.next(); // skip "object"
