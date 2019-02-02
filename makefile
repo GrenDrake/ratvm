@@ -3,7 +3,7 @@ CXXFLAGS= -std=c++11 -g -Wall
 BUILD_OBJS=src/build.o src/general.o src/lexer.o src/preprocess.o \
 		   src/parse_main.o src/translate.o src/gamedata.o src/generate.o \
 		   src/value.o src/parse_functions.o src/parsestate.o src/bytestream.o \
-		   src/dump.o
+		   src/dump.o src/opcode.o
 BUILD=./build
 
 FILESCAN_OBJS=src/filescan.o src/value.o src/bytestream.o
