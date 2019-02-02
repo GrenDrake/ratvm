@@ -1048,6 +1048,7 @@ function testStringManipulation(: testString) {
 function showOptions() {
     asm
 
+    true saveAllowed set_setting
     "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading." say
     0 printMagicNumbers call
 
@@ -1075,6 +1076,7 @@ function showOptions() {
 function dispatcher(optionFunc extraValue) {
     asm
 
+    false saveAllowed set_setting
     extraValue 1 optionFunc call
     0 return
 }
