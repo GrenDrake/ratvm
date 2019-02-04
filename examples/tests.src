@@ -801,48 +801,96 @@ function printArray(theArray : counter length) {
     " (length: " say length say ")\n" say
 }
 
-function testLists(: counter) {
+function testLists(: counter random_value) {
     asm
 
-    "Test list size (should be 3): " say
-    testList get_size say "\n" say
-    testList 1 printArray call
+    "\n# Testing List Operations\n" say
 
-    "Adding new item 91 at end...\n" say
-    91 99 testList add_item "\n" say
-    testList 1 printArray call
+    "Testing list insertion...[br]" say
+    testList get_size 3 cmp test_add jz
+    "Test list has wrong initial size." error
 
-    "Adding new item 4608 in first position...\n" say
-    4608 0 testList add_item "\n" say
-    testList 1 printArray call
+    test_add:
+    91 99 testList add_item
+    testList get_size 4 cmp test_add_initial jz
+    "Test list has wrong size after add at end." error
 
-    "Adding new item 44 after second item...\n" say
-    44 2 testList add_item "\n" say
-    testList 1 printArray call
+    test_add_initial:
+    46 0 testList add_item
+    testList get_size 5 cmp test_add_middle jz
+    "Test list has wrong size after add at beginning." error
 
-    "New test list size (should be 6): " say
-    testList get_size say "\n" say
+    test_add_middle:
+    13 2 testList add_item
+    testList get_size 6 cmp test_list_contents jz
+    "Test list has wrong size after add in middle." error
 
-    "Deleting index #2...\n" say
-    2 testList del_item
-    testList 1 printArray call
+    test_list_contents:
+    0 testList get_item 46 cmp test_list_contents_wrong jnz
+    1 testList get_item  1 cmp test_list_contents_wrong jnz
+    2 testList get_item 13 cmp test_list_contents_wrong jnz
+    3 testList get_item  2 cmp test_list_contents_wrong jnz
+    4 testList get_item  3 cmp test_list_contents_wrong jnz
+    5 testList get_item 91 cmp test_list_contents_wrong jnz
 
-    "Trying to get bad index -1: " say
-    -1 testList get_item say "\n" say
 
-    "Trying to get bad index 99: " say
-    99 testList get_item say "\n" say
-
-    "Updating index #2 to second_obj...\n" say
+    "Testing changing value in list...[br]" say
     second_obj 2 testList set_item
-    testList 1 printArray call
+    2 testList get_item second_obj cmp test_deletion jz
+    "Failed to update list index." error
 
-    "\nSelecting 20 random items from testList:" say
+
+    test_deletion:
+    "Testing list deletion...[br]" say
+    2 testList del_item
+    testList get_size 5 cmp test_del_first jz
+    "Test list has wrong size after delete." error
+
+    test_del_first:
+    0 testList del_item
+    testList get_size 4 cmp test_del_last jz
+    "Test list has wrong size after delete." error
+
+    test_del_last:
+    3 testList del_item
+    testList get_size 3 cmp test_list_contents_2 jz
+    "Test list has wrong size after delete." error
+
+    test_list_contents_2:
+    0 testList get_item  1 cmp test_list_contents_wrong jnz
+    1 testList get_item  2 cmp test_list_contents_wrong jnz
+    2 testList get_item  3 cmp test_list_contents_wrong jnz
+
+
+    "Testing bad list indexes...[br]" say
+    -1 testList get_item 0 cmp test_list_badindex jz
+    "Accessing negative list index does not return 0." error
+
+    test_list_badindex:
+    99 testList get_item 0 cmp test_random jz
+    "Accessing list index beyond list size does not return 0." error
+
+
+    test_random:
+    "Testing getting random list items...[br]" say
     0 counter store
     randomloop:
-    " [" say testList get_random say "]" say
+    testList get_random random_value store
+    random_value 1 cmp randomloop_good jz
+    random_value 2 cmp randomloop_good jz
+    random_value 3 cmp randomloop_good jz
+    "Got unexpected value when drawing random list values." error
+    randomloop_good:
     counter inc counter store
-    20 counter cmp randomloop jgt
+    200 counter cmp randomloop jgt
+
+    return
+
+    test_list_contents_wrong:
+    "\n" say testList 1 printArray call
+    "List has wrong contents." error
+    return
+
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -851,56 +899,56 @@ function testLists(: counter) {
 function testMaps(: keys) {
     asm
 
-    "Current item \"7\" (non-existant key): " say
-    7 testMap get_item say
-    "[br]" say
+    "\n# Testing Map Operations\n" say
 
+    "Fetching map keys...[br]" say
+    7 testMap get_item 0 cmp test_valid_key jz
+    "Accessing invalid element returns wrong value." error
 
-    "Current item \"2\" (\"End\"): " say
-    2 testMap get_item say
-    "\n" say
+    test_valid_key:
+    2 testMap get_item "End" cmp test_update jz
+    "Retrieving map key \"2\" returned invalid result." error
 
-    "Updating item \"2\"...[br]" say
-    "Apple" 2 testMap set_item
+    test_update:
+    "Testing key update...[br]" say
+    "Apple" 3 testMap set_item
+    3 testMap get_item "Apple" cmp test_newkey jz
+    "Retrieving updated map key \"3\" returned invalid result." error
 
-    "New item \"2\" (\"Apple\"): " say
-    2 testMap get_item say
-    "\n" say
+    test_newkey:
+    "Testing inserting new key...[br]" say
+    "item" "newkey" testMap set_item
+    "newkey" testMap get_item "item" cmp test_haskey jz
+    "Retrieving new map key returned invalid result." error
 
+    test_haskey:
+    "Testing has_key...[br]" say
+    2 testMap has_item test_haskey_2 jnz
+    "Map denies having key \"2\"." error
 
-    "Adding item \"item\"...[br]" say
-    "newkey" "item" testMap set_item
+    test_haskey_2:
+    7 testMap has_item test_delete jz
+    "Map claims to have key \"7\"." error
 
-    "Item \"item\" value (\"newkey\"): " say
-    "item" testMap get_item say
-    "[br]" say
+    test_delete:
+    "newkey" testMap del_item
+    "newkey" testMap get_item 0 cmp test_key_list jz
+    "Failed to delete newkey." error
 
-
-    "Has key 2 (yes): " say
-    2 testMap has_item say
-    "\n" say
-
-    "Deleting item \"2\"...[br]" say
-    2 testMap del_item
-    "Current item \"2\" (\"End\"): " say
-    2 testMap get_item say "\n" say
-
-    "Has key 2 (no): " say
-    2 testMap has_item say
-    "[br]" say
-
-
-    "Has key 3 (yes): " say
-    3 testMap has_item say
-    "[br]" say
-
-    "Has key 88 (no): " say
-    88 testMap has_item say
-    "\n" say
-
-    testMap get_keys keys store
+    test_key_list:
     "Converting testMap keys to list...[br]" say
-    keys 1 printArray call
+    testMap get_keys keys store
+    0 keys get_item 1 cmp found_bad_key jnz
+    1 keys get_item 2 cmp found_bad_key jnz
+    2 keys get_item 3 cmp found_bad_key jnz
+    3 keys get_item 4 cmp found_bad_key jnz
+    keys get_size 4 cmp all_done jz
+    "Map keys list is wrong size." error
+
+    all_done:
+    return
+    found_bad_key:
+    "Key list has invalid value." error
 }
 
 // ////////////////////////////////////////////////////////////////////////////
