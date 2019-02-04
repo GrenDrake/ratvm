@@ -90,7 +90,7 @@ function testStack() {
     asm
     2 4 6 8
 
-    "# Testing stack manipulation\n" say
+    "\n# Testing stack manipulation\n" say
 
     "Testing correct initial size...[br]" say
     stack_size 4 cmp testPeek jz
@@ -143,7 +143,7 @@ function testStack() {
 // ////////////////////////////////////////////////////////////////////////////
 function testCall() {
     asm
-    "# Testing function calls\n" say
+    "\n# Testing function calls\n" say
 
     "Checking value of self on non-method...[br]" say
     self none cmp oneUnspecified jz
@@ -1037,7 +1037,7 @@ function testDynamic(: newObj newStr newList newMap) {
 function testStringManipulation(: testString) {
     asm
 
-    "# Test String Manipulation\n" say
+    "\n# Test String Manipulation\n" say
 
     "Check static string \"Fred\" has length four...[br]" say
     "Fred" strlen 4 cmp strlenNewString jz
