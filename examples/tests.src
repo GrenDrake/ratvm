@@ -1012,24 +1012,41 @@ function testDynamic(: newObj newStr newList newMap) {
 function testStringManipulation(: testString) {
     asm
 
+    "Check static string \"Fred\" has length four...[br]" say
+    "Fred" strlen 4 cmp strlenNewString jz
+    "Bad length on static string \"Fred\"." error
+
+    strlenNewString:
     String new testString store
-    "Length of new string (0): " say testString strlen say "[br]" say
+    "Check new string has zero length...[br]" say
+    testString strlen strcpyStrlen jz
+    "Bad initial length on new string." error
+
+    strcpyStrlen:
+    "Copying \"Fred\" to dynamic string...[br]" say
     "Fred" testString strcpy
-    "String is now: \"" say testString say "\" (\"Fred\")[br]" say
-    "Length of string \"Fred\" (4): " say testString strlen say "[br]" say
+    testString strlen 4 cmp stringCompares jz
+    "Bad length on copied string \"Fred\"." error
 
-    "static \"Fred\" == dynamic \"Fred\" (no): " say testString "Fred" cmp not say "[br]" say
-    "strcmp above: " say "Fred" testString strcmp not say "[br]" say
-    "strcmp \"Fred\" vs \"Joe\": " say "Joe" testString strcmp not say "[br]" say
+    stringCompares:
+    "Comparing static and dynamic strings with [b]==[/b]...[br]" say
+    testString "Fred" cmp stringCompareStrcmp jnz
+    "Identity of dynamic and static strings compared equal." error
 
+    stringCompareStrcmp:
+    "Comparing static and dynamic strings with [b]strcmp[/b]...[br]" say
+    "Fred" testString strcmp stringAppend jz
+    "Dynamic and static strings did not compare equal." error
+
+    stringAppend:
+    "Appending to test string...[br]" say
     " Lives!" testString strcat
-    "After appending: \"" say testString say "\" (\"Fred Lives!\")[br]" say
-    "New length (11): " say testString say "[br]" say
+    "Fred Lives!" testString strcmp doneStrings jz
+    "String append malfunctioned." error
 
+    doneStrings:
     continueStr testPagesCleanup add_option
     dispatcher get_option
-
-//    strcpy strcat strlen strcmp
 }
 
 
