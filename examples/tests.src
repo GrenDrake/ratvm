@@ -230,30 +230,79 @@ function testCompare(: testValue) {
     asm
     "\n# Testing compare opcode\n" say
 
-    "[b][comparing integer values][/b][br]" say
-    " 5 vs 5 (=   0): " say 5 5  cmp say "[br]" say
-    " 2 < 5: " say 2 5 cmp testLTgood jlt
-        " [b]failed[/b][br]" say testGT jmp
-        testLTgood: " passed[br]" say
-    testGT:
-    " 5 > 2: " say 5 2 cmp testGTgood jgt
-        " [b]failed[/b][br]" say testGT jmp
-        testGTgood: " passed[br]" say
-    "-5 vs 5 (= -10): " say -5 5 cmp say "[br]" say
-    "5 vs -5 (=  10): " say 5 -5 cmp say "\n" say
+    "Comparing integer values...[br]" say
+    5 5 cmp testCmpLT jz
+    "Failed 5 == 5." error
 
-    "\n[b][comparing non-integer values][/b][br]" say
-    "none vs none (= 0): " say testValue none cmp say "[br]" say
-    "string vs none (= 1): " say "\n" none cmp say "[br]" say
-    "string vs function (= 1): " say "\n" testCompare cmp say "[br]" say
-    "string vs same string (= 0): " say "\n" "\n" cmp say "[br]" say
-    "string vs other string (= 1): " say "\n" "" cmp say "\n" say
+    testCmpLT:
+    2 5 cmp testCmpGT jlt
+    "Failed 2 < 5." error
 
-    "\n[b][testing integer comparisons using local variables][/b][br]" say
+    testCmpGT:
+    5 2 cmp testCmpLTE jgt
+    "Failed 5 > 2." error
+
+    testCmpLTE:
+    2 5 cmp testCmpLTE2 jlte
+    "Failed 2 <= 5." error
+
+    testCmpLTE2:
+    5 5 cmp testCmpGTE jlte
+    "Failed 5 <= 5." error
+
+    testCmpGTE:
+    5 2 cmp testCmpGTE2 jgte
+    "Failed 5 >= 2." error
+
+    testCmpGTE2:
+    5 5 cmp testCmpLtNeg jgte
+    "Failed 5 >= 5." error
+
+    testCmpLtNeg:
+    -5 5 cmp testCmpGtNeg jlt
+    "Failed -5 < 5." error
+
+    testCmpGtNeg:
+    5 -5 cmp testNonInteger jgt
+    "Failed 5 > -5." error
+
+
+    testNonInteger:
+    "Testing non-integer comparisons...[br]" say
+    none none cmp testStrNone jz
+    "Failed none == none." error
+
+    testStrNone:
+    "\n" none cmp testStrFunc jnz
+    "Failed String != none." error
+
+    testStrFunc:
+    "\n" testCompare cmp testStrSelf jnz
+    "Failed String != Function." error
+
+    testStrSelf:
+    "\n" "\n" cmp testStrStr jz
+    "Failed String != self." error
+
+    testStrStr:
+    "\n" " " cmp testWithLocals jnz
+    "Failed String != String." error
+
+    testWithLocals:
+    "Testing using local variables...[br]" say
     5 testValue store
-    " var vs 5 (=  0): " say testValue 5 cmp say "[br]" say
-    " 2 vs var (= -3): " say 2 testValue cmp say "[br]" say
-    " var vs 2 (=  3): " say testValue 2 cmp say "\n" say
+    testValue 5 cmp localLt jz
+    "Failed local == 5." error
+
+    localLt:
+    2 testValue cmp localGt jlt
+    "Failed 2 < local." error
+
+    localGt:
+    testValue 2 cmp done jgt
+    "Failed local > 2." error
+
+    done:
 }
 
 
