@@ -1054,6 +1054,8 @@ function testDynamic(: newObj newStr newList newMap) {
 function testStringManipulation(: testString) {
     asm
 
+    "# Test String Manipulation\n" say
+
     "Check static string \"Fred\" has length four...[br]" say
     "Fred" strlen 4 cmp strlenNewString jz
     "Bad length on static string \"Fred\"." error
