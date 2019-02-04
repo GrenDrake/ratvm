@@ -1092,10 +1092,6 @@ function doAllTests() {
     0 testObjectProps call
     0 testDynamic call
     0 testStringManipulation call
-
-    0 testOutput call
-    0 testInfoarea call
-    0 testRandom call
 }
 
 // ////////////////////////////////////////////////////////////////////////////
