@@ -73,7 +73,7 @@ struct OpcodeDef {
         StringAppend        = 66,
         StringLength        = 67,
         StringCompare       = 68,
-        /* Unused opcode: 69 */
+        Error               = 69,
         SetInfo             = 70,
         AddPage             = 71,
         DelPage             = 72,
