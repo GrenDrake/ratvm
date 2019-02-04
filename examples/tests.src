@@ -23,14 +23,7 @@ object first_obj
     anObject object ;
     aMap { $fruit: $apple }
     aList [ 4 ]
-    testMethod function(arg1 arg2 arg3) {
-        asm
-        "I am: " say self say "\n" say
-        "My Arguments: " say
-        arg1 say ", " say
-        arg2 say ", " say
-        arg3 say "\n" say
-    }
+    testMethod function() { }
 ;
 object second_obj;
 
@@ -130,33 +123,82 @@ function testStack(: counter next) {
 // ////////////////////////////////////////////////////////////////////////////
 function testCall() {
     asm
+    "# Testing function calls\n" say
 
-    "\n## Testing function calls\n" say
-    "Passing (4, 5). " say
-    5 4 2 testCallHelper call
-    "Passing (4). " say
-    4 1 testCallHelper call
-    "Passing (). " say
-    0 testCallHelper call
-    "Multiply 5 * 5 = " say
-    5 5 2 testCallHelperMultiply call say
-    "\n" say
+    "Checking value of self on non-method...[br]" say
+    self none cmp oneUnspecified jz
+    "Incorrect value of self." error
 
-    "[b]Calling first_obj.testMethod...[/b]\n" say
-    3 2 1 3 $testMethod first_obj call_method
+    oneUnspecified:
+    "Testing call with unspecified arguments...[br]" say
+    24 1 testCall_onlyOne call
+
+    "Testing call with extra arguments...[br]" say
+    34 88 24 3 testCall_both call
+
+    "Checking result of calling testCallHelperMultiply(5,6)...[br]" say
+    5 6 2 testCallHelperMultiply call 30 cmp testMethodCall jz
+    "testCallHelperMultiply(5,6) did not have result of 30." error
+
+    testMethodCall:
+    "Calling testCallObject.testMethod...[br]" say
+    3 2 1 3 $testMethod testCallObject call_method
 
     continueStr showOptions add_option
     dispatcher get_option
 }
 
-function testCallHelper( arg1 arg2 ) {
+object testCallObject
+    testMethod function(arg1 arg2 arg3) {
+        asm
+
+        "[i]testMethod:[/i] Checking value of self...[br]" say
+        self testCallObject cmp testArg1 jz
+        "Incorrect value of self." error
+
+        testArg1:
+        "[i]testMethod:[/i] Checking argument values...[br]" say
+        arg1 1 cmp testArg2 jz
+        "First argument has wrong value." error
+        testArg2:
+        arg2 2 cmp testArg3 jz
+        "Second argument has wrong value." error
+        testArg3:
+        arg3 3 cmp done jz
+        "Third argument has wrong value." error
+
+        done:
+    }
+;
+
+function testCall_onlyOne( arg1 arg2 ) {
     asm
 
-    "Received: (" say
-    arg1 say
-    ", " say
-    arg2 say
-    ")\n" say
+    arg1 none cmp compareArg2 jnz
+    "First passed argument had unexpected none" error
+
+    compareArg2:
+    arg2 none cmp done jz
+    "Second passed argument not none" error
+
+    done:
+}
+
+function testCall_both( arg1 arg2 : var1 ) {
+    asm
+
+    arg1 none cmp compareArg2 jnz
+    "First passed argument had unexpected none" error
+
+    compareArg2:
+    arg2 none cmp compareVar1 jnz
+    "First passed argument had unexpected none" error
+
+    compareVar1:
+    var1 none cmp done jz
+    "First non-argument local not none" error
+
+    done:
 }
 
 function testCallHelperMultiply( arg1 arg2 ) {
