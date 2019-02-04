@@ -51,15 +51,6 @@ function printMagicNumbers() {
     $number3 magic_2 get_prop say ".\n" say
 }
 
-object game_status
-    ident 3
-    save function() { }
-    load function() {
-        asm
-        "Restored saved game!\n" say
-        0 showOptions call
-    }
-;
 object magic_1
     ident 1
     save function(data) {
