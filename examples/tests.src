@@ -311,211 +311,158 @@ function testCompare(: testValue) {
 // ////////////////////////////////////////////////////////////////////////////
 function testJumps(: testValue) {
     asm
-    "\n## Testing jump opcodes\n" say
+    "\n# Testing jump opcodes\n" say
 
-// jump
-    "jmp      : " say
+    "Testing unconditional jump...[br]" say
     test001 jmp
-    "Failed!\n" say 0 return // abort because the rest of the tests depend on
-                             // the jmp opcode
-    test001: "Succeeded!\n" say
+    "Failed unconditional jump." error
 
-// jump zero
-    "jz    (0): " say
-    0 test003 jz
-    "Failed!\n" say test003after jmp
-    test003: "Succeeded!\n" say
-    test003after:
+    test001:
+    "Testing conditional jumps...[br]" say
+    0 test002 jz
+    "Failed jz (0)." error
 
-    "jz    (1): " say
-    1 test004failed jz
-    "Succeeded!\n" say test004after jmp
-    test004failed: "Failed!\n" say
-    test004after:
+    test002:
+    1 test002_failed jz
+    test003 jmp
+    test002_failed:
+    "Failed jz (1)." error
 
-//  jump not zero
-    "jnz   (0): " say
-    0 test005failed jnz
-    "Succeeded!\n" say test005after jmp
-    test005failed: "Failed!\n" say
-    test005after:
+    test003:
+    0 test003_failed jnz
+    test004 jmp
+    test003_failed:
+    "Failed jnz (0)." error
 
-    "jnz   (1): " say
-    1 test006 jnz
-    "Failed!\n" say test006after jmp
-    test006: "Succeeded!\n" say
-    test006after:
+    test004:
+    1 test005 jnz
+    "Failed jnz (1)." error
 
-//  jump less than
-    "jlt   (1): " say
-    1 test007failed jlt
-    "Succeeded!\n" say test007after jmp
-    test007failed: "Failed!\n" say
-    test007after:
+    test005:
+    1 test005_failed jlt
+    test006 jmp
+    test005_failed:
+    "Failed jlt (1)." error
 
-    "jlt   (0): " say
-    0 test008failed jlt
-    "Succeeded!\n" say test008after jmp
-    test008failed: "Failed!\n" say
-    test008after:
+    test006:
+    0 test006_failed jlt
+    test007 jmp
+    test006_failed:
+    "Failed jlt (0)." error
 
-    "jlt  (-1): " say
-    -1 test009 jlt
-    "Failed!\n" say test009after jmp
-    test009: "Succeeded!\n" say
-    test009after:
+    test007:
+    -1 test008 jlt
+    "Failed jlt (-1)." error
 
-//  jump less than or equal
-    "jlte  (1): " say
-    1 test010failed jlte
-    "Succeeded!\n" say test010after jmp
-    test010failed: "Failed!\n" say
-    test010after:
+    test008:
+    -1 test008_failed jgt
+    test009 jmp
+    test008_failed:
+    "Failed jgt (-1)." error
 
-    "jlte  (0): " say
-    0 test011 jlte
-    "Failed!\n" say test011after jmp
-    test011: "Succeeded!\n" say
-    test011after:
+    test009:
+    0 test009_failed jgt
+    test010 jmp
+    test009_failed:
+    "Failed jgt (0)." error
 
-    "jlte (-1): " say
+    test010:
+    1 test011 jgt
+    "Failed jgt (1)." error
+
+    test011:
     -1 test012 jlte
-    "Failed!\n" say test012after jmp
-    test012: "Succeeded!\n" say
-    test012after:
+    "Failed jlte (-1)." error
 
-//  jump greater than
-    "jgt   (1): " say
-    1 test013 jgt
-    "Failed!\n" say test013after jmp
-    test013: "Succeeded!\n" say
-    test013after:
+    test012:
+    0 test013 jlte
+    "Failed jlte (0)." error
 
-    "jgt   (0): " say
-    0 test014failed jgt
-    "Succeeded!\n" say test014after jmp
-    test014failed: "Failed!\n" say
-    test014after:
+    test013:
+    1 test013_failed jlte
+    test014 jmp
+    test013_failed:
+    "Failed jlte (1)." error
 
-    "jgt  (-1): " say
-    -1 test015failed jgt
-    "Succeeded!\n" say test015after jmp
-    test015failed: "Failed!\n" say
-    test015after:
+    test014:
+    1 test015 jgte
+    "Failed jgte (1)." error
 
-//  jump greater than or equal
-    "jgte  (1): " say
-    1 test016 jgte
-    "Failed!\n" say test013after jmp
-    test016: "Succeeded!\n" say
-    test016after:
+    test015:
+    0 test016 jgte
+    "Failed jgte (0)." error
 
-    "jgte  (0): " say
-    0 test017 jgte
-    "Failed!\n" say test017after jmp
-    test017: "Succeeded!\n" say
-    test017after:
+    test016:
+    -1 test016_failed jgte
+    test017 jmp
+    test016_failed:
+    "Failed jgte (-1)." error
 
-    "jgte (-1): " say
-    -1 test018failed jgte
-    "Succeeded!\n" say test018after jmp
-    test018failed: "Failed!\n" say
-    test018after:
-
-
-    "\n[Jump target stored in local variable.]\n" say
-    "jmp: " say
-    test019 testValue store
+    test017:
+    "Test jump target in local variable...[br]" say
+    test018 testValue store
     testValue jmp
-    "Failed!\n" say test019after jmp
-    test019: "Succeeded!\n" say
-    test019after:
+    "Failed jmp w/ local." error
 
-    "jz: " say
-    test020 testValue store
+    test018:
+    test019 testValue store
     0 testValue jz
-    "Failed!\n" say test020after jmp
-    test020: "Succeeded!\n" say
-    test020after:
+    "Failed jz w/ local." error
 
-    "jnz: " say
-    test021 testValue store
+    test019:
+    test020 testValue store
     1 testValue jnz
-    "Failed!\n" say test021after jmp
-    test021: "Succeeded!\n" say
-    test021after:
+    "Failed jnz w/ local." error
 
-    "jlt: " say
-    test022 testValue store
+    test020:
+    test021 testValue store
     -1 testValue jlt
-    "Failed!\n" say test022after jmp
-    test022: "Succeeded!\n" say
-    test022after:
+    "Failed jlt w/ local." error
 
-    "jlte: " say
+    test021:
+    test022 testValue store
+    1 testValue jgt
+    "Failed jgt w/ local." error
+
+    test022:
     test023 testValue store
     -1 testValue jlte
-    "Failed!\n" say test023after jmp
-    test023: "Succeeded!\n" say
-    test023after:
+    "Failed jlte w/ local." error
 
-    "jgt: " say
+    test023:
     test024 testValue store
-    1 testValue jgt
-    "Failed!\n" say test024after jmp
-    test024: "Succeeded!\n" say
-    test024after:
-
-    "jgte: " say
-    test025 testValue store
     1 testValue jgte
-    "Failed!\n" say test025after jmp
-    test025: "Succeeded!\n" say
-    test025after:
+    "Failed jgte w/ local." error
 
-
-    "\n[Test value stored in local variable.]\n" say
-    "jz: " say
+    test024:
+    "Testing with value in local variable...[br]" say
     0 testValue store
-    testValue test026success jz
-    "Failed!\n" say test026after jmp
-    test026success: "Succeeded!\n" say
-    test026after:
+    testValue test025 jz
+    "Failed jz w/ value in local." error
 
-    "jnz: " say
+    test025:
     1 testValue store
-    testValue test027success jnz
-    "Failed!\n" say test027after jmp
-    test027success: "Succeeded!\n" say
-    test027after:
+    testValue test026 jnz
+    "Failed jnz w/ value in local." error
 
-    "jlt: " say
+    test026:
+    testValue test027 jgt
+    "Failed jgt w/ value in local." error
+
+    test027:
+    testValue test028 jgte
+    "Failed jgte w/ value in local." error
+
+    test028:
     -1 testValue store
-    testValue test028success jlt
-    "Failed!\n" say test028after jmp
-    test028success: "Succeeded!\n" say
-    test028after:
+    testValue test029 jlt
+    "Failed jlt w/ value in local." error
 
-    "jlte: " say
-    -1 testValue store
-    testValue test029success jlte
-    "Failed!\n" say test029after jmp
-    test029success: "Succeeded!\n" say
-    test029after:
+    test029:
+    testValue done jlte
+    "Failed jlte w/ value in local." error
 
-    "jgt: " say
-    1 testValue store
-    testValue test030success jgt
-    "Failed!\n" say test030after jmp
-    test030success: "Succeeded!\n" say
-    test030after:
-
-    "jgte: " say
-    1 testValue store
-    testValue test031success jgte
-    "Failed!\n" say test031after jmp
-    test031success: "Succeeded!\n" say
-    test031after:
+    done:
 }
 
 
