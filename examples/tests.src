@@ -131,8 +131,6 @@ function testStack() {
     0 stack_peek 2 cmp testSwapError jnz
     2 stack_peek 6 cmp testSwapError jnz
 
-    continueStr showOptions add_option
-    dispatcher get_option
     return
 
     testSwapError:
@@ -165,9 +163,6 @@ function testCall() {
     testMethodCall:
     "Calling testCallObject.testMethod...[br]" say
     3 2 1 3 $testMethod testCallObject call_method
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 object testCallObject
@@ -259,9 +254,6 @@ function testCompare(: testValue) {
     " var vs 5 (=  0): " say testValue 5 cmp say "[br]" say
     " 2 vs var (= -3): " say 2 testValue cmp say "[br]" say
     " var vs 2 (=  3): " say testValue 2 cmp say "\n" say
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 
@@ -475,10 +467,6 @@ function testJumps(: testValue) {
     "Failed!\n" say test031after jmp
     test031success: "Succeeded!\n" say
     test031after:
-
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 
@@ -555,9 +543,6 @@ function testMath(: counter) {
     "Not \"Fred\": " say "Fred" not say "[br]" say
     "Not testMath: " say testMath not say "[br]" say
     "Not none: " say none not say "[br]" say
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 
@@ -602,9 +587,6 @@ function testObjectProps() {
     "[br]first_obj.testMethod (5): " say $testMethod first_obj get_prop typeof say
     "[br]first_obj.anObject (6): "   say $anObject   first_obj get_prop typeof say
     "[br]first_obj.aProperty (7): "  say $aProperty  first_obj get_prop typeof say
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 
@@ -626,9 +608,6 @@ function testLoopDemo(: counter theValue) {
     "Final result: " say
     theValue say
     "\n" say
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 
@@ -642,13 +621,12 @@ function testInputs() {
     "No extra value"        receiveExtra   add_option
     "Extra value 6"         receiveExtra   6   add_option_x
     "Extra value 73"        receiveExtra   73  add_option_x
-    "Return to top menu"    showOptions    add_option
     dispatcher get_option
 }
 function receiveExtra(extra) {
     asm
     "Option extra value: " say extra say
-    continueStr testInputs add_option
+    "Back to inputs menu" testInputs add_option
     dispatcher get_option
 }
 function testGetkey() {
@@ -659,7 +637,7 @@ function testGetkey() {
 function testGetkeyReceive(key) {
     asm
     "Resulting character code: " say key say ".\n" say
-    continueStr testInputs add_option
+    "Back to inputs menu" testInputs add_option
     dispatcher get_option
 }
 
@@ -755,8 +733,6 @@ function testValues(: localvar unusedvar) {
     "New value: \"" say localvar say "\" and type: " say localvar typeof say "[br]" say
 
     all_done:
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -780,9 +756,6 @@ function testOutput() {
     "italic text: [i]Lorem ipsum dolor sit amet.[/i][br]" say
     "bold italic: [b][i]Lorem ipsum dolor sit amet.[/i][/b][br]" say
     "italic bold: [i][b]Lorem ipsum dolor sit amet.[/b][/i]\n" say
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -797,8 +770,6 @@ function testInfoarea() {
     "5:00 am"       InfobarRight    set_info
     "Fred is Cool"  InfobarFooter   set_info
     "Updated Title" InfobarTitle    set_info
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -816,9 +787,6 @@ function testRandom(: counter) {
     counter 1 sub counter store
     loop_start jmp
     loop_done: "\n" say
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -879,9 +847,6 @@ function testLists(: counter) {
     " [" say testList get_random say "]" say
     counter inc counter store
     20 counter cmp randomloop jgt
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -940,9 +905,6 @@ function testMaps(: keys) {
     testMap get_keys keys store
     "Converting testMap keys to list...[br]" say
     keys 1 printArray call
-
-    continueStr showOptions add_option
-    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -960,7 +922,7 @@ function testPagesReal() {
     asm
     "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
     "Remove \"Another Page\"" testPagesRemovePage add_option
-    continueStr testPagesCleanup add_option
+    "Cleanup and return to main list" testPagesCleanup add_option
     dispatcher get_option
 }
 function testPagesRemovePage() {
@@ -1019,7 +981,7 @@ function testPage1(key) {
 function otherPage() {
     asm
     "You selected a page other than the demo page! (Only the demo page has actual content.)" say
-    continueStr testPagesCleanup add_option
+    "Continue" none add_option
     endOtherPage get_option
 }
 function endOtherPage() {
@@ -1071,9 +1033,6 @@ function testDynamic(: newObj newStr newList newMap) {
     "newStr (0):" say newStr is_static say "\n" say
 
     List new List new List new say
-
-    continueStr testPagesCleanup add_option
-    dispatcher get_option
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -1117,10 +1076,31 @@ function testStringManipulation(: testString) {
     "String append malfunctioned." error
 
     doneStrings:
-    continueStr testPagesCleanup add_option
-    dispatcher get_option
 }
 
+// ////////////////////////////////////////////////////////////////////////////
+// All tests runner
+// ////////////////////////////////////////////////////////////////////////////
+function doAllTests() {
+    asm
+
+    0 testJumps call
+    0 testCompare call
+    0 testCall call
+    0 testStack call
+    0 testMath call
+
+    0 testValues call
+    0 testLists call
+    0 testMaps call
+    0 testObjectProps call
+    0 testDynamic call
+    0 testStringManipulation call
+
+    0 testOutput call
+    0 testInfoarea call
+    0 testRandom call
+}
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
@@ -1132,23 +1112,28 @@ function showOptions() {
     "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading." say
     0 printMagicNumbers call
 
-    "Loop Demo"                 testLoopDemo       add_option
-    "Test Info Areas"           testInfoarea       add_option
-    "Test Call"                 testCall           add_option
-    "Test String Manipulation"  testStringManipulation  add_option
-    "Test Dynamic Objects"      testDynamic        add_option
-    "Test RNG"                  testRandom         add_option
-    "Test Compare"              testCompare        add_option
-    "Test Jumps"                testJumps          add_option
-    "Test Math"                 testMath           add_option
-    "Test List Methods"         testLists          add_option
-    "Test Map Methods"          testMaps           add_option
-    "Test Object Properties"    testObjectProps    add_option
+    "All non-interactive tests" doAllTests         add_option
+    "Loop demo"                 testLoopDemo       add_option
+
+    "Test jumps"                testJumps          add_option
+    "Test compare"              testCompare        add_option
+    "Test call"                 testCall           add_option
     "Test stack commands"       testStack          add_option
+    "Test math"                 testMath           add_option
+
     "Test value types"          testValues         add_option
+    "Test list methods"         testLists          add_option
+    "Test map methods"          testMaps           add_option
+    "Test object properties"    testObjectProps    add_option
+    "Test dynamic objects"      testDynamic        add_option
+    "Test string manipulation"  testStringManipulation  add_option
+
     "Test output"               testOutput         add_option
-    "Test Pages"                testPages          add_option
-    "Test Input Methods"        testInputs         add_option
+    "Test info areas"           testInfoarea       add_option
+    "Test random"               testRandom         add_option
+
+    "Test pages"                testPages          add_option
+    "Test input methods"        testInputs         add_option
     dispatcher get_option
 }
 
@@ -1158,6 +1143,17 @@ function dispatcher(optionFunc extraValue) {
 
     false saveAllowed set_setting
     extraValue 1 optionFunc call
+
+    optionFunc showOptions cmp alldone jz
+    optionFunc testPages cmp alldone jz
+    optionFunc testPagesReal cmp alldone jz
+    optionFunc testPagesRemovePage cmp alldone jz
+    optionFunc receiveExtra cmp alldone jz
+    optionFunc testGetkey cmp alldone jz
+    "Return to main page" showOptions add_option
+    dispatcher get_option
+
+    alldone:
     0 return
 }
 
