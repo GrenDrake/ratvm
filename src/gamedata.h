@@ -73,6 +73,7 @@ struct FunctionDef {
     unsigned codePosition, codeEndPosition;
     ByteStream code;
     int globalId;
+    bool isAsm;
 };
 
 class GameData {

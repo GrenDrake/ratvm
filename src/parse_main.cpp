@@ -80,8 +80,14 @@ int parse_flags(GameData &gamedata, ParseState &state) {
 // Parse a function
 int parse_function(GameData &gamedata, ParseState &state) {
     static int nextFunctionId = 1;
+    bool isAsm = false;
     const Origin &origin = state.here()->origin;
-    state.skip("function");
+    if (state.matches("asm_function")) {
+        isAsm = true;
+        state.skip("asm_function");
+    } else {
+        state.skip("function");
+    }
 
     std::string funcName;
     if (state.matches(Token::Identifier)) {
@@ -97,6 +103,7 @@ int parse_function(GameData &gamedata, ParseState &state) {
     function->origin = origin;
     function->name = funcName;
     function->globalId = nextFunctionId++;
+    function->isAsm = isAsm;
     gamedata.functions.push_back(function);
     // arguments / locals
     bool doingLocals = false;
@@ -255,7 +262,7 @@ Value parse_value(GameData &gamedata, ParseState &state) {
     } else if (state.matches("flags")) {
         int newId = parse_flags(gamedata, state);
         value = Value{Value::FlagSet, newId};
-    } else if (state.matches("function")) {
+    } else if (state.matches("function") || state.matches("asm_function")) {
         int newId = parse_function(gamedata, state);
         value = Value{Value::Node, newId};
     } else if (state.matches(Token::Integer)) {
@@ -313,7 +320,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
                     gamedata.errors.push_back(Error{object->origin, "Anonymous object at top level"});
                 }
             }
-        } else if (state.matches("function")) {
+        } else if (state.matches("function") || state.matches("asm_function")) {
             int functionId = parse_function(gamedata, state);
             if (functionId > 0) {
                 FunctionDef *function = gamedata.functions[functionId];

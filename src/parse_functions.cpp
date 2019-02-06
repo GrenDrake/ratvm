@@ -193,13 +193,14 @@ int parse_functions(GameData &gamedata) {
         }
 
         function->codePosition = gamedata.bytecode.size();
-        if (state.at_end()) {
-            // empty function
-        } else if (state.matches("asm")) {
-            state.next();
+        if (function->isAsm) {
             parse_asm_function(gamedata, function, state);
         } else {
-            gamedata.errors.push_back(Error{function->origin, "Unknown function type."});
+            if (state.at_end()) {
+                // empty function
+            } else {
+                gamedata.errors.push_back(Error{function->origin, "Non-asm functions not implemented."});
+            }
         }
         function->code.add_8(OpcodeDef::Return);
         function->code.padTo(4);

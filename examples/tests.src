@@ -33,8 +33,7 @@ object second_obj;
 // Code for testing load/save
 // ////////////////////////////////////////////////////////////////////////////
 
-function printMagicNumbers() {
-    asm
+asm_function printMagicNumbers() {
     "\nThis morning's magic numbers are: " say
     $number1 magic_1 get_prop say ", " say
     $number2 magic_1 get_prop say ", and " say
@@ -47,14 +46,12 @@ function printMagicNumbers() {
 
 object magic_1
     ident 1
-    save function(data) {
-        asm
+    save asm_function(data) {
         $number1 self get_prop 99 data add_item
         $number2 self get_prop 99 data add_item
         $number3 self get_prop 99 data add_item
     }
-    load function(data) {
-        asm
+    load asm_function(data) {
         0 data get_item $number1 self set_prop
         1 data get_item $number2 self set_prop
         2 data get_item $number3 self set_prop
@@ -66,14 +63,12 @@ object magic_1
 
 object magic_2
     ident 2
-    save function(data) {
-        asm
+    save asm_function(data) {
         $number1 self get_prop 99 data add_item
         $number2 self get_prop 99 data add_item
         $number3 self get_prop 99 data add_item
     }
-    load function(data) {
-        asm
+    load asm_function(data) {
         0 data get_item $number1 self set_prop
         1 data get_item $number2 self set_prop
         2 data get_item $number3 self set_prop
@@ -87,8 +82,7 @@ object magic_2
 // ////////////////////////////////////////////////////////////////////////////
 // Test stack commands
 // ////////////////////////////////////////////////////////////////////////////
-function testStack() {
-    asm
+asm_function testStack() {
     2 4 6 8
 
     "\n# Testing stack manipulation\n" say
@@ -142,8 +136,7 @@ function testStack() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test function calls and arguments
 // ////////////////////////////////////////////////////////////////////////////
-function testCall() {
-    asm
+asm_function testCall() {
     "\n# Testing function calls\n" say
 
     "Checking value of self on non-method...[br]" say
@@ -167,9 +160,7 @@ function testCall() {
 }
 
 object testCallObject
-    testMethod function(arg1 arg2 arg3) {
-        asm
-
+    testMethod asm_function(arg1 arg2 arg3) {
         "[i]testMethod:[/i] Checking value of self...[br]" say
         self testCallObject cmp testArg1 jz
         "Incorrect value of self." error
@@ -189,9 +180,7 @@ object testCallObject
     }
 ;
 
-function testCall_onlyOne( arg1 arg2 ) {
-    asm
-
+asm_function testCall_onlyOne( arg1 arg2 ) {
     arg1 none cmp compareArg2 jnz
     "First passed argument had unexpected none" error
 
@@ -202,9 +191,7 @@ function testCall_onlyOne( arg1 arg2 ) {
     done:
 }
 
-function testCall_both( arg1 arg2 : var1 ) {
-    asm
-
+asm_function testCall_both( arg1 arg2 : var1 ) {
     arg1 none cmp compareArg2 jnz
     "First passed argument had unexpected none" error
 
@@ -219,16 +206,15 @@ function testCall_both( arg1 arg2 : var1 ) {
     done:
 }
 
-function testCallHelperMultiply( arg1 arg2 ) {
-    asm arg1 arg2 mult return
+asm_function testCallHelperMultiply( arg1 arg2 ) {
+    arg1 arg2 mult return
 }
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test compare command
 // ////////////////////////////////////////////////////////////////////////////
-function testCompare(: testValue) {
-    asm
+asm_function testCompare(: testValue) {
     "\n# Testing compare opcode\n" say
 
     "Comparing integer values...[br]" say
@@ -310,8 +296,7 @@ function testCompare(: testValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test jump commands
 // ////////////////////////////////////////////////////////////////////////////
-function testJumps(: testValue) {
-    asm
+asm_function testJumps(: testValue) {
     "\n# Testing jump opcodes\n" say
 
     "Testing unconditional jump...[br]" say
@@ -470,9 +455,7 @@ function testJumps(: testValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test math commands
 // ////////////////////////////////////////////////////////////////////////////
-function testMath(: counter) {
-    asm
-
+asm_function testMath(: counter) {
     "\n# Testing math opcodes\n" say
     "Testing arithmetic...[br]" say
 
@@ -573,9 +556,7 @@ function testMath(: counter) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test object property commands
 // ////////////////////////////////////////////////////////////////////////////
-function testObjectProps() {
-    asm
-
+asm_function testObjectProps() {
     "\n# Testing object manipulation opcodes\n[b][testing get_prop][/b][br]" say
     "first_obj.aString: " say
     $aString first_obj get_prop say
@@ -617,8 +598,7 @@ function testObjectProps() {
 // ////////////////////////////////////////////////////////////////////////////
 // Basic looping demo
 // ////////////////////////////////////////////////////////////////////////////
-function testLoopDemo(: counter theValue) {
-    asm
+asm_function testLoopDemo(: counter theValue) {
 // show a count up loop and calculate 2^10
     0 *counter store
     1 *theValue store
@@ -638,8 +618,7 @@ function testLoopDemo(: counter theValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test input commands
 // ////////////////////////////////////////////////////////////////////////////
-function testInputs() {
-    asm
+asm_function testInputs() {
     "This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu." say
     "Test key input"        testGetkey     add_option
     "No extra value"        receiveExtra   add_option
@@ -647,19 +626,16 @@ function testInputs() {
     "Extra value 73"        receiveExtra   73  add_option_x
     dispatcher get_option
 }
-function receiveExtra(extra) {
-    asm
+asm_function receiveExtra(extra) {
     "Option extra value: " say extra say
     "Back to inputs menu" testInputs add_option
     dispatcher get_option
 }
-function testGetkey() {
-    asm
+asm_function testGetkey() {
     "This will demonstrate and test the get_key input type." say
     "Try pressing a key." testGetkeyReceive get_key
 }
-function testGetkeyReceive(key) {
-    asm
+asm_function testGetkeyReceive(key) {
     "Resulting character code: " say key say ".\n" say
     "Back to inputs menu" testInputs add_option
     dispatcher get_option
@@ -669,9 +645,7 @@ function testGetkeyReceive(key) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test value types
 // ////////////////////////////////////////////////////////////////////////////
-function testValues(: localvar) {
-    asm
-
+asm_function testValues(: localvar) {
     "\n# Testing Value Types\n" say
 
     "Checking basic value types...[br]" say
@@ -738,9 +712,7 @@ function testValues(: localvar) {
 // ////////////////////////////////////////////////////////////////////////////
 // Output command tests
 // ////////////////////////////////////////////////////////////////////////////
-function testOutput() {
-    asm
-
+asm_function testOutput() {
     "This text (and nearly all text in these tests) is output using the \"say\" command.\nSay integer value: " say
     6215 say
     "[br]-1 using say_unsigned (should be 4294967295): " say
@@ -761,9 +733,7 @@ function testOutput() {
 // ////////////////////////////////////////////////////////////////////////////
 // Update info areas
 // ////////////////////////////////////////////////////////////////////////////
-function testInfoarea() {
-    asm
-
+asm_function testInfoarea() {
     "The header, footer, and title regions should now be updated. (Unless you already ran this test since starting the program.)" say
 
     "Good day!"     InfobarLeft     set_info
@@ -775,9 +745,7 @@ function testInfoarea() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test RNG
 // ////////////////////////////////////////////////////////////////////////////
-function testRandom(: counter) {
-    asm
-
+asm_function testRandom(: counter) {
     "This will generate 100 random numbers between 50 and 60 below.\n" say
 
     100 *counter store
@@ -792,9 +760,7 @@ function testRandom(: counter) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test List Methods
 // ////////////////////////////////////////////////////////////////////////////
-function printArray(theArray : counter length) {
-    asm
-
+asm_function printArray(theArray : counter length) {
     "[b]Array contents:[/b]" say
     theArray get_size *length store
     0 *counter store
@@ -805,9 +771,7 @@ function printArray(theArray : counter length) {
     " (length: " say length say ")\n" say
 }
 
-function testLists(: counter random_value) {
-    asm
-
+asm_function testLists(: counter random_value) {
     "\n# Testing List Operations\n" say
 
     "Testing list insertion...[br]" say
@@ -900,9 +864,7 @@ function testLists(: counter random_value) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test Map Methods
 // ////////////////////////////////////////////////////////////////////////////
-function testMaps(: keys) {
-    asm
-
+asm_function testMaps(: keys) {
     "\n# Testing Map Operations\n" say
 
     "Fetching map keys...[br]" say
@@ -958,28 +920,24 @@ function testMaps(: keys) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test Page Commands
 // ////////////////////////////////////////////////////////////////////////////
-function testPages() {
-    asm
+asm_function testPages() {
     "Demo Page" testPage1 'd' add_page
     "Another Page" otherPage 'a' add_page
     "Page" otherPage 'p' add_page
     "A Long Page Name" otherPage 'l' add_page
     0 testPagesReal call
 }
-function testPagesReal() {
-    asm
+asm_function testPagesReal() {
     "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
     "Remove \"Another Page\"" testPagesRemovePage add_option
     "Cleanup and return to main list" testPagesCleanup add_option
     dispatcher get_option
 }
-function testPagesRemovePage() {
-    asm
+asm_function testPagesRemovePage() {
     "Another Page" del_page
     0 testPagesReal call
 }
-function testPagesCleanup() {
-    asm
+asm_function testPagesCleanup() {
     "Demo Page" del_page
     "Another Page" del_page
     "Page" del_page
@@ -991,8 +949,7 @@ object testpageData
     count 1
     index 0
 ;
-function testPage1(key) {
-    asm
+asm_function testPage1(key) {
     key typeof Integer cmp showpage jnz
     key 32 cmp showkey jnz
     end_page
@@ -1026,22 +983,19 @@ function testPage1(key) {
     "Press space to return." testPage1 get_key
     $count testpageData get_prop inc $count testpageData set_prop
 }
-function otherPage() {
-    asm
+asm_function otherPage() {
     "You selected a page other than the demo page! (Only the demo page has actual content.)" say
     "Continue" none add_option
     endOtherPage get_option
 }
-function endOtherPage() {
-    asm end_page
+asm_function endOtherPage() {
+    end_page
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test Dynamic Creation
 // ////////////////////////////////////////////////////////////////////////////
-function testDynamic(: newObj newStr newList newMap) {
-    asm
-
+asm_function testDynamic(: newObj newStr newList newMap) {
     "[b]Creating data...[/b][br]" say
 
     "[i]Creating new object...[/i][br]" say
@@ -1086,9 +1040,7 @@ function testDynamic(: newObj newStr newList newMap) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test String Manipulation
 // ////////////////////////////////////////////////////////////////////////////
-function testStringManipulation(: testString) {
-    asm
-
+asm_function testStringManipulation(: testString) {
     "\n# Test String Manipulation\n" say
 
     "Check static string \"Fred\" has length four...[br]" say
@@ -1129,9 +1081,7 @@ function testStringManipulation(: testString) {
 // ////////////////////////////////////////////////////////////////////////////
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
-function doAllTests() {
-    asm
-
+asm_function doAllTests() {
     0 testJumps call
     0 testCompare call
     0 testCall call
@@ -1149,9 +1099,7 @@ function doAllTests() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
-function showOptions() {
-    asm
-
+asm_function showOptions() {
     true saveAllowed set_setting
     "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading." say
     0 printMagicNumbers call
@@ -1182,9 +1130,7 @@ function showOptions() {
 }
 
 
-function dispatcher(optionFunc extraValue) {
-    asm
-
+asm_function dispatcher(optionFunc extraValue) {
     false saveAllowed set_setting
     extraValue 1 optionFunc call
 
@@ -1201,8 +1147,7 @@ function dispatcher(optionFunc extraValue) {
     0 return
 }
 
-function main(fromRestore) {
-    asm
+asm_function main(fromRestore) {
     "GTRPGE Test Suite" InfobarTitle set_info
     fromRestore all_done jnz
 
