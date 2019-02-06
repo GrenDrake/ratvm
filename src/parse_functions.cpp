@@ -86,6 +86,23 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 ident = gamedata.getStringId(state.here()->text);
                 bytecode_push_value(function->code, Value::String, ident);
                 break;
+            case Token::Indirection: {
+                // variable name reference
+                state.next();
+                state.require(Token::Type::Identifier);
+                int argumentNumber = -1;
+                for (unsigned i = 0; i < function->local_names.size(); ++i) {
+                    if (function->local_names[i] == state.here()->text) {
+                        argumentNumber = i;
+                    }
+                }
+                if (argumentNumber < 0) {
+                    std::stringstream ss;
+                    ss << "Symbol \"" << state.here()->text << "\" is not a local variable name.";
+                    gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+                }
+                bytecode_push_value(function->code, Value::VarRef, argumentNumber);
+                break; }
             case Token::Identifier: {
                 // is label
                 if (state.peek() && state.peek()->type == Token::Colon) {

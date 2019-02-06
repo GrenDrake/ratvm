@@ -30,7 +30,7 @@ public:
 
         Semicolon,
         Colon,
-        // Indirection,
+        Indirection,
         // Say,
         EndOfFile
     };

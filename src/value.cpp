@@ -44,6 +44,9 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::FlagSet:
             out << "FlagSet";
             break;
+        case Value::VarRef:
+            out << "VarRef";
+            break;
         case Value::LocalVar:
             out << "LocalVar";
             break;

@@ -291,7 +291,7 @@ function testCompare(: testValue) {
 
     testWithLocals:
     "Testing using local variables...[br]" say
-    5 testValue store
+    5 *testValue store
     testValue 5 cmp localLt jz
     "Failed local == 5." error
 
@@ -401,48 +401,48 @@ function testJumps(: testValue) {
 
     test017:
     "Test jump target in local variable...[br]" say
-    test018 testValue store
+    test018 *testValue store
     testValue jmp
     "Failed jmp w/ local." error
 
     test018:
-    test019 testValue store
+    test019 *testValue store
     0 testValue jz
     "Failed jz w/ local." error
 
     test019:
-    test020 testValue store
+    test020 *testValue store
     1 testValue jnz
     "Failed jnz w/ local." error
 
     test020:
-    test021 testValue store
+    test021 *testValue store
     -1 testValue jlt
     "Failed jlt w/ local." error
 
     test021:
-    test022 testValue store
+    test022 *testValue store
     1 testValue jgt
     "Failed jgt w/ local." error
 
     test022:
-    test023 testValue store
+    test023 *testValue store
     -1 testValue jlte
     "Failed jlte w/ local." error
 
     test023:
-    test024 testValue store
+    test024 *testValue store
     1 testValue jgte
     "Failed jgte w/ local." error
 
     test024:
     "Testing with value in local variable...[br]" say
-    0 testValue store
+    0 *testValue store
     testValue test025 jz
     "Failed jz w/ value in local." error
 
     test025:
-    1 testValue store
+    1 *testValue store
     testValue test026 jnz
     "Failed jnz w/ value in local." error
 
@@ -455,7 +455,7 @@ function testJumps(: testValue) {
     "Failed jgte w/ value in local." error
 
     test028:
-    -1 testValue store
+    -1 *testValue store
     testValue test029 jlt
     "Failed jlt w/ value in local." error
 
@@ -620,11 +620,11 @@ function testObjectProps() {
 function testLoopDemo(: counter theValue) {
     asm
 // show a count up loop and calculate 2^10
-    0 counter store
-    1 theValue store
+    0 *counter store
+    1 *theValue store
     loopstart:
-    counter 1 add counter store
-    2 theValue mult theValue store
+    counter 1 add *counter store
+    2 theValue mult *theValue store
     counter say
     " " say
     counter 10 cmp loopstart jlt
@@ -705,8 +705,12 @@ function testValues(: localvar) {
     "Failed typeof testObjectName == testObject." error
 
     test_property:
-    testProperty typeof Property cmp test_flags jz
+    testProperty typeof Property cmp test_varref jz
     "Failed typeof testProperty == Property." error
+
+    test_varref:
+    *localvar typeof Reference cmp test_flags jz
+    "Failed typeof *localvar == Reference." error
 
     test_flags:
     testFlags typeof Integer cmp test_local jz
@@ -718,13 +722,13 @@ function testValues(: localvar) {
     "Failed localvar default value == none." error
 
     test_local_2:
-    0 localvar store
+    0 *localvar store
     localvar typeof Integer cmp test_casts jz
     "Failed typeof localvar == Integer." error
 
     test_casts:
     "Testing type casting...[br]" say
-    String localvar astype localvar store
+    String localvar astype *localvar store
     localvar firstString cmp all_done jz
     "Failed localvar cast to string." error
 
@@ -776,11 +780,11 @@ function testRandom(: counter) {
 
     "This will generate 100 random numbers between 50 and 60 below.\n" say
 
-    100 counter store
+    100 *counter store
     loop_start:
     counter loop_done jlte
     50 60 random say " " say
-    counter 1 sub counter store
+    counter 1 sub *counter store
     loop_start jmp
     loop_done: "\n" say
 }
@@ -792,11 +796,11 @@ function printArray(theArray : counter length) {
     asm
 
     "[b]Array contents:[/b]" say
-    theArray get_size length store
-    0 counter store
+    theArray get_size *length store
+    0 *counter store
     arraydumploop:
     " " say counter theArray get_item say
-    counter inc counter store
+    counter inc *counter store
     length counter cmp arraydumploop jgt
     " (length: " say length say ")\n" say
 }
@@ -873,15 +877,15 @@ function testLists(: counter random_value) {
 
     test_random:
     "Testing getting random list items...[br]" say
-    0 counter store
+    0 *counter store
     randomloop:
-    testList get_random random_value store
+    testList get_random *random_value store
     random_value 1 cmp randomloop_good jz
     random_value 2 cmp randomloop_good jz
     random_value 3 cmp randomloop_good jz
     "Got unexpected value when drawing random list values." error
     randomloop_good:
-    counter inc counter store
+    counter inc *counter store
     200 counter cmp randomloop jgt
 
     return
@@ -937,7 +941,7 @@ function testMaps(: keys) {
 
     test_key_list:
     "Converting testMap keys to list...[br]" say
-    testMap get_keys keys store
+    testMap get_keys *keys store
     0 keys get_item 1 cmp found_bad_key jnz
     1 keys get_item 2 cmp found_bad_key jnz
     2 keys get_item 3 cmp found_bad_key jnz
@@ -1041,7 +1045,7 @@ function testDynamic(: newObj newStr newList newMap) {
     "[b]Creating data...[/b][br]" say
 
     "[i]Creating new object...[/i][br]" say
-    Object new newObj store
+    Object new *newObj store
     "Created type:" say newObj typeof say "[br]" say
 
     "Initial anInt property: " say
@@ -1051,18 +1055,18 @@ function testDynamic(: newObj newStr newList newMap) {
     $anInt newObj get_prop say "\n" say
 
     "[i]Creating new string...[/i][br]" say
-    String new newStr store
+    String new *newStr store
     "Created type:" say newStr typeof say "[br](string manipulation functions tested seperately)\n" say
 
     "[i]Creating new map...[/i][br]" say
-    Map new newMap store
+    Map new *newMap store
     "Created type:" say newMap typeof say "[br]" say
     "Initial value of key: " say "key" newMap get_item say "[br]" say
     "New Map Value" "key" newMap set_item
     "Updated value of key: " say "key" newMap get_item say "\n" say
 
     "[i]Creating new list...[/i][br]" say
-    List new newList store
+    List new *newList store
     "Created type:" say newList typeof say "[br]" say
     "Initial size: " say newList get_size say "[br]" say
     "New List Item" 0 newList add_item
@@ -1092,7 +1096,7 @@ function testStringManipulation(: testString) {
     "Bad length on static string \"Fred\"." error
 
     strlenNewString:
-    String new testString store
+    String new *testString store
     "Check new string has zero length...[br]" say
     testString strlen strcpyStrlen jz
     "Bad initial length on new string." error

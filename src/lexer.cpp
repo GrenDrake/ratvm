@@ -141,6 +141,10 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             tokens.push_back(Token(state.origin, Token::Colon));
             next(state);
             continue;
+        } else if (c == '*') {
+            tokens.push_back(Token(state.origin, Token::Indirection));
+            next(state);
+            continue;
         } else if (c == '[') {
             tokens.push_back(Token(state.origin, Token::OpenSquare));
             next(state);

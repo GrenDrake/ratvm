@@ -15,6 +15,7 @@ struct Value {
         Property    = 7,
         Stream      = 8,
         JumpTarget  = 9,
+        VarRef      = 10,
         LocalVar    = 15,
         FlagSet     = 98,
         Symbol      = 99
