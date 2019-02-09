@@ -996,43 +996,84 @@ asm_function endOtherPage() {
 // Test Dynamic Creation
 // ////////////////////////////////////////////////////////////////////////////
 asm_function testDynamic(: newObj newStr newList newMap) {
-    "[b]Creating data...[/b][br]" say
+    "\n#Testing Dynamic Creation\n" say
 
-    "[i]Creating new object...[/i][br]" say
-    Object new *newObj store
-    "Created type:" say newObj typeof say "[br]" say
-
-    "Initial anInt property: " say
-    $anInt newObj get_prop say "[br]" say
-    66 $anInt newObj set_prop
-    "anInt property after update: " say
-    $anInt newObj get_prop say "\n" say
-
-    "[i]Creating new string...[/i][br]" say
+    "Creating data...[br]" say
     String new *newStr store
-    "Created type:" say newStr typeof say "[br](string manipulation functions tested seperately)\n" say
+    newStr typeof String cmp makeNewObject jz
+    "New string not of String type." error
 
-    "[i]Creating new map...[/i][br]" say
-    Map new *newMap store
-    "Created type:" say newMap typeof say "[br]" say
-    "Initial value of key: " say "key" newMap get_item say "[br]" say
-    "New Map Value" "key" newMap set_item
-    "Updated value of key: " say "key" newMap get_item say "\n" say
+    makeNewObject:
+    Object new *newObj store
+    newObj typeof Object cmp makeNewList jz
+    "New object not of Object type." error
 
-    "[i]Creating new list...[/i][br]" say
+    makeNewList:
     List new *newList store
-    "Created type:" say newList typeof say "[br]" say
-    "Initial size: " say newList get_size say "[br]" say
-    "New List Item" 0 newList add_item
-    "New size: " say newList get_size say "[br]" say
-    "Item 0: " say 0 newList get_item say "\n" say
+    newList typeof List cmp makeNewMap jz
+    "New list not of List type." error
 
-    "[b]Testing isStatic[/b][br]" say
-    "testDynamic (1): " say testDynamic is_static say "[br]" say
-    "\"Fred\" (1): " say "Fred" is_static say "[br]" say
-    "testList (1): " say testList is_static say "[br]" say
-    "newObj (0):" say newObj is_static say "[br]" say
-    "newStr (0):" say newStr is_static say "\n" say
+    makeNewMap:
+    Map new *newMap store
+    newMap typeof Map cmp testNewObjectProperties jz
+    "New map not of Map type." error
+
+
+    testNewObjectProperties:
+    "Testing property manipulation of created object...[br]" say
+    $anInt newObj get_prop 0 cmp testObjectUnsetHas jz
+    "New object returns value for unset property." error
+
+    testObjectUnsetHas:
+    $anInt newObj has_prop testObjectSet jz
+    "New object claims to have anInt property." error
+
+    testObjectSet:
+    66 $anInt newObj set_prop
+    $anInt newObj get_prop 66 cmp testObjectSetHas jz
+    "Updated property on new object did not retain value." error
+
+    testObjectSetHas:
+    $anInt newObj has_prop testMapValues jnz
+    "New object denies having anInt property." error
+
+
+    testMapValues:
+    "Testing values of new map...[br]" say
+    "key" newMap get_item 0 cmp testSetMapValue jz
+    "New map returns value for unset key...[br]" error
+
+    testSetMapValue:
+    "New Map Value" "key" newMap set_item
+    "key" newMap get_item "New Map Value" cmp testListValues jz
+    "New map returns 0 for updated key...[br]" error
+
+
+    testListValues:
+    "Testing values of new list...[br]" say
+    newList get_size 0 cmp testListAddValue jz
+    "New list is not empty." error
+
+    testListAddValue:
+    "New List Item" 0 newList add_item
+    0 newList get_item "New List Item" cmp testIsStatic jz
+    "List item not updated." error
+
+    testIsStatic:
+    "Testing isStatic...[br]" say
+    testDynamic is_static reportedStaticAsDynamic jz
+    "Fred" is_static reportedStaticAsDynamic jz
+    testList is_static reportedStaticAsDynamic jz
+
+    newObj is_static reportedDynamicAsStatic jnz
+    newStr is_static reportedDynamicAsStatic jnz
+    return
+
+    reportedStaticAsDynamic:
+    "Reported static value as dynamic." error
+
+    reportedDynamicAsStatic:
+    "Reported dynamic value as static." error
 
     List new List new List new say
 }
