@@ -736,10 +736,10 @@ asm_function testOutput() {
 asm_function testInfoarea() {
     "The header, footer, and title regions should now be updated. (Unless you already ran this test since starting the program.)" say
 
-    "Good day!"     InfobarLeft     set_info
-    "5:00 am"       InfobarRight    set_info
-    "Fred is Cool"  InfobarFooter   set_info
-    "Updated Title" InfobarTitle    set_info
+    "Good day!"     infobarLeft     set_setting
+    "5:00 am"       infobarRight    set_setting
+    "Fred is Cool"  infobarFooter   set_setting
+    "Updated Title" infobarTitle    set_setting
 }
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -1148,7 +1148,7 @@ asm_function dispatcher(optionFunc extraValue) {
 }
 
 asm_function main(fromRestore) {
-    "GTRPGE Test Suite" InfobarTitle set_info
+    "GTRPGE Test Suite" infobarTitle set_setting
     fromRestore all_done jnz
 
     // set the "magic numbers" used for demonstrate the load/save code

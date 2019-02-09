@@ -24,12 +24,12 @@ void add_default_constants(GameData &gamedata) {
     gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::Integer, 7}));
     gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::Integer, 9}));
     gamedata.symbols.add(SymbolDef(Origin(), "Reference",       Value{Value::Integer, 10}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarLeft",     Value{Value::Integer, 0}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarRight",    Value{Value::Integer, 1}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarFooter",   Value{Value::Integer, 2}));
-    gamedata.symbols.add(SymbolDef(Origin(), "InfobarTitle",    Value{Value::Integer, 3}));
     gamedata.symbols.add(SymbolDef(Origin(), "none",            Value{Value::None,    0}));
     gamedata.symbols.add(SymbolDef(Origin(), "saveAllowed",     Value{Value::Integer, 0}));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarLeft",     Value{Value::Integer, 1}));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarRight",    Value{Value::Integer, 2}));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarFooter",   Value{Value::Integer, 3}));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarTitle",    Value{Value::Integer, 4}));
     gamedata.symbols.add(SymbolDef(Origin(), "true",            Value{Value::Integer, 1}));
     gamedata.symbols.add(SymbolDef(Origin(), "false",           Value{Value::Integer, 0}));
     gamedata.getPropertyId("(invalid)");
