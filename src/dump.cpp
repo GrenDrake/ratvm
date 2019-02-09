@@ -156,9 +156,7 @@ void dump_asm(GameData &gamedata, std::ostream &out) {
                         type = function->code.read_8(i++);
                         out << ' ' << static_cast<Value::Type>(type);
                         break;
-                    case OpcodeDef::PushNeg1:
-                        type = function->code.read_8(i++);
-                        out << ' ' << static_cast<Value::Type>(type);
+                    case OpcodeDef::PushNone:
                         break;
                     case OpcodeDef::Push8:
                         type = function->code.read_8(i++);

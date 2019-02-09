@@ -8,7 +8,7 @@ struct OpcodeDef {
         Return              = 0,
         Push0               = 1,
         Push1               = 2,
-        PushNeg1            = 3,
+        PushNone            = 3,
         Push8               = 4,
         Push16              = 5,
         Push32              = 6,

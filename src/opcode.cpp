@@ -4,7 +4,7 @@ OpcodeDef opcodes[] = {
     {   "return",       OpcodeDef::Return       },
     {   "push_0",       OpcodeDef::Push0        },
     {   "push_1",       OpcodeDef::Push1        },
-    {   "push_n1",      OpcodeDef::PushNeg1     },
+    {   "push_none",    OpcodeDef::PushNone     },
     {   "push_8",       OpcodeDef::Push8        },
     {   "push_16",      OpcodeDef::Push16       },
     {   "push_32",      OpcodeDef::Push32       },

@@ -28,14 +28,13 @@ static void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseS
 static void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value);
 
 void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) {
-    if (value == 0) {
+    if (type == Value::None) {
+        bytecode.add_8(OpcodeDef::PushNone);
+    } else if (value == 0) {
         bytecode.add_8(OpcodeDef::Push0);
         bytecode.add_8(type);
     } else if (value == 1) {
         bytecode.add_8(OpcodeDef::Push1);
-        bytecode.add_8(type);
-    } else if (value == -1) {
-        bytecode.add_8(OpcodeDef::PushNeg1);
         bytecode.add_8(type);
     } else if (value >= INT8_MIN && value <= INT8_MAX) {
         bytecode.add_8(OpcodeDef::Push8);
