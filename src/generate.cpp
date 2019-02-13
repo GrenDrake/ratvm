@@ -62,11 +62,9 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         gamedata.errors.push_back(Error{Origin(outputFile,0,0), "Function \"main\" not defined."});
         write_32(out, 0);
     }
-    //  12,13,14,15: system property IDs
-    write_8(out, gamedata.getPropertyId("internal_name"));
-    write_8(out, gamedata.getPropertyId("ident"));
-    write_8(out, gamedata.getPropertyId("save"));
-    write_8(out, gamedata.getPropertyId("load"));
+    // write gamefile flags
+    write_32(out, 0);
+
     // pad to the header out to 64 bytes
     write_32(out, 0);   // 16: padding
     write_32(out, 0);   // 20: padding
