@@ -88,6 +88,7 @@ public:
     void organize();
     FunctionDef* functionByName(const std::string &name);
     int checkObjectIdents();
+    unsigned getSourceFileIndex(const std::string &filename);
 
     std::vector<Error> errors;
     SymbolTable symbols;
@@ -99,6 +100,7 @@ public:
     std::vector<FunctionDef*> functions;
     std::vector<FlagSet> flagsets;
     ByteStream bytecode;
+    std::vector<std::string> sourceFiles;
 
     unsigned stringsStart, listsStart, mapsStart, objectsStart;
     unsigned functionsStart, bytecodeStart, fileEnd;

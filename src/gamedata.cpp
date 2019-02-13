@@ -147,3 +147,12 @@ int GameData::checkObjectIdents() {
 
     return nextIdent;
 }
+
+unsigned GameData::getSourceFileIndex(const std::string &filename) {
+    for (unsigned i = 0; i < sourceFiles.size(); ++i) {
+        if (sourceFiles[i] == filename) return i;
+    }
+    sourceFiles.push_back(filename);
+    return sourceFiles.size() - 1;
+}
+
