@@ -310,7 +310,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
         }
         state.require(Token::Identifier);
 
-        if (state.matches("value")) {
+        if (state.matches("declare")) {
             parse_constant(gamedata, state);
         } else if (state.matches("object")) {
             int objectId = parse_object(gamedata, state);

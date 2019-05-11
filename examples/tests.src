@@ -2,20 +2,20 @@
 // First string : this must be the first string used for one of the tests
 //                to function correctly.
 // ////////////////////////////////////////////////////////////////////////////
-value firstString "this is the first string"
+declare firstString "this is the first string"
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Data used for tests
 // ////////////////////////////////////////////////////////////////////////////
-value testInt 7384
-value testStr "A Name"
-value testList [ 1 2 3 ]
-value testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" }
-value testFunction function testFunctionName () {}
-value testObject object testObjectName;
-value testProperty $testFunc
-value testFlags flags( 6 7 8 testInt )
+declare testInt 7384
+declare testStr "A Name"
+declare testList [ 1 2 3 ]
+declare testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" }
+declare testFunction function testFunctionName () {}
+declare testObject object testObjectName;
+declare testProperty $testFunc
+declare testFlags flags( 6 7 8 testInt )
 
 object first_obj
     anInt 2
@@ -1204,4 +1204,4 @@ asm_function main(fromRestore) {
     0 showOptions call
 }
 
-value te ""
+declare te ""
