@@ -41,6 +41,11 @@ void parse_constant(GameData &gamedata, ParseState &state) {
     const std::string &constantName = state.here()->text;
     state.next();
     Value value = parse_value(gamedata, state);
+    if (value.type == Value::Object || value.type == Value::Node) {
+        std::stringstream ss;
+        ss << "Declaration of " << constantName << " cannot declare objects or functions.";
+        gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+    }
     gamedata.symbols.add(SymbolDef(origin,
                                     constantName,
                                     value));

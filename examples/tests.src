@@ -12,8 +12,6 @@ declare testInt 7384
 declare testStr "A Name"
 declare testList [ 1 2 3 ]
 declare testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" }
-declare testFunction function testFunctionName () {}
-declare testObject object testObjectName;
 declare testProperty $testFunc
 declare testFlags flags( 6 7 8 testInt )
 
@@ -665,18 +663,12 @@ asm_function testValues(: localvar) {
     "Failed typeof testMap == Map." error
 
     test_function:
-    testFunction typeof Function cmp test_function_alias jz
-    "Failed typeof testFunction == Function." error
-    test_function_alias:
-    testFunctionName typeof Function cmp test_object jz
-    "Failed typeof testFunctionName == Function." error
+    testValues typeof Function cmp test_object jz
+    "Failed typeof testValues == Function." error
 
     test_object:
-    testObject typeof Object cmp test_object_alias jz
-    "Failed typeof testObject == Object." error
-    test_object_alias:
-    testObjectName typeof Object cmp test_property jz
-    "Failed typeof testObjectName == testObject." error
+    first_obj typeof Object cmp test_property jz
+    "Failed typeof first_obj == testObject." error
 
     test_property:
     testProperty typeof Property cmp test_varref jz
