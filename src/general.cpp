@@ -22,21 +22,23 @@
  * Definitions for BuildError class                                           *
  * ************************************************************************** */
 BuildError::BuildError(const std::string &msg)
-: std::runtime_error(msg), errorMessage("")
-{
-    strncpy(errorMessage, msg.c_str(), errorMessageLength-1);
-}
+: std::runtime_error(msg), mRawOrigin(), mRawMessage(msg)
+{ }
 BuildError::BuildError(const Origin &origin, const std::string &msg)
-: std::runtime_error(msg), errorMessage("")
-{
-    std::stringstream ss;
-    ss << origin << ' ' << msg;
-
-    strncpy(errorMessage, ss.str().c_str(), errorMessageLength-1);
-}
+: std::runtime_error(msg), mRawOrigin(origin), mRawMessage(msg)
+{ }
 const char* BuildError::what() const throw() {
-    return errorMessage;
+    std::stringstream ss;
+    ss << mRawOrigin << ' ' << mRawMessage << " (unchecked)";
+    return ss.str().c_str();
 }
+const std::string& BuildError::getMessage() const {
+    return mRawMessage;
+}
+const Origin& BuildError::getOrigin() const {
+    return mRawOrigin;
+}
+
 
 
 /* ************************************************************************** *
@@ -131,14 +133,18 @@ std::ostream& operator<<(std::ostream &out, const Token &token) {
 
 
 /* ************************************************************************** *
- * Definitions for Token class                                                *
+ * Definitions for Origin class                                                *
  * ************************************************************************** */
 std::ostream& operator<<(std::ostream &out, const Origin &origin) {
-    out << origin.file << std::dec;
-    if (origin.line > 0 && origin.column > 0) {
-        if (origin.line > 0)    out << ':' << origin.line;
-        if (origin.column > 0)  out << ':' << origin.column;
+    std::stringstream ss;
+    ss << origin.file;
+    if (origin.line > 0) {
+        ss << ':' << origin.line;
+        if (origin.column > 0) {
+            ss << ':' << origin.column;
+        }
     }
+    out << ss.str();
     return out;
 }
 

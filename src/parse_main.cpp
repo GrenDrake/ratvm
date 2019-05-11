@@ -37,7 +37,13 @@ static Value parse_value(GameData &gamedata, ParseState &state);
 void parse_constant(GameData &gamedata, ParseState &state) {
     Origin origin = state.here()->origin;
     state.next(); // skip "constant"
-    state.require(Token::Identifier);
+    try {
+        state.require(Token::Identifier);
+    } catch (BuildError &e) {
+        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        state.next();
+        return;
+    }
     const std::string &constantName = state.here()->text;
     state.next();
     Value value = parse_value(gamedata, state);
@@ -118,7 +124,13 @@ int parse_function(GameData &gamedata, ParseState &state) {
             state.next();
             continue;
         }
-        state.require(Token::Identifier);
+        try {
+            state.require(Token::Identifier);
+        } catch (BuildError &e) {
+            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            state.next();
+            continue;
+        }
         if (doingLocals)    ++function->local_count;
         else                ++function->argument_count;
         function->local_names.push_back(state.here()->text);
@@ -227,9 +239,15 @@ int parse_object(GameData &gamedata, ParseState &state) {
             propName = state.here()->text;
             propId = gamedata.getPropertyId(propName);
         } else {
-            state.require(Token::Property);
-            propId = state.here()->value;
-            propName = state.here()->text;
+            try {
+                state.require(Token::Property);
+                propId = state.here()->value;
+                propName = state.here()->text;
+            } catch (BuildError &e) {
+                gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+                propId = -1;
+                propName = "bad_prop";
+            }
         }
         const Origin &propOrigin = state.here()->origin;
         state.next();
@@ -313,7 +331,13 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
             state.next();
             continue;
         }
-        state.require(Token::Identifier);
+        try {
+            state.require(Token::Identifier);
+        } catch (BuildError &e) {
+            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            state.next();
+            continue;
+        }
 
         if (state.matches("declare")) {
             parse_constant(gamedata, state);
