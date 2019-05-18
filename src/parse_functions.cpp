@@ -84,6 +84,35 @@ bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &nam
     return false;
 }
 
+Value evalIdentifier(GameData &gamedata, FunctionDef *function, const std::string identifier) {
+    // is opcode name
+    const OpcodeDef *opcode = getOpcode(identifier);
+    if (opcode) {
+        Value result = Value{Value::Opcode, 0, identifier};
+        result.opcode = opcode;
+        return result;
+    }
+
+    // is reserved word
+    if (std::find(reservedWords.begin(), reservedWords.end(), identifier) != reservedWords.end()) {
+        return Value{Value::Reserved, 0, identifier};
+    }
+
+    // is global symbol
+    const SymbolDef *symbol = gamedata.symbols.get(identifier);
+    if (symbol) {
+        return symbol->value;
+    }
+
+    // is local name
+    auto localIter = std::find(function->local_names.begin(), function->local_names.end(), identifier);
+    if (localIter != function->local_names.end()) {
+        int localNumber = std::distance(function->local_names.begin(), localIter);
+        return Value{Value::LocalVar, localNumber};
+    }
+    return Value{Value::Symbol, 0, identifier};
+}
+
 struct Backpatch {
     unsigned position;
     std::string name;
@@ -130,35 +159,27 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     state.next();
                     break;
                 }
-                // is opcode name
-                opcode = getOpcode(state.here()->text);
-                if (opcode) {
-                    function->code.add_8(opcode->code);
-                    break;
-                }
-                // is global symbol
-                symbol = gamedata.symbols.get(state.here()->text);
-                if (symbol) {
-                    bytecode_push_value(function->code, symbol->value.type, symbol->value.value);
-                    break;
-                }
-                // is local name
-                auto localIter = std::find(function->local_names.begin(), function->local_names.end(), state.here()->text);
-                if (localIter != function->local_names.end()) {
-                    int localNumber = std::distance(function->local_names.begin(), localIter);
-                    bytecode_push_value(function->code, Value::LocalVar, localNumber);
-                    break;
-                }
-                // presume its a label
-                auto labelIter = function->labels.find(state.here()->text);
-                if (labelIter != function->labels.end()) {
-                    bytecode_push_value(function->code, Value::JumpTarget, labelIter->second);
+                Value result = evalIdentifier(gamedata, function, state.here()->text);
+                if (result.type == Value::Opcode) {
+                    function->code.add_8(result.opcode->code);
+                } else if (result.type == Value::Reserved) {
+                    std::stringstream ss;
+                    ss << "Unexpected reserved word " << result.text << '.';
+                    gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+                } else if (result.type != Value::Symbol) {
+                    bytecode_push_value(function->code, result.type, result.value);
                 } else {
-                    function->code.add_8(OpcodeDef::Push32);
-                    function->code.add_8(Value::JumpTarget);
-                    unsigned labelPos = function->code.size();
-                    patches.push_back(Backpatch{labelPos, state.here()->text,state.here()->origin});
-                    function->code.add_32(0xFFFFFFFF);
+                    // presume its a label
+                    auto labelIter = function->labels.find(state.here()->text);
+                    if (labelIter != function->labels.end()) {
+                        bytecode_push_value(function->code, Value::JumpTarget, labelIter->second);
+                    } else {
+                        function->code.add_8(OpcodeDef::Push32);
+                        function->code.add_8(Value::JumpTarget);
+                        unsigned labelPos = function->code.size();
+                        patches.push_back(Backpatch{labelPos, state.here()->text,state.here()->origin});
+                        function->code.add_32(0xFFFFFFFF);
+                    }
                 }
                 break;
             }
@@ -220,33 +241,14 @@ List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
                 list->values.push_back(ListValue{ Value{Value::Expression}, sublist });
                 break; }
             case Token::Identifier: {
-                // is opcode name
-                if (getOpcode(state.here()->text)) {
-                    list->values.push_back(ListValue{ Value{Value::Opcode, 0, here->text} });
-                    break;
+                Value result = evalIdentifier(gamedata, function, here->text);
+                if (result.type != Value::Symbol) {
+                    list->values.push_back(ListValue{ result });
+                } else {
+                    std::stringstream ss;
+                    ss << "Undefined symbol " << here->text << '.';
+                    gamedata.errors.push_back(Error{here->origin, ss.str()});
                 }
-                // is reserved word
-                if (std::find(reservedWords.begin(), reservedWords.end(), here->text) != reservedWords.end()) {
-                    list->values.push_back(ListValue{ Value{Value::Reserved, 0, here->text} });
-                    break;
-                }
-                // is global symbol
-                const SymbolDef *symbol = gamedata.symbols.get(state.here()->text);
-                if (symbol) {
-                    list->values.push_back(ListValue{ symbol->value });
-                    break;
-                }
-                // is local name
-                auto localIter = std::find(function->local_names.begin(), function->local_names.end(), state.here()->text);
-                if (localIter != function->local_names.end()) {
-                    int localNumber = std::distance(function->local_names.begin(), localIter);
-                    list->values.push_back(ListValue{ Value{Value::LocalVar, localNumber} });
-                    break;
-                }
-
-                std::stringstream ss;
-                ss << "Undefined symbol " << here->text << '.';
-                gamedata.errors.push_back(Error{here->origin, ss.str()});
                 break; }
             default: {
                 std::stringstream ss;
