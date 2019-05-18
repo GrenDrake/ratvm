@@ -32,7 +32,7 @@ public:
         Colon,
         Indirection,
         // Say,
-        EndOfFile
+        EndOfFile,
     };
 
     Token()

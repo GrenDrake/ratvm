@@ -21,11 +21,24 @@
 #include "origin.h"
 #include "token.h"
 #include "opcode.h"
+#include "expression.h"
 
 #include "bytestream.h"
 
 static void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state);
+void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &state);
 static void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value);
+
+std::vector<std::string> reservedWords{
+    "asm",
+    "do_while",
+    "get",
+    "if",
+    "proc",
+    "say",
+    "set",
+    "while",
+};
 
 void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) {
     if (type == Value::None) {
@@ -54,6 +67,9 @@ void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) 
 bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &name, unsigned localId) {
     if (function->isAsm && getOpcode(name)) return true;
     if (gamedata.symbols.get(name)) return true;
+    if (std::find(reservedWords.begin(), reservedWords.end(), name) != reservedWords.end()) {
+        return true;
+    }
     for (const auto &labelIter : function->labels) {
         if (labelIter.first == name) {
             return true;
@@ -173,6 +189,98 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
     }
 }
 
+
+
+
+List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
+    try {
+        state.require(Token::OpenParan);
+    } catch (BuildError &e) {
+        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        return nullptr;
+    }
+    state.next();
+
+    List *list = new List;
+    const Token *here = state.here();
+    while (here && here->type != Token::CloseParan) {
+        switch(here->type) {
+            case Token::Integer:
+                list->values.push_back(ListValue{ Value{Value::Integer, here->value} });
+                break;
+            case Token::Property:
+                list->values.push_back(ListValue{ Value{Value::Property, here->value} });
+                break;
+            case Token::String: {
+                int ident = gamedata.getStringId(state.here()->text);
+                list->values.push_back(ListValue{ Value{Value::String, ident} });
+                break; }
+            case Token::OpenParan: {
+                List *sublist = parse_list(gamedata, function, state);
+                list->values.push_back(ListValue{ Value{Value::Expression}, sublist });
+                break; }
+            case Token::Identifier: {
+                // is opcode name
+                if (getOpcode(state.here()->text)) {
+                    list->values.push_back(ListValue{ Value{Value::Opcode, 0, here->text} });
+                    break;
+                }
+                // is reserved word
+                if (std::find(reservedWords.begin(), reservedWords.end(), here->text) != reservedWords.end()) {
+                    list->values.push_back(ListValue{ Value{Value::Reserved, 0, here->text} });
+                    break;
+                }
+                // is global symbol
+                const SymbolDef *symbol = gamedata.symbols.get(state.here()->text);
+                if (symbol) {
+                    list->values.push_back(ListValue{ symbol->value });
+                    break;
+                }
+                // is local name
+                auto localIter = std::find(function->local_names.begin(), function->local_names.end(), state.here()->text);
+                if (localIter != function->local_names.end()) {
+                    int localNumber = std::distance(function->local_names.begin(), localIter);
+                    list->values.push_back(ListValue{ Value{Value::LocalVar, localNumber} });
+                    break;
+                }
+
+                std::stringstream ss;
+                ss << "Undefined symbol " << here->text << '.';
+                gamedata.errors.push_back(Error{here->origin, ss.str()});
+                break; }
+            default: {
+                std::stringstream ss;
+                ss << "Unexpected type " << here->type << '.';
+                gamedata.errors.push_back(Error{here->origin, ss.str()});
+                break; }
+        }
+        here = state.next();
+    }
+    return list;
+}
+
+void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
+    std::vector<List*> lists;
+
+    while (!state.at_end()) {
+        List *list = parse_list(gamedata, function, state);
+        if (!list) return;
+        lists.push_back(list);
+        state.next();
+    }
+
+    if (gamedata.errors.empty()) {
+        for (List *l : lists) {
+            dump_list(l, std::cout);
+            std::cout << "\n";
+        }
+    }
+
+    for (List *l : lists) {
+        delete l;
+    }
+}
+
 int parse_functions(GameData &gamedata) {
     for (FunctionDef *function : gamedata.functions) {
         if (function == nullptr) continue;
@@ -195,11 +303,12 @@ int parse_functions(GameData &gamedata) {
         if (function->isAsm) {
             parse_asm_function(gamedata, function, state);
         } else {
-            if (state.at_end()) {
-                // empty function
-            } else {
-                gamedata.errors.push_back(Error{function->origin, "Non-asm functions not implemented."});
-            }
+            parse_std_function(gamedata, function, state);
+            // if (state.at_end()) {
+            //     // empty function
+            // } else {
+            //     gamedata.errors.push_back(Error{function->origin, "Non-asm functions not implemented."});
+            // }
         }
         function->code.add_8(OpcodeDef::Return);
         function->code.padTo(4);

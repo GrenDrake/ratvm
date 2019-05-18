@@ -78,6 +78,9 @@ std::ostream& operator<<(std::ostream &out, const Token::Type &type) {
             out << "Close Square";
             break;
 
+        case Token::Indirection:
+            out << "Indirection";
+            break;
         case Token::Semicolon:
             out << "Semicolon";
             break;

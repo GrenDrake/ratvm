@@ -50,6 +50,15 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::LocalVar:
             out << "LocalVar";
             break;
+        case Value::Reserved:
+            out << "Reserved Word";
+            break;
+        case Value::Opcode:
+            out << "Opcode";
+            break;
+        case Value::Expression:
+            out << "Expression";
+            break;
         default:
             out << "(unhandled type " << static_cast<int>(type) << ")";
     }
@@ -59,9 +68,9 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
 std::ostream& operator<<(std::ostream &out, const Value &value) {
     std::stringstream ss;
     ss << '<' << value.type;
-    if (value.type == Value::Symbol) {
+    if (value.type == Value::Symbol || value.type == Value::Reserved || value.type == Value::Opcode) {
         ss << " ~" << value.text << '~';
-    } else if (value.type != Value::None) {
+    } else if (value.type != Value::None && value.type != Value::Expression) {
         ss << ' ' << value.value;
     }
     ss << '>';

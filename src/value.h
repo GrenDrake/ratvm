@@ -16,6 +16,9 @@ struct Value {
         JumpTarget  = 9,
         VarRef      = 10,
         LocalVar    = 15,
+        Reserved    = 95,
+        Opcode      = 96,
+        Expression    = 97,
         FlagSet     = 98,
         Symbol      = 99
     };
