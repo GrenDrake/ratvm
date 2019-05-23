@@ -80,10 +80,14 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
             checkListSize(list, minimumCallOperands, minimumCallOperands);
             return;
         } else {
+            if (list->values[2].value.type != Value::Integer) {
+                gamedata.errors.push_back(Error{list->values[2].origin, "Argument count must be integer."});
+                return;
+            }
             wantedOpcodeCount = minimumCallOperands + list->values[2].value.value;
             if (list->values.size() != wantedOpcodeCount) {
                 std::stringstream ss;
-                ss << "Uninsufficent operands for call opcode (expected exactly ";
+                ss << "Insufficent operands for call opcode (expected exactly ";
                 ss << wantedOpcodeCount << ", but found " << list->values.size();
                 ss << ").";
                 gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
