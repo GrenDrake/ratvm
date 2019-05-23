@@ -12,6 +12,26 @@
 #include "gamedata.h"
 #include "opcode.h"
 
+struct StatementType {
+    std::string name;
+    void (*handler)(GameData &gamedata, FunctionDef *function, List *list);
+};
+
+void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
+void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
+
+StatementType statementTypes[] = {
+    { "label",  stmt_label },
+    { "print",  stmt_print },
+};
+
+
+/* ************************************************************************** *
+ * General list management functions                                          *
+ * ************************************************************************** */
+
 void dump_list(const List *list, std::ostream &out) {
     if (!list) return;
     out << "( ";
@@ -33,20 +53,10 @@ bool checkListSize(const List *list, int minSize, int maxSize) {
     return false;
 }
 
-struct StatementType {
-    std::string name;
-    void (*handler)(GameData &gamedata, FunctionDef *function, List *list);
-};
 
-void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
-void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
-void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
-void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
-
-StatementType statementTypes[] = {
-    { "label",  stmt_label },
-    { "print",  stmt_print },
-};
+/* ************************************************************************** *
+ * Handlers for statement types                                               *
+ * ************************************************************************** */
 
 void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values[0].value.type != Value::Opcode) {
@@ -130,6 +140,26 @@ void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     function->asmCode.push_back(new AsmOpcode(func.origin, OpcodeDef::Call));
 }
 
+
+void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list) {
+    const std::string &word = list->values[0].value.text;
+    for (const StatementType &stmt : statementTypes) {
+        if (stmt.name == word) {
+            stmt.handler(gamedata, function, list);
+            return;
+        }
+    }
+
+    std::stringstream ss;
+    ss << word << " is not a valid expression command.";
+    gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+}
+
+
+/* ************************************************************************** *
+ * Handlers for reserved words                                                *
+ * ************************************************************************** */
+
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
     if (checkListSize(list, 2, 2)) {
         if (list->values[1].value.type != Value::Symbol) {
@@ -162,6 +192,10 @@ void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
     }
 }
 
+/* ************************************************************************** *
+ * Core list processing function                                              *
+ * ************************************************************************** */
+
 void process_list(GameData &gamedata, FunctionDef *function, List *list) {
     if (!list || list->values.empty()) return;
 
@@ -170,30 +204,18 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
         case Value::LocalVar:
             handle_call_stmt(gamedata, function, list);
             break;
-        case Value::Opcode: {
+        case Value::Opcode:
             handle_asm_stmt(gamedata, function, list);
-            break; }
+            break;
         case Value::String:
             list->values.insert(list->values.begin(),
-                    ListValue{list->values[0].origin, {Value::Reserved, 0, "print"}});
+                    ListValue{list->values[0].origin,
+                    {Value::Reserved, 0, "print"}});
             stmt_print(gamedata, function, list);
             break;
-        case Value::Reserved: {
-            bool handled = false;
-            const std::string &word = list->values[0].value.text;
-            for (const StatementType &stmt : statementTypes) {
-                if (stmt.name == word) {
-                    stmt.handler(gamedata, function, list);
-                    handled = true;
-                    break;
-                }
-            }
-            if (!handled) {
-                std::stringstream ss;
-                ss << word << " is not a valid expression command.";
-                gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
-            }
-            break; }
+        case Value::Reserved:
+            handle_reserved_stmt(gamedata, function, list);
+            break;
         default: {
             std::stringstream ss;
             ss << "Expression not permitted to begin with value of type ";

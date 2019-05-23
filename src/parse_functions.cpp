@@ -116,8 +116,6 @@ Value evalIdentifier(GameData &gamedata, FunctionDef *function, const std::strin
 }
 
 void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
-    const OpcodeDef *opcode;
-    const SymbolDef *symbol;
     std::vector<Backpatch> patches;
 
     while (!state.at_end()) {
