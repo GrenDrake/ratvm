@@ -28,14 +28,16 @@
 static void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state);
 void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &state);
 static void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value);
+void build_function(FunctionDef *function);
 
 std::vector<std::string> reservedWords{
     "asm",
     "do_while",
     "get",
     "if",
+    "label",
+    "print",
     "proc",
-    "say",
     "set",
     "while",
 };
@@ -113,11 +115,6 @@ Value evalIdentifier(GameData &gamedata, FunctionDef *function, const std::strin
     return Value{Value::Symbol, 0, identifier};
 }
 
-struct Backpatch {
-    unsigned position;
-    std::string name;
-    Origin origin;
-};
 void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
     const OpcodeDef *opcode;
     const SymbolDef *symbol;
@@ -210,9 +207,6 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
     }
 }
 
-
-
-
 List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
     try {
         state.require(Token::OpenParan);
@@ -227,28 +221,22 @@ List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
     while (here && here->type != Token::CloseParan) {
         switch(here->type) {
             case Token::Integer:
-                list->values.push_back(ListValue{ Value{Value::Integer, here->value} });
+                list->values.push_back(ListValue{here->origin,  Value{Value::Integer, here->value} });
                 break;
             case Token::Property:
-                list->values.push_back(ListValue{ Value{Value::Property, here->value} });
+                list->values.push_back(ListValue{here->origin,  Value{Value::Property, here->value} });
                 break;
             case Token::String: {
                 int ident = gamedata.getStringId(state.here()->text);
-                list->values.push_back(ListValue{ Value{Value::String, ident} });
+                list->values.push_back(ListValue{here->origin,  Value{Value::String, ident} });
                 break; }
             case Token::OpenParan: {
                 List *sublist = parse_list(gamedata, function, state);
-                list->values.push_back(ListValue{ Value{Value::Expression}, sublist });
+                list->values.push_back(ListValue{here->origin,  Value{Value::Expression}, sublist });
                 break; }
             case Token::Identifier: {
                 Value result = evalIdentifier(gamedata, function, here->text);
-                if (result.type != Value::Symbol) {
-                    list->values.push_back(ListValue{ result });
-                } else {
-                    std::stringstream ss;
-                    ss << "Undefined symbol " << here->text << '.';
-                    gamedata.errors.push_back(Error{here->origin, ss.str()});
-                }
+                list->values.push_back(ListValue{here->origin,  result });
                 break; }
             default: {
                 std::stringstream ss;
@@ -259,6 +247,47 @@ List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
         here = state.next();
     }
     return list;
+}
+
+void FunctionBuilder::build(const AsmValue *value) {
+    if (value->value.type == Value::Symbol) {
+        auto labelIter = forFunction->labels.find(value->value.text);
+        if (labelIter != forFunction->labels.end()) {
+            bytecode_push_value(forFunction->code, Value::JumpTarget, labelIter->second);
+        } else {
+            forFunction->code.add_8(OpcodeDef::Push32);
+            forFunction->code.add_8(Value::JumpTarget);
+            patches.push_back(Backpatch{forFunction->code.size(), value->value.text, value->getOrigin()});
+            forFunction->code.add_32(0xFFFFFFFF);
+        }
+    } else {
+        bytecode_push_value(forFunction->code, value->value.type, value->value.value);
+    }
+}
+void FunctionBuilder::build(const AsmLabel *label) {
+    forFunction->labels.insert(std::make_pair(label->text, forFunction->code.size()));
+}
+void FunctionBuilder::build(const AsmOpcode *opcode) {
+    forFunction->code.add_8(opcode->opcode);
+}
+
+void build_function(GameData &gamedata, FunctionDef *function) {
+    FunctionBuilder builder{function, gamedata};
+
+    for (const AsmLine *line : function->asmCode) {
+        line->build(builder);
+    }
+
+    for (const Backpatch &patch : builder.patches) {
+        auto labelIter = function->labels.find(patch.name);
+        if (labelIter != function->labels.end()) {
+            function->code.overwrite_32(patch.position, labelIter->second);
+        } else {
+            std::stringstream ss;
+            ss << "Undefined symbol " << patch.name << '.';
+            gamedata.errors.push_back(Error{patch.origin, ss.str()});
+        }
+    }
 }
 
 void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
@@ -273,10 +302,10 @@ void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &s
 
     if (gamedata.errors.empty()) {
         for (List *l : lists) {
-            dump_list(l, std::cout);
-            std::cout << "\n";
+            process_list(gamedata, function, l);
         }
     }
+    build_function(gamedata, function);
 
     for (List *l : lists) {
         delete l;

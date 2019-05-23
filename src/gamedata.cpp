@@ -15,6 +15,34 @@
 #include "origin.h"
 #include "token.h"
 
+FunctionDef::~FunctionDef() {
+    for (AsmLine *line : asmCode) {
+        delete line;
+    }
+}
+
+void FunctionDef::dumpAsm(FunctionDef *function, std::ostream &out) const {
+    for (const AsmLine *line : function->asmCode) {
+        const AsmLabel *label = dynamic_cast<const AsmLabel*>(line);
+        if (label) {
+            out << "LABEL " << label->text << '\n';
+            continue;
+        }
+
+        const AsmOpcode *code = dynamic_cast<const AsmOpcode*>(line);
+        if (code) {
+            out << "OPCODE " << code->opcode << '\n';
+            continue;
+        }
+
+        const AsmValue *value = dynamic_cast<const AsmValue*>(line);
+        if (value) {
+            out << "VALUE " << value->value << '\n';
+            continue;
+        }
+    }
+}
+
 GameData::GameData()
 : nextAnonymousId(firstAnonymousId) {
     objects.push_back(nullptr);

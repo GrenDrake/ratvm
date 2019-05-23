@@ -58,10 +58,71 @@ struct FlagSet {
     unsigned finalValue;
 };
 
+struct Backpatch {
+    unsigned position;
+    std::string name;
+    Origin origin;
+};
+
+struct AsmValue;
+struct AsmLabel;
+struct AsmOpcode;
+struct FunctionDef;
+class GameData;
+struct FunctionBuilder {
+    void build(const AsmValue *value);
+    void build(const AsmLabel *label);
+    void build(const AsmOpcode *opcode);
+    FunctionDef *forFunction;
+    GameData &gamedata;
+    std::vector<Backpatch> patches;
+};
+
+struct AsmLine {
+    AsmLine(const Origin &origin)
+    : mOrigin(origin)
+    { }
+    virtual ~AsmLine() { }
+    virtual void build(FunctionBuilder &builder) const = 0;
+
+    const Origin& getOrigin() const { return mOrigin; }
+    Origin mOrigin;
+};
+struct AsmLabel : public AsmLine {
+    AsmLabel(const Origin &origin, const std::string &text)
+    : AsmLine(origin), text(text)
+    { }
+    virtual ~AsmLabel() override { }
+    virtual void build(FunctionBuilder &builder) const override { builder.build(this); }
+
+    std::string text;
+};
+
+struct AsmOpcode : public AsmLine {
+    AsmOpcode(const Origin &origin, int opcode)
+    : AsmLine(origin), opcode(opcode)
+    { }
+    virtual ~AsmOpcode() override { }
+    virtual void build(FunctionBuilder &builder) const override { builder.build(this); }
+
+    int opcode;
+};
+struct AsmValue : public AsmLine {
+    AsmValue(const Origin &origin, const Value &value)
+    : AsmLine(origin), value(value)
+    { }
+    virtual ~AsmValue() override { }
+    virtual void build(FunctionBuilder &builder) const override { builder.build(this); }
+
+    Value value;
+};
+
 struct FunctionDef {
     FunctionDef()
     : argument_count(0), local_count(0)
     { }
+    ~FunctionDef();
+    void dumpAsm(FunctionDef *function, std::ostream &out) const;
 
     Origin origin;
     int argument_count;
@@ -74,6 +135,7 @@ struct FunctionDef {
     ByteStream code;
     int globalId;
     bool isAsm;
+    std::vector<AsmLine*> asmCode;
 };
 
 class GameData {

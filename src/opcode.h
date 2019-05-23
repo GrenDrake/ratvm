@@ -85,7 +85,8 @@ struct OpcodeDef {
 
     std::string name;
     int code;
-    int arg_size;
+    int inputs;
+    int outputs;
 
     int count;
 };

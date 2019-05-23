@@ -4,9 +4,14 @@
 #include <vector>
 
 #include "value.h"
+#include "origin.h"
+
+class GameData;
+struct FunctionDef;
 
 struct List;
 struct ListValue {
+    Origin origin;
     Value value;
     List *list;
 };
@@ -23,5 +28,7 @@ struct List {
 };
 
 void dump_list(const List *list, std::ostream &out);
+bool checkListSize(const List *list, int minSize, int maxSize);
+void process_list(GameData &gamedata, FunctionDef *function, List *list);
 
 #endif
