@@ -152,7 +152,8 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
         case Value::String:
             list->values.insert(list->values.begin(),
                     ListValue{list->values[0].origin, {Value::Reserved, 0, "print"}});
-            /* fallthrough */
+            stmt_print(gamedata, function, list);
+            break;
         case Value::Reserved: {
             bool handled = false;
             const std::string &word = list->values[0].value.text;
