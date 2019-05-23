@@ -47,6 +47,9 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::VarRef:
             out << "VarRef";
             break;
+        case Value::JumpTarget:
+            out << "Jump Target";
+            break;
         case Value::LocalVar:
             out << "LocalVar";
             break;
