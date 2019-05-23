@@ -39,6 +39,7 @@ struct StatementType {
 };
 
 void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
+void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 
@@ -110,6 +111,25 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     function->asmCode.push_back(new AsmOpcode(list->values[0].origin, list->values[0].value.opcode->code));
 }
 
+void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
+    const ListValue &func = list->values[0];
+    const int argumentCount = list->values.size() - 1;
+
+    for (unsigned i = list->values.size() - 1; i >= 1; --i) {
+        const ListValue &theValue = list->values[i];
+        if (theValue.value.type == Value::Expression) {
+            process_list(gamedata, function, theValue.list);
+            if (!gamedata.errors.empty()) return;
+        } else {
+            function->asmCode.push_back(new AsmValue(theValue.origin, theValue.value));
+        }
+    }
+
+    function->asmCode.push_back(new AsmValue(func.origin, Value{Value::Integer, argumentCount}));
+    function->asmCode.push_back(new AsmValue(func.origin, func.value));
+    function->asmCode.push_back(new AsmOpcode(func.origin, OpcodeDef::Call));
+}
+
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
     if (checkListSize(list, 2, 2)) {
         if (list->values[1].value.type != Value::Symbol) {
@@ -146,6 +166,10 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
     if (!list || list->values.empty()) return;
 
     switch (list->values[0].value.type) {
+        case Value::Node:
+        case Value::LocalVar:
+            handle_call_stmt(gamedata, function, list);
+            break;
         case Value::Opcode: {
             handle_asm_stmt(gamedata, function, list);
             break; }
