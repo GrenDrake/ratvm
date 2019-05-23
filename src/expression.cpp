@@ -140,7 +140,11 @@ void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     }
 
     function->asmCode.push_back(new AsmValue(func.origin, Value{Value::Integer, argumentCount}));
-    function->asmCode.push_back(new AsmValue(func.origin, func.value));
+    if (func.value.type == Value::Expression) {
+        process_list(gamedata, function, func.list);
+    } else {
+        function->asmCode.push_back(new AsmValue(func.origin, func.value));
+    }
     function->asmCode.push_back(new AsmOpcode(func.origin, OpcodeDef::Call));
 }
 
@@ -206,6 +210,7 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
     switch (list->values[0].value.type) {
         case Value::Node:
         case Value::LocalVar:
+        case Value::Expression:
             handle_call_stmt(gamedata, function, list);
             break;
         case Value::Opcode:
