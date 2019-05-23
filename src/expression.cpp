@@ -19,6 +19,8 @@ struct StatementType {
 
 void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
+void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list);
+void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 
@@ -148,6 +150,22 @@ void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     function->asmCode.push_back(new AsmOpcode(func.origin, OpcodeDef::Call));
 }
 
+void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() != 2) {
+        gamedata.errors.push_back(Error{list->values[0].origin,
+            "Object property access requires two elements: (object $property)"});
+    }
+    const ListValue &obj = list->values[0];
+    const ListValue &prop = list->values[1];
+
+    if (prop.value.type == Value::Expression) {
+        process_list(gamedata, function, prop.list);
+    } else {
+        function->asmCode.push_back(new AsmValue(prop.origin, prop.value));
+    }
+    function->asmCode.push_back(new AsmValue(obj.origin, obj.value));
+    function->asmCode.push_back(new AsmOpcode(obj.origin, OpcodeDef::GetProp));
+}
 
 void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     const std::string &word = list->values[0].value.text;
@@ -212,6 +230,9 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
         case Value::LocalVar:
         case Value::Expression:
             handle_call_stmt(gamedata, function, list);
+            break;
+        case Value::Object:
+            handle_getprop_stmt(gamedata, function, list);
             break;
         case Value::Opcode:
             handle_asm_stmt(gamedata, function, list);
