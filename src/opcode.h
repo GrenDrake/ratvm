@@ -22,8 +22,6 @@ struct OpcodeDef {
         StackPeek           = 15, // peek at the stack item X items from the top
         StackSize           = 16, // get the current size of the stack
         Call                = 17, // call a value as a function
-        CallMethod          = 18, // call an object property as a function
-        Self                = 19, // get object the current function is a property of
         GetProp             = 20,
         HasProp             = 21, // check if property is set on object
         SetProp             = 22, // set object property to value

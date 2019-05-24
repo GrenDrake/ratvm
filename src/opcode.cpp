@@ -18,8 +18,6 @@ OpcodeDef opcodes[] = {
     {   "stack_peek",   OpcodeDef::StackPeek,               1, 0 },
     {   "stack_size",   OpcodeDef::StackSize,               0, 1 },
     {   "call",         OpcodeDef::Call,                    2, 1 },
-    {   "call_method",  OpcodeDef::CallMethod,              3, 1 },
-    {   "self",         OpcodeDef::Self,                    0, 1 },
     {   "get_prop",     OpcodeDef::GetProp,                 2, 1 },
     {   "has_prop",     OpcodeDef::HasProp,                 2, 1 },
     {   "set_prop",     OpcodeDef::SetProp,                 3, 0 },

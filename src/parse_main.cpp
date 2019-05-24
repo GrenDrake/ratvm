@@ -116,6 +116,9 @@ int parse_function(GameData &gamedata, ParseState &state) {
     function->globalId = nextFunctionId++;
     function->isAsm = isAsm;
     gamedata.functions.push_back(function);
+    // hidden "self" argument
+    ++function->argument_count;
+    function->local_names.push_back("self");
     // arguments / locals
     bool doingLocals = false;
     while (!state.eof() && !state.matches(Token::CloseParan)) {
