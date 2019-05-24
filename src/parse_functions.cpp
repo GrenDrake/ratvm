@@ -31,14 +31,11 @@ static void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t 
 void build_function(FunctionDef *function);
 
 std::vector<std::string> reservedWords{
-    "asm",
     "do_while",
-    "get",
     "if",
     "label",
     "print",
     "proc",
-    "set",
     "while",
 };
 
