@@ -154,7 +154,7 @@ asm_function testCall() {
 
     testMethodCall:
     "Calling testCallObject.testMethod...[br]" say
-    3 2 1 3 $testMethod testCallObject call_method
+    3 2 1 3 $testMethod testCallObject get_prop call
 }
 
 object testCallObject
