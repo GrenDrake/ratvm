@@ -12,7 +12,7 @@ FILESCAN=./filescan
 TEST_BYTESTREAM_OBJS=tests/bytestream.o src/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
 
-all: $(BUILD) $(FILESCAN) tests
+all: $(BUILD) $(FILESCAN) tests game.bin
 
 tests: $(TEST_BYTESTREAM)
 
@@ -25,6 +25,11 @@ $(FILESCAN): $(FILESCAN_OBJS)
 $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
+
+game.bin: $(BUILD) examples/tests.src
+	cd examples && ../build -data -functions -bytecode -asm -ir tests.src
+	mv examples/game.bin examples/data.txt .
+	cp game.bin ../gtrpge-javascript/
 
 runner:
 	cd gtrpge-runner && make
