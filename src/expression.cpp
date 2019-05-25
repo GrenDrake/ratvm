@@ -21,10 +21,14 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 
+void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
+
 StatementType statementTypes[] = {
+    { "if",     stmt_if    },
     { "label",  stmt_label },
     { "print",  stmt_print },
 };
@@ -198,22 +202,36 @@ void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
     }
 }
 
+void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() < 3 || list->values.size() > 4) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "If expression must have two or three values."});
+        return;
+    }
+
+    std::string if_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+    std::string else_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+
+    const Origin &origin = list->values[0].origin;
+    process_value(gamedata, function, list->values[1]);
+    function->asmCode.push_back(new AsmValue(origin, Value{Value::Symbol, 0, else_label}));
+    function->asmCode.push_back(new AsmOpcode(origin, OpcodeDef::JumpZero));
+    process_value(gamedata, function, list->values[2]);
+    function->asmCode.push_back(new AsmValue(origin, Value{Value::Symbol, 0, if_label}));
+    function->asmCode.push_back(new AsmOpcode(origin, OpcodeDef::Jump));
+    function->asmCode.push_back(new AsmLabel(origin, else_label));
+    if (list->values.size() >= 4) {
+        process_value(gamedata, function, list->values[3]);
+    } else {
+        function->asmCode.push_back(new AsmValue(list->values[0].origin, Value{Value::Integer, 0}));
+    }
+    function->asmCode.push_back(new AsmLabel(origin, if_label));
+}
+
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
     for (unsigned i = 1; i < list->values.size(); ++i) {
-        const ListValue &theValue = list->values[i];
-        switch(theValue.value.type) {
-            case Value::Symbol: {
-                std::stringstream ss;
-                ss << "Undefined symbol " << theValue.value.text << '.';
-                gamedata.errors.push_back(Error{theValue.origin, ss.str()});
-                break; }
-            case Value::Expression:
-                process_list(gamedata, function, theValue.list);
-                if (!gamedata.errors.empty()) return;
-                break;
-            default:
-                function->asmCode.push_back(new AsmValue(theValue.origin, theValue.value));
-        }
+        process_value(gamedata, function, list->values[i]);
         function->asmCode.push_back(new AsmOpcode(list->values[0].origin, OpcodeDef::Say));
     }
 }
@@ -221,6 +239,28 @@ void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
 /* ************************************************************************** *
  * Core list processing function                                              *
  * ************************************************************************** */
+
+void process_value(GameData &gamedata, FunctionDef *function, ListValue &value) {
+    switch(value.value.type) {
+        case Value::Reserved:
+        case Value::Opcode: {
+            std::stringstream ss;
+            ss << "Invalid expression value of type " << value.value.type << '.';
+            gamedata.errors.push_back(Error{value.origin, ss.str()});
+            break; }
+        case Value::Symbol: {
+            std::stringstream ss;
+            ss << "Undefined symbol " << value.value.text << '.';
+            gamedata.errors.push_back(Error{value.origin, ss.str()});
+            break; }
+        case Value::Expression:
+            process_list(gamedata, function, value.list);
+            if (!gamedata.errors.empty()) return;
+            break;
+        default:
+            function->asmCode.push_back(new AsmValue(value.origin, value.value));
+    }
+}
 
 void process_list(GameData &gamedata, FunctionDef *function, List *list) {
     if (!list || list->values.empty()) return;

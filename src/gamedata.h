@@ -119,7 +119,7 @@ struct AsmValue : public AsmLine {
 
 struct FunctionDef {
     FunctionDef()
-    : argument_count(0), local_count(0)
+    : argument_count(0), local_count(0), nextLabel(1)
     { }
     ~FunctionDef();
     void dumpAsm(FunctionDef *function, std::ostream &out) const;
@@ -136,6 +136,7 @@ struct FunctionDef {
     int globalId;
     bool isAsm;
     std::vector<AsmLine*> asmCode;
+    int nextLabel;
 };
 
 class GameData {
