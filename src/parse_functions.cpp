@@ -27,7 +27,7 @@
 
 static void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state);
 void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &state);
-static void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value);
+static int bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value);
 void build_function(FunctionDef *function);
 
 ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState &state);
@@ -42,27 +42,33 @@ std::vector<std::string> reservedWords{
     "while",
 };
 
-void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) {
+int bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) {
     if (type == Value::None) {
         bytecode.add_8(OpcodeDef::PushNone);
+        return 1;
     } else if (value == 0) {
         bytecode.add_8(OpcodeDef::Push0);
         bytecode.add_8(type);
+        return 2;
     } else if (value == 1) {
         bytecode.add_8(OpcodeDef::Push1);
         bytecode.add_8(type);
+        return 2;
     } else if (value >= INT8_MIN && value <= INT8_MAX) {
         bytecode.add_8(OpcodeDef::Push8);
         bytecode.add_8(type);
         bytecode.add_8(value);
+        return 3;
     } else if (value >= INT16_MIN && value <= INT16_MAX) {
         bytecode.add_8(OpcodeDef::Push16);
         bytecode.add_8(type);
         bytecode.add_16(value);
+        return 4;
     } else {
         bytecode.add_8(OpcodeDef::Push32);
         bytecode.add_8(type);
         bytecode.add_32(value);
+        return 6;
     }
 }
 

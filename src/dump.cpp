@@ -237,6 +237,53 @@ void dump_fullBytecode(GameData &gamedata, std::ostream &out) {
     gamedata.bytecode.dump(out, 0);
 }
 
+void dump_ir(GameData &gamedata, std::ostream &out) {
+    for (const FunctionDef *function : gamedata.functions) {
+        if (!function) continue;
+        out << "FUNCTION #" << function->globalId << ' ' << function->name << " (";
+        for (const std::string &name : function->local_names) {
+            out << ' ' << name;
+        }
+        out << " )\n";
+        if (function->isAsm) out << "    (asm function)\n";
+        for (const AsmLine *line : function->asmCode) {
+            out << std::right << std::dec;
+            out << "    ";
+
+            const AsmLabel *label = dynamic_cast<const AsmLabel*>(line);
+            if (label) {
+                out << "LABEL " << label->text << '\n';
+                continue;
+            }
+
+            const AsmOpcode *code = dynamic_cast<const AsmOpcode*>(line);
+            if (code) {
+                const OpcodeDef *opdef = getOpcodeByCode(code->opcode);
+                out << "OPCODE " << code->opcode;
+                if (opdef)  out << " (" << opdef->name << ")\n";
+                else        out << '\n';
+                continue;
+            }
+
+            const AsmValue *value = dynamic_cast<const AsmValue*>(line);
+            if (value) {
+                out << "VALUE " << value->value;
+                switch (value->value.type) {
+                    case Value::VarRef:
+                    case Value::LocalVar:
+                        out << " (" << function->local_names[value->value.value] << ")\n";
+                        break;
+                    default:
+                        out << '\n';
+                        break;
+                }
+                continue;
+            }
+        }
+        out << '\n';
+    }
+}
+
 void dump_stringtable(GameData &gamedata, std::ostream &out) {
     for (unsigned i = 0; i < gamedata.stringTable.size(); ++i) {
         out << i << " [" << gamedata.stringTable[i].size() << "] ~";

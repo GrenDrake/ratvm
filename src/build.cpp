@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
     bool dump_functionBytecode = false;
     bool dump_strings = false;
     bool dump_asmCode = false;
+    bool dump_irFlag = false;
     bool skipIdentCheck = false;
     int next_filename = 0;
 
@@ -49,6 +50,8 @@ int main(int argc, char *argv[]) {
             dump_asmCode = true;
         } else if (strcmp(argv[i], "-strings") == 0) {
             dump_strings = true;
+        } else if (strcmp(argv[i], "-ir") == 0) {
+            dump_irFlag = true;
         } else if (strcmp(argv[i], "-skip-ident-check") == 0) {
             skipIdentCheck = true;
         } else if (next_filename < 2) {
@@ -107,6 +110,10 @@ int main(int argc, char *argv[]) {
     if (dump_asmCode) {
         std::ofstream asmFile("asm.txt");
         dump_asm(gamedata, asmFile);
+    }
+    if (dump_irFlag) {
+        std::ofstream irFile("ir.txt");
+        dump_ir(gamedata, irFile);
     }
     if (dump_bytecode) {
         std::ofstream bytecodeFile("bytecode.txt");

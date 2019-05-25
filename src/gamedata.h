@@ -84,8 +84,10 @@ struct AsmLine {
     { }
     virtual ~AsmLine() { }
     virtual void build(FunctionBuilder &builder) const = 0;
+    virtual unsigned getSize() const = 0;
 
     const Origin& getOrigin() const { return mOrigin; }
+private:
     Origin mOrigin;
 };
 struct AsmLabel : public AsmLine {
@@ -94,6 +96,7 @@ struct AsmLabel : public AsmLine {
     { }
     virtual ~AsmLabel() override { }
     virtual void build(FunctionBuilder &builder) const override { builder.build(this); }
+    virtual unsigned getSize() const override { return 0; };
 
     std::string text;
 };
@@ -104,6 +107,7 @@ struct AsmOpcode : public AsmLine {
     { }
     virtual ~AsmOpcode() override { }
     virtual void build(FunctionBuilder &builder) const override { builder.build(this); }
+    virtual unsigned getSize() const override { return 1; };
 
     int opcode;
 };
@@ -113,8 +117,10 @@ struct AsmValue : public AsmLine {
     { }
     virtual ~AsmValue() override { }
     virtual void build(FunctionBuilder &builder) const override { builder.build(this); }
+    virtual unsigned getSize() const override { return 0; };
 
     Value value;
+    unsigned mSize;
 };
 
 struct FunctionDef {
@@ -126,7 +132,6 @@ struct FunctionDef {
     void addLabel(const Origin &origin, const std::string &label);
     void addOpcode(const Origin &origin, int opcode);
     void addValue(const Origin &origin, const Value &value);
-    void dumpAsm(FunctionDef *function, std::ostream &out) const;
 
     Origin origin;
     int argument_count;
@@ -181,6 +186,7 @@ void dump_gamedata(GameData &gamedata, std::ostream &out);
 void dump_asm(GameData &gamedata, std::ostream &out);
 void dump_functions(GameData &gamedata, std::ostream &out, bool functionBytecode);
 void dump_fullBytecode(GameData &gamedata, std::ostream &out);
+void dump_ir(GameData &gamedata, std::ostream &out);
 void dump_stringtable(GameData &gamedata, std::ostream &out);
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out);
 
