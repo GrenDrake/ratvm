@@ -117,18 +117,18 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
                 gamedata.errors.push_back(Error{theValue.origin,
                     "Store opcode must reference local variable."});
             } else {
-                function->asmCode.push_back(new AsmValue(theValue.origin, Value{Value::VarRef, theValue.value.value}));
+                function->addValue(theValue.origin, Value{Value::VarRef, theValue.value.value});
             }
         } else {
             if (theValue.value.type == Value::Expression) {
                 process_list(gamedata, function, theValue.list);
                 if (!gamedata.errors.empty()) return;
             } else {
-                function->asmCode.push_back(new AsmValue(theValue.origin, theValue.value));
+                function->addValue(theValue.origin, theValue.value);
             }
         }
     }
-    function->asmCode.push_back(new AsmOpcode(list->values[0].origin, list->values[0].value.opcode->code));
+    function->addOpcode(list->values[0].origin, list->values[0].value.opcode->code);
 }
 
 void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
@@ -141,17 +141,17 @@ void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
             process_list(gamedata, function, theValue.list);
             if (!gamedata.errors.empty()) return;
         } else {
-            function->asmCode.push_back(new AsmValue(theValue.origin, theValue.value));
+            function->addValue(theValue.origin, theValue.value);
         }
     }
 
-    function->asmCode.push_back(new AsmValue(func.origin, Value{Value::Integer, argumentCount}));
+    function->addValue(func.origin, Value{Value::Integer, argumentCount});
     if (func.value.type == Value::Expression) {
         process_list(gamedata, function, func.list);
     } else {
-        function->asmCode.push_back(new AsmValue(func.origin, func.value));
+        function->addValue(func.origin, func.value);
     }
-    function->asmCode.push_back(new AsmOpcode(func.origin, OpcodeDef::Call));
+    function->addOpcode(func.origin, OpcodeDef::Call);
 }
 
 void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list) {
@@ -165,10 +165,10 @@ void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list) 
     if (prop.value.type == Value::Expression) {
         process_list(gamedata, function, prop.list);
     } else {
-        function->asmCode.push_back(new AsmValue(prop.origin, prop.value));
+        function->addValue(prop.origin, prop.value);
     }
-    function->asmCode.push_back(new AsmValue(obj.origin, obj.value));
-    function->asmCode.push_back(new AsmOpcode(obj.origin, OpcodeDef::GetProp));
+    function->addValue(obj.origin, obj.value);
+    function->addOpcode(obj.origin, OpcodeDef::GetProp);
 }
 
 void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list) {
@@ -197,7 +197,7 @@ void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
             ss << "Label name must be undefined identifier";
             gamedata.errors.push_back(Error{list->values[1].origin, ss.str()});
         } else {
-            function->asmCode.push_back(new AsmLabel(list->values[1].origin, list->values[1].value.text));
+            function->addLabel(list->values[1].origin, list->values[1].value.text);
         }
     }
 }
@@ -215,24 +215,24 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
 
     const Origin &origin = list->values[0].origin;
     process_value(gamedata, function, list->values[1]);
-    function->asmCode.push_back(new AsmValue(origin, Value{Value::Symbol, 0, else_label}));
-    function->asmCode.push_back(new AsmOpcode(origin, OpcodeDef::JumpZero));
+    function->addValue(origin, Value{Value::Symbol, 0, else_label});
+    function->addOpcode(origin, OpcodeDef::JumpZero);
     process_value(gamedata, function, list->values[2]);
-    function->asmCode.push_back(new AsmValue(origin, Value{Value::Symbol, 0, if_label}));
-    function->asmCode.push_back(new AsmOpcode(origin, OpcodeDef::Jump));
-    function->asmCode.push_back(new AsmLabel(origin, else_label));
+    function->addValue(origin, Value{Value::Symbol, 0, if_label});
+    function->addOpcode(origin, OpcodeDef::Jump);
+    function->addLabel(origin, else_label);
     if (list->values.size() >= 4) {
         process_value(gamedata, function, list->values[3]);
     } else {
-        function->asmCode.push_back(new AsmValue(list->values[0].origin, Value{Value::Integer, 0}));
+        function->addValue(list->values[0].origin, Value{Value::Integer, 0});
     }
-    function->asmCode.push_back(new AsmLabel(origin, if_label));
+    function->addLabel(origin, if_label);
 }
 
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
     for (unsigned i = 1; i < list->values.size(); ++i) {
         process_value(gamedata, function, list->values[i]);
-        function->asmCode.push_back(new AsmOpcode(list->values[0].origin, OpcodeDef::Say));
+        function->addOpcode(list->values[0].origin, OpcodeDef::Say);
     }
 }
 
@@ -258,7 +258,7 @@ void process_value(GameData &gamedata, FunctionDef *function, ListValue &value) 
             if (!gamedata.errors.empty()) return;
             break;
         default:
-            function->asmCode.push_back(new AsmValue(value.origin, value.value));
+            function->addValue(value.origin, value.value);
     }
 }
 

@@ -122,6 +122,10 @@ struct FunctionDef {
     : argument_count(0), local_count(0), nextLabel(1)
     { }
     ~FunctionDef();
+
+    void addLabel(const Origin &origin, const std::string &label);
+    void addOpcode(const Origin &origin, int opcode);
+    void addValue(const Origin &origin, const Value &value);
     void dumpAsm(FunctionDef *function, std::ostream &out) const;
 
     Origin origin;

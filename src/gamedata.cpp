@@ -21,6 +21,18 @@ FunctionDef::~FunctionDef() {
     }
 }
 
+void FunctionDef::addLabel(const Origin &origin, const std::string &label) {
+    asmCode.push_back(new AsmLabel(origin, label));
+}
+
+void FunctionDef::addOpcode(const Origin &origin, int opcode) {
+    asmCode.push_back(new AsmOpcode(origin, opcode));
+}
+
+void FunctionDef::addValue(const Origin &origin, const Value &value) {
+    asmCode.push_back(new AsmValue(origin, value));
+}
+
 void FunctionDef::dumpAsm(FunctionDef *function, std::ostream &out) const {
     for (const AsmLine *line : function->asmCode) {
         const AsmLabel *label = dynamic_cast<const AsmLabel*>(line);
