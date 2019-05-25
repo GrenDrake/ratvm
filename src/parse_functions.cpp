@@ -30,6 +30,9 @@ void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &s
 static void bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value);
 void build_function(FunctionDef *function);
 
+ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState &state);
+List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state);
+
 std::vector<std::string> reservedWords{
     "do_while",
     "if",
@@ -202,6 +205,41 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
     }
 }
 
+ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState &state) {
+    const Token *here = state.here();
+    ListValue newValue = {Origin(), Value{Value::None}};
+    if (!here) return newValue;
+
+    switch(here->type) {
+        case Token::Integer:
+            newValue = ListValue{here->origin,  Value{Value::Integer, here->value} };
+            break;
+        case Token::Property:
+            newValue = ListValue{here->origin,  Value{Value::Property, here->value} };
+            break;
+        case Token::String: {
+            int ident = gamedata.getStringId(state.here()->text);
+            newValue = ListValue{here->origin,  Value{Value::String, ident} };
+            break; }
+        case Token::OpenParan: {
+            List *sublist = parse_list(gamedata, function, state);
+            newValue = ListValue{here->origin,  Value{Value::Expression}, sublist };
+            break; }
+        case Token::Identifier: {
+            Value result = evalIdentifier(gamedata, function, here->text);
+            newValue = ListValue{here->origin,  result };
+            break; }
+        default: {
+            std::stringstream ss;
+            ss << "Unexpected type " << here->type << '.';
+            gamedata.errors.push_back(Error{here->origin, ss.str()});
+            here = state.next();
+            return newValue; }
+    }
+    here = state.next();
+    return newValue;
+}
+
 List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
     try {
         state.require(Token::OpenParan);
@@ -214,32 +252,9 @@ List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
     List *list = new List;
     const Token *here = state.here();
     while (here && here->type != Token::CloseParan) {
-        switch(here->type) {
-            case Token::Integer:
-                list->values.push_back(ListValue{here->origin,  Value{Value::Integer, here->value} });
-                break;
-            case Token::Property:
-                list->values.push_back(ListValue{here->origin,  Value{Value::Property, here->value} });
-                break;
-            case Token::String: {
-                int ident = gamedata.getStringId(state.here()->text);
-                list->values.push_back(ListValue{here->origin,  Value{Value::String, ident} });
-                break; }
-            case Token::OpenParan: {
-                List *sublist = parse_list(gamedata, function, state);
-                list->values.push_back(ListValue{here->origin,  Value{Value::Expression}, sublist });
-                break; }
-            case Token::Identifier: {
-                Value result = evalIdentifier(gamedata, function, here->text);
-                list->values.push_back(ListValue{here->origin,  result });
-                break; }
-            default: {
-                std::stringstream ss;
-                ss << "Unexpected type " << here->type << '.';
-                gamedata.errors.push_back(Error{here->origin, ss.str()});
-                break; }
-        }
-        here = state.next();
+        ListValue nextValue = parse_listvalue(gamedata, function, state);
+        list->values.push_back(nextValue);
+        here = state.here();
     }
     return list;
 }
