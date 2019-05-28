@@ -12,11 +12,6 @@
 #include "gamedata.h"
 #include "opcode.h"
 
-struct StatementType {
-    std::string name;
-    void (*handler)(GameData &gamedata, FunctionDef *function, List *list);
-};
-
 void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list);
@@ -27,12 +22,26 @@ void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 
 void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
 
+/* ************************************************************************** *
+ * Reserved words and statements                                              *
+ * ************************************************************************** */
+
 StatementType statementTypes[] = {
-    { "if",     stmt_if    },
-    { "label",  stmt_label },
-    { "print",  stmt_print },
+    { "",           nullptr    },
+    { "do_while",   nullptr },
+    { "if",         stmt_if    },
+    { "label",      stmt_label },
+    { "print",      stmt_print },
+    { "proc",       nullptr },
+    { "while",      nullptr },
 };
 
+const StatementType& getReservedWord(const std::string &word) {
+    for (const StatementType &stmt : statementTypes) {
+        if (stmt.name == word) return stmt;
+    }
+    return statementTypes[0];
+}
 
 /* ************************************************************************** *
  * General list management functions                                          *

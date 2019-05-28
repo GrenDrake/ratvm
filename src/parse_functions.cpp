@@ -33,14 +33,6 @@ void build_function(FunctionDef *function);
 ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState &state);
 List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state);
 
-std::vector<std::string> reservedWords{
-    "do_while",
-    "if",
-    "label",
-    "print",
-    "proc",
-    "while",
-};
 
 int bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) {
     if (type == Value::None) {
@@ -75,7 +67,7 @@ int bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value) {
 bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &name, unsigned localId) {
     if (function->isAsm && getOpcode(name)) return true;
     if (gamedata.symbols.get(name)) return true;
-    if (std::find(reservedWords.begin(), reservedWords.end(), name) != reservedWords.end()) {
+    if (getReservedWord(name).handler != nullptr) {
         return true;
     }
     for (const auto &labelIter : function->labels) {
@@ -102,7 +94,7 @@ Value evalIdentifier(GameData &gamedata, FunctionDef *function, const std::strin
     }
 
     // is reserved word
-    if (std::find(reservedWords.begin(), reservedWords.end(), identifier) != reservedWords.end()) {
+    if (getReservedWord(identifier).handler != nullptr) {
         return Value{Value::Reserved, 0, identifier};
     }
 
