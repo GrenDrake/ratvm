@@ -52,8 +52,6 @@ OpcodeDef opcodes[] = {
     {   "bit_xor",      OpcodeDef::BitXor,                  2, 1 },
     {   "bit_not",      OpcodeDef::BitNot,                  1, 1 },
     {   "random",       OpcodeDef::Random,                  2, 1 },
-    {   "inc",          OpcodeDef::Inc,                     1, 1 },
-    {   "dec",          OpcodeDef::Dec,                     1, 1 },
     {   "get_random",   OpcodeDef::GetRandom,               1, 1 },
     {   "get_keys",     OpcodeDef::GetKeys,                 1, 1 },
     {   "stack_swap",   OpcodeDef::StackSwap,               2, 0 },

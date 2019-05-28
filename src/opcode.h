@@ -13,6 +13,7 @@ struct OpcodeDef {
         Push16              = 5,
         Push32              = 6,
         Store               = 7,
+        /* unused: 8 */
         SayUCFirst          = 9,
         Say                 = 10,
         SayUnsigned         = 11,
@@ -22,6 +23,7 @@ struct OpcodeDef {
         StackPeek           = 15, // peek at the stack item X items from the top
         StackSize           = 16, // get the current size of the stack
         Call                = 17, // call a value as a function
+        /* unused: 18 */
         GetProp             = 19,
         HasProp             = 20, // check if property is set on object
         SetProp             = 21, // set object property to value
@@ -59,8 +61,7 @@ struct OpcodeDef {
         BitXor              = 50,
         BitNot              = 51,
         Random              = 52,
-        Inc                 = 53,
-        Dec                 = 54,
+        /* unused: 53, 54 */
         GetRandom           = 55,
         GetKeys             = 56,
         StackSwap           = 57,

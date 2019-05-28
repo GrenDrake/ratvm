@@ -548,17 +548,8 @@ asm_function testMath(: counter) {
     "Failed !testMath() == false." error
 
     testNotNone:
-    none not testDecInc jnz
+    none not done jnz
     "Failed !none == true." error
-
-    testDecInc:
-    "Testing incrementing and decrementing...[br]" say
-    4 inc 5 eq testDec jnz
-    "Failed inc 4 == 5." error
-
-    testDec:
-    4 dec 3 eq done jnz
-    "Failed dec 4 == 3." error
 
     done:
 }
@@ -771,7 +762,7 @@ asm_function printArray(theArray : counter length) {
     0 *counter store
     arraydumploop:
     " " say counter theArray get_item say
-    counter inc *counter store
+    counter 1 add *counter store
     length counter gt arraydumploop jnz
     " (length: " say length say ")\n" say
 }
@@ -854,7 +845,7 @@ asm_function testLists(: counter random_value) {
     random_value 3 eq randomloop_good jnz
     "Got unexpected value when drawing random list values." error
     randomloop_good:
-    counter inc *counter store
+    counter 1 add *counter store
     200 counter gt randomloop jnz
 
     return
@@ -961,10 +952,10 @@ asm_function testPage1(key) {
     return
 
     leftkey:
-    $index testpageData get_prop dec $index testpageData set_prop
+    $index testpageData get_prop 1 sub $index testpageData set_prop
     showpage jmp
     rightkey:
-    $index testpageData get_prop inc $index testpageData set_prop
+    $index testpageData get_prop 1 add $index testpageData set_prop
     showpage jmp
     upkey:
     $index testpageData get_prop 10 mult $index testpageData set_prop
@@ -986,7 +977,7 @@ asm_function testPage1(key) {
     $index testpageData get_prop say
     ". Use arrow keys to change."
     "Press space to return." testPage1 get_key
-    $count testpageData get_prop inc $count testpageData set_prop
+    $count testpageData get_prop 1 add $count testpageData set_prop
 }
 asm_function otherPage() {
     "You selected a page other than the demo page! (Only the demo page has actual content.)" say
