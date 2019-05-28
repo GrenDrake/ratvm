@@ -86,43 +86,43 @@ asm_function testStack() {
     "\n# Testing stack manipulation\n" say
 
     "Testing correct initial size...[br]" say
-    stack_size 4 cmp testPeek jz
+    stack_size 4 eq testPeek jnz
     "Stack has bad initial size." error
 
     testPeek:
     "Testing stack peeking...[br]" say
-    0 stack_peek 8 cmp testPeek2 jz
+    0 stack_peek 8 eq testPeek2 jnz
     "Failed peek at top item." error
     testPeek2:
-    3 stack_peek 2 cmp testPop jz
+    3 stack_peek 2 eq testPop jnz
     "Failed peek at bottom item." error
 
     testPop:
     "Popping item and checking stack size...[br]" say
     pop
-    stack_size 3 cmp testPush jz
+    stack_size 3 eq testPush jnz
     "Stack has bad size after pop." error
 
     testPush:
     "Pushing new item and checking stack size...[br]" say
     94
-    stack_size 4 cmp testDup jz
+    stack_size 4 eq testDup jnz
     "Stack has bad size after push." error
 
     testDup:
     "Duplicating top item and checking size and value...[br]" say
     stack_dup
-    stack_size 5 cmp testDup2 jz
+    stack_size 5 eq testDup2 jnz
     "Stack has bad size after stack_dup." error
     testDup2:
-    cmp testSwap jz
+    eq testSwap jnz
     "Duplicate item not equal to original." error
 
     testSwap:
     "Testing stack swapping...[br]" say
     0 2 stack_swap
-    0 stack_peek 2 cmp testSwapError jnz
-    2 stack_peek 6 cmp testSwapError jnz
+    0 stack_peek 2 eq testSwapError jz
+    2 stack_peek 6 eq testSwapError jz
 
     return
 
@@ -138,7 +138,7 @@ asm_function testCall() {
     "\n# Testing function calls\n" say
 
     "Checking value of self on non-method...[br]" say
-    self none cmp oneUnspecified jz
+    self none eq oneUnspecified jnz
     "Incorrect value of self." error
 
     oneUnspecified:
@@ -149,7 +149,7 @@ asm_function testCall() {
     34 88 24 3 testCall_both call
 
     "Checking result of calling testCallHelperMultiply(5,6)...[br]" say
-    5 6 2 testCallHelperMultiply call 30 cmp testMethodCall jz
+    5 6 2 testCallHelperMultiply call 30 eq testMethodCall jnz
     "testCallHelperMultiply(5,6) did not have result of 30." error
 
     testMethodCall:
@@ -160,18 +160,18 @@ asm_function testCall() {
 object testCallObject
     testMethod asm_function(arg1 arg2 arg3) {
         "[i]testMethod:[/i] Checking value of self...[br]" say
-        self testCallObject cmp testArg1 jz
+        self testCallObject eq testArg1 jnz
         "Incorrect value of self." error
 
         testArg1:
         "[i]testMethod:[/i] Checking argument values...[br]" say
-        arg1 1 cmp testArg2 jz
+        arg1 1 eq testArg2 jnz
         "First argument has wrong value." error
         testArg2:
-        arg2 2 cmp testArg3 jz
+        arg2 2 eq testArg3 jnz
         "Second argument has wrong value." error
         testArg3:
-        arg3 3 cmp done jz
+        arg3 3 eq done jnz
         "Third argument has wrong value." error
 
         done:
@@ -179,26 +179,26 @@ object testCallObject
 ;
 
 asm_function testCall_onlyOne( arg1 arg2 ) {
-    arg1 none cmp compareArg2 jnz
+    arg1 none eq compareArg2 jz
     "First passed argument had unexpected none" error
 
     compareArg2:
-    arg2 none cmp done jz
+    arg2 none eq done jnz
     "Second passed argument not none" error
 
     done:
 }
 
 asm_function testCall_both( arg1 arg2 : var1 ) {
-    arg1 none cmp compareArg2 jnz
+    arg1 none eq compareArg2 jz
     "First passed argument had unexpected none" error
 
     compareArg2:
-    arg2 none cmp compareVar1 jnz
+    arg2 none eq compareVar1 jz
     "First passed argument had unexpected none" error
 
     compareVar1:
-    var1 none cmp done jz
+    var1 none eq done jnz
     "First non-argument local not none" error
 
     done:
@@ -216,75 +216,88 @@ asm_function testCompare(: testValue) {
     "\n# Testing compare opcode\n" say
 
     "Comparing integer values...[br]" say
-    5 5 cmp testCmpLT jz
+    5 5 eq testEqFail jnz
     "Failed 5 == 5." error
 
+    testEqFail:
+    5 10 eq testNeq jz
+    "Failed 5 != 10." error
+
+    testNeq:
+    5 5 neq testNeqFail jz
+    "Failed 5 == 5." error
+
+    testNeqFail:
+    5 10 neq testCmpLT jnz
+    "Failed 5 != 10." error
+
+
     testCmpLT:
-    2 5 cmp testCmpGT jlt
+    2 5 lt testCmpGT jnz
     "Failed 2 < 5." error
 
     testCmpGT:
-    5 2 cmp testCmpLTE jgt
+    5 2 gt testCmpLTE jnz
     "Failed 5 > 2." error
 
     testCmpLTE:
-    2 5 cmp testCmpLTE2 jlte
+    2 5 lte testCmpLTE2 jnz
     "Failed 2 <= 5." error
 
     testCmpLTE2:
-    5 5 cmp testCmpGTE jlte
+    5 5 lte testCmpGTE jnz
     "Failed 5 <= 5." error
 
     testCmpGTE:
-    5 2 cmp testCmpGTE2 jgte
+    5 2 gte testCmpGTE2 jnz
     "Failed 5 >= 2." error
 
     testCmpGTE2:
-    5 5 cmp testCmpLtNeg jgte
+    5 5 gte testCmpLtNeg jnz
     "Failed 5 >= 5." error
 
     testCmpLtNeg:
-    -5 5 cmp testCmpGtNeg jlt
+    -5 5 lt testCmpGtNeg jnz
     "Failed -5 < 5." error
 
     testCmpGtNeg:
-    5 -5 cmp testNonInteger jgt
+    5 -5 gt testNonInteger jnz
     "Failed 5 > -5." error
 
 
     testNonInteger:
     "Testing non-integer comparisons...[br]" say
-    none none cmp testStrNone jz
+    none none eq testStrNone jnz
     "Failed none == none." error
 
     testStrNone:
-    "\n" none cmp testStrFunc jnz
+    "\n" none eq testStrFunc jz
     "Failed String != none." error
 
     testStrFunc:
-    "\n" testCompare cmp testStrSelf jnz
+    "\n" testCompare eq testStrSelf jz
     "Failed String != Function." error
 
     testStrSelf:
-    "\n" "\n" cmp testStrStr jz
+    "\n" "\n" eq testStrStr jnz
     "Failed String != self." error
 
     testStrStr:
-    "\n" " " cmp testWithLocals jnz
+    "\n" " " eq testWithLocals jz
     "Failed String != String." error
 
     testWithLocals:
     "Testing using local variables...[br]" say
     5 *testValue store
-    testValue 5 cmp localLt jz
+    testValue 5 eq localLt jnz
     "Failed local == 5." error
 
     localLt:
-    2 testValue cmp localGt jlt
+    2 testValue lt localGt jnz
     "Failed 2 < local." error
 
     localGt:
-    testValue 2 cmp done jgt
+    testValue 2 gt done jnz
     "Failed local > 2." error
 
     done:
@@ -323,64 +336,64 @@ asm_function testJumps(: testValue) {
     "Failed jnz (1)." error
 
     test005:
-    1 test005_failed jlt
+    1 0 lt test005_failed jnz
     test006 jmp
     test005_failed:
-    "Failed jlt (1)." error
+    "Failed lt (1)." error
 
     test006:
-    0 test006_failed jlt
+    0 0 lt test006_failed jnz
     test007 jmp
     test006_failed:
-    "Failed jlt (0)." error
+    "Failed lt (0)." error
 
     test007:
-    -1 test008 jlt
-    "Failed jlt (-1)." error
+    -1 0 lt test008 jnz
+    "Failed lt (-1)." error
 
     test008:
-    -1 test008_failed jgt
+    -1 0 gt test008_failed jnz
     test009 jmp
     test008_failed:
-    "Failed jgt (-1)." error
+    "Failed gt (-1)." error
 
     test009:
-    0 test009_failed jgt
+    0 0 gt test009_failed jnz
     test010 jmp
     test009_failed:
-    "Failed jgt (0)." error
+    "Failed gt (0)." error
 
     test010:
-    1 test011 jgt
-    "Failed jgt (1)." error
+    1 0 gt test011 jnz
+    "Failed gt (1)." error
 
     test011:
-    -1 test012 jlte
-    "Failed jlte (-1)." error
+    -1 0 lte test012 jnz
+    "Failed lte (-1)." error
 
     test012:
-    0 test013 jlte
-    "Failed jlte (0)." error
+    0 0 lte test013 jnz
+    "Failed lte (0)." error
 
     test013:
-    1 test013_failed jlte
+    1 0 lte test013_failed jnz
     test014 jmp
     test013_failed:
-    "Failed jlte (1)." error
+    "Failed lte (1)." error
 
     test014:
-    1 test015 jgte
-    "Failed jgte (1)." error
+    1 0 gte test015 jnz
+    "Failed gte (1)." error
 
     test015:
-    0 test016 jgte
-    "Failed jgte (0)." error
+    0 0 gte test016 jnz
+    "Failed gte (0)." error
 
     test016:
-    -1 test016_failed jgte
+    -1 0 gte test016_failed jnz
     test017 jmp
     test016_failed:
-    "Failed jgte (-1)." error
+    "Failed gte (-1)." error
 
     test017:
     "Test jump target in local variable...[br]" say
@@ -400,23 +413,23 @@ asm_function testJumps(: testValue) {
 
     test020:
     test021 *testValue store
-    -1 testValue jlt
-    "Failed jlt w/ local." error
+    -1 0 lt testValue jnz
+    "Failed lt w/ local." error
 
     test021:
     test022 *testValue store
-    1 testValue jgt
-    "Failed jgt w/ local." error
+    1 0 gt testValue jnz
+    "Failed gt w/ local." error
 
     test022:
     test023 *testValue store
-    -1 testValue jlte
-    "Failed jlte w/ local." error
+    -1 0 lte testValue jnz
+    "Failed lte w/ local." error
 
     test023:
     test024 *testValue store
-    1 testValue jgte
-    "Failed jgte w/ local." error
+    1 0 gte testValue jnz
+    "Failed gte w/ local." error
 
     test024:
     "Testing with value in local variable...[br]" say
@@ -430,21 +443,21 @@ asm_function testJumps(: testValue) {
     "Failed jnz w/ value in local." error
 
     test026:
-    testValue test027 jgt
-    "Failed jgt w/ value in local." error
+    testValue 0 gt test027 jnz
+    "Failed gt w/ value in local." error
 
     test027:
-    testValue test028 jgte
-    "Failed jgte w/ value in local." error
+    testValue 0 gte test028 jnz
+    "Failed gte w/ value in local." error
 
     test028:
     -1 *testValue store
-    testValue test029 jlt
-    "Failed jlt w/ value in local." error
+    testValue 0 lt test029 jnz
+    "Failed lt w/ value in local." error
 
     test029:
-    testValue done jlte
-    "Failed jlte w/ value in local." error
+    testValue 0 lte done jnz
+    "Failed lte w/ value in local." error
 
     done:
 }
@@ -457,52 +470,52 @@ asm_function testMath(: counter) {
     "\n# Testing math opcodes\n" say
     "Testing arithmetic...[br]" say
 
-    5 5 add 10 cmp testMinus jz
+    5 5 add 10 eq testMinus jnz
     "Failed 5 + 5 == 10." error
 
     testMinus:
-    10 5 sub 5 cmp testMult jz
+    10 5 sub 5 eq testMult jnz
     "Failed 10 - 5 == 5." error
 
     testMult:
-    10 5 mult 50 cmp testDiv jz
+    10 5 mult 50 eq testDiv jnz
     "Failed 10 * 5 == 50." error
 
     testDiv:
-    40 5 div 8 cmp testMod jz
+    40 5 div 8 eq testMod jnz
     "Failed 40 / 5 == 8." error
 
     testMod:
-    40 6 mod 4 cmp testPow jz
+    40 6 mod 4 eq testPow jnz
     "Failed 40 % 6 == 4." error
 
     testPow:
-    2 8 pow 256 cmp testLeftShift jz
+    2 8 pow 256 eq testLeftShift jnz
     "Failed 2 ^ 8 == 256." error
 
     testLeftShift:
     "Testing bit operations...[br]" say
-    1 4 left_shift 16 cmp testRightShift jz
+    1 4 left_shift 16 eq testRightShift jnz
     "Failed 1 << 4 == 16." error
 
     testRightShift:
-    32 4 right_shift 2 cmp testBitAnd jz
+    32 4 right_shift 2 eq testBitAnd jnz
     "Failed 32 >> 4 == 2." error
 
     testBitAnd:
-    90 170 bit_and 10 cmp testBitOr jz
+    90 170 bit_and 10 eq testBitOr jnz
     "Failed 90 & 170 == 10." error
 
     testBitOr:
-    90 170 bit_or 250 cmp testBitXor jz
+    90 170 bit_or 250 eq testBitXor jnz
     "Failed 90 | 170 == 250." error
 
     testBitXor:
-    90 170 bit_xor 240 cmp testBitNot jz
+    90 170 bit_xor 240 eq testBitNot jnz
     "Failed 90 ^ 170 == 240." error
 
     testBitNot:
-    148 bit_not -149 cmp testTruth jz
+    148 bit_not -149 eq testTruth jnz
     "Failed ~148 == -149." error
 
     testTruth:
@@ -540,11 +553,11 @@ asm_function testMath(: counter) {
 
     testDecInc:
     "Testing incrementing and decrementing...[br]" say
-    4 inc 5 cmp testDec jz
+    4 inc 5 eq testDec jnz
     "Failed inc 4 == 5." error
 
     testDec:
-    4 dec 3 cmp done jz
+    4 dec 3 eq done jnz
     "Failed dec 4 == 3." error
 
     done:
@@ -605,7 +618,7 @@ asm_function testLoopDemo(: counter theValue) {
     2 theValue mult *theValue store
     counter say
     " " say
-    counter 10 cmp loopstart jlt
+    counter 10 lt loopstart jnz
     "Loop finished!\n" say
     "Final result: " say
     theValue say
@@ -647,55 +660,55 @@ asm_function testValues(: localvar) {
     "\n# Testing Value Types\n" say
 
     "Checking basic value types...[br]" say
-    testInt typeof Integer cmp test_string jz
+    testInt typeof Integer eq test_string jnz
     "Failed typeof testInt == Integer." error
 
     test_string:
-    testStr typeof String cmp test_list jz
+    testStr typeof String eq test_list jnz
     "Failed typeof testStr == String." error
 
     test_list:
-    testList typeof List cmp test_map jz
+    testList typeof List eq test_map jnz
     "Failed typeof testList == List." error
 
     test_map:
-    testMap typeof Map cmp test_function jz
+    testMap typeof Map eq test_function jnz
     "Failed typeof testMap == Map." error
 
     test_function:
-    testValues typeof Function cmp test_object jz
+    testValues typeof Function eq test_object jnz
     "Failed typeof testValues == Function." error
 
     test_object:
-    first_obj typeof Object cmp test_property jz
+    first_obj typeof Object eq test_property jnz
     "Failed typeof first_obj == testObject." error
 
     test_property:
-    testProperty typeof Property cmp test_varref jz
+    testProperty typeof Property eq test_varref jnz
     "Failed typeof testProperty == Property." error
 
     test_varref:
-    *localvar typeof Reference cmp test_flags jz
+    *localvar typeof Reference eq test_flags jnz
     "Failed typeof *localvar == Reference." error
 
     test_flags:
-    testFlags typeof Integer cmp test_local jz
+    testFlags typeof Integer eq test_local jnz
     "Failed typeof testFlags == Integer." error
 
     test_local:
     "Testing local variable values...[br]" say
-    localvar none cmp test_local_2 jz
+    localvar none eq test_local_2 jnz
     "Failed localvar default value == none." error
 
     test_local_2:
     0 *localvar store
-    localvar typeof Integer cmp test_casts jz
+    localvar typeof Integer eq test_casts jnz
     "Failed typeof localvar == Integer." error
 
     test_casts:
     "Testing type casting...[br]" say
     String localvar astype *localvar store
-    localvar firstString cmp all_done jz
+    localvar firstString eq all_done jnz
     "Failed localvar cast to string." error
 
     all_done:
@@ -742,7 +755,7 @@ asm_function testRandom(: counter) {
 
     100 *counter store
     loop_start:
-    counter loop_done jlte
+    counter 0 lte loop_done jnz
     50 60 random say " " say
     counter 1 sub *counter store
     loop_start jmp
@@ -759,7 +772,7 @@ asm_function printArray(theArray : counter length) {
     arraydumploop:
     " " say counter theArray get_item say
     counter inc *counter store
-    length counter cmp arraydumploop jgt
+    length counter gt arraydumploop jnz
     " (length: " say length say ")\n" say
 }
 
@@ -767,67 +780,67 @@ asm_function testLists(: counter random_value) {
     "\n# Testing List Operations\n" say
 
     "Testing list insertion...[br]" say
-    testList get_size 3 cmp test_add jz
+    testList get_size 3 eq test_add jnz
     "Test list has wrong initial size." error
 
     test_add:
     91 99 testList add_item
-    testList get_size 4 cmp test_add_initial jz
+    testList get_size 4 eq test_add_initial jnz
     "Test list has wrong size after add at end." error
 
     test_add_initial:
     46 0 testList add_item
-    testList get_size 5 cmp test_add_middle jz
+    testList get_size 5 eq test_add_middle jnz
     "Test list has wrong size after add at beginning." error
 
     test_add_middle:
     13 2 testList add_item
-    testList get_size 6 cmp test_list_contents jz
+    testList get_size 6 eq test_list_contents jnz
     "Test list has wrong size after add in middle." error
 
     test_list_contents:
-    0 testList get_item 46 cmp test_list_contents_wrong jnz
-    1 testList get_item  1 cmp test_list_contents_wrong jnz
-    2 testList get_item 13 cmp test_list_contents_wrong jnz
-    3 testList get_item  2 cmp test_list_contents_wrong jnz
-    4 testList get_item  3 cmp test_list_contents_wrong jnz
-    5 testList get_item 91 cmp test_list_contents_wrong jnz
+    0 testList get_item 46 eq test_list_contents_wrong jz
+    1 testList get_item  1 eq test_list_contents_wrong jz
+    2 testList get_item 13 eq test_list_contents_wrong jz
+    3 testList get_item  2 eq test_list_contents_wrong jz
+    4 testList get_item  3 eq test_list_contents_wrong jz
+    5 testList get_item 91 eq test_list_contents_wrong jz
 
 
     "Testing changing value in list...[br]" say
     second_obj 2 testList set_item
-    2 testList get_item second_obj cmp test_deletion jz
+    2 testList get_item second_obj eq test_deletion jnz
     "Failed to update list index." error
 
 
     test_deletion:
     "Testing list deletion...[br]" say
     2 testList del_item
-    testList get_size 5 cmp test_del_first jz
+    testList get_size 5 eq test_del_first jnz
     "Test list has wrong size after delete." error
 
     test_del_first:
     0 testList del_item
-    testList get_size 4 cmp test_del_last jz
+    testList get_size 4 eq test_del_last jnz
     "Test list has wrong size after delete." error
 
     test_del_last:
     3 testList del_item
-    testList get_size 3 cmp test_list_contents_2 jz
+    testList get_size 3 eq test_list_contents_2 jnz
     "Test list has wrong size after delete." error
 
     test_list_contents_2:
-    0 testList get_item  1 cmp test_list_contents_wrong jnz
-    1 testList get_item  2 cmp test_list_contents_wrong jnz
-    2 testList get_item  3 cmp test_list_contents_wrong jnz
+    0 testList get_item  1 eq test_list_contents_wrong jz
+    1 testList get_item  2 eq test_list_contents_wrong jz
+    2 testList get_item  3 eq test_list_contents_wrong jz
 
 
     "Testing bad list indexes...[br]" say
-    -1 testList get_item 0 cmp test_list_badindex jz
+    -1 testList get_item 0 eq test_list_badindex jnz
     "Accessing negative list index does not return 0." error
 
     test_list_badindex:
-    99 testList get_item 0 cmp test_random jz
+    99 testList get_item 0 eq test_random jnz
     "Accessing list index beyond list size does not return 0." error
 
 
@@ -836,13 +849,13 @@ asm_function testLists(: counter random_value) {
     0 *counter store
     randomloop:
     testList get_random *random_value store
-    random_value 1 cmp randomloop_good jz
-    random_value 2 cmp randomloop_good jz
-    random_value 3 cmp randomloop_good jz
+    random_value 1 eq randomloop_good jnz
+    random_value 2 eq randomloop_good jnz
+    random_value 3 eq randomloop_good jnz
     "Got unexpected value when drawing random list values." error
     randomloop_good:
     counter inc *counter store
-    200 counter cmp randomloop jgt
+    200 counter gt randomloop jnz
 
     return
 
@@ -860,23 +873,23 @@ asm_function testMaps(: keys) {
     "\n# Testing Map Operations\n" say
 
     "Fetching map keys...[br]" say
-    7 testMap get_item 0 cmp test_valid_key jz
+    7 testMap get_item 0 eq test_valid_key jnz
     "Accessing invalid element returns wrong value." error
 
     test_valid_key:
-    2 testMap get_item "End" cmp test_update jz
+    2 testMap get_item "End" eq test_update jnz
     "Retrieving map key \"2\" returned invalid result." error
 
     test_update:
     "Testing key update...[br]" say
     "Apple" 3 testMap set_item
-    3 testMap get_item "Apple" cmp test_newkey jz
+    3 testMap get_item "Apple" eq test_newkey jnz
     "Retrieving updated map key \"3\" returned invalid result." error
 
     test_newkey:
     "Testing inserting new key...[br]" say
     "item" "newkey" testMap set_item
-    "newkey" testMap get_item "item" cmp test_haskey jz
+    "newkey" testMap get_item "item" eq test_haskey jnz
     "Retrieving new map key returned invalid result." error
 
     test_haskey:
@@ -890,17 +903,17 @@ asm_function testMaps(: keys) {
 
     test_delete:
     "newkey" testMap del_item
-    "newkey" testMap get_item 0 cmp test_key_list jz
+    "newkey" testMap get_item 0 eq test_key_list jnz
     "Failed to delete newkey." error
 
     test_key_list:
     "Converting testMap keys to list...[br]" say
     testMap get_keys *keys store
-    0 keys get_item 1 cmp found_bad_key jnz
-    1 keys get_item 2 cmp found_bad_key jnz
-    2 keys get_item 3 cmp found_bad_key jnz
-    3 keys get_item 4 cmp found_bad_key jnz
-    keys get_size 4 cmp all_done jz
+    0 keys get_item 1 eq found_bad_key jz
+    1 keys get_item 2 eq found_bad_key jz
+    2 keys get_item 3 eq found_bad_key jz
+    3 keys get_item 4 eq found_bad_key jz
+    keys get_size 4 eq all_done jnz
     "Map keys list is wrong size." error
 
     all_done:
@@ -942,8 +955,8 @@ object testpageData
     index 0
 ;
 asm_function testPage1(key) {
-    key typeof Integer cmp showpage jnz
-    key 32 cmp showkey jnz
+    key typeof Integer eq showpage jz
+    key 32 eq showkey jz
     end_page
     return
 
@@ -962,10 +975,10 @@ asm_function testPage1(key) {
 
     showkey:
     "You pressed: " say key say " (which is not space).\n" say
-    key -1 cmp leftkey jz
-    key -2 cmp rightkey jz
-    key -3 cmp downkey jz
-    key -4 cmp upkey jz
+    key -1 eq leftkey jnz
+    key -2 eq rightkey jnz
+    key -3 eq downkey jnz
+    key -4 eq upkey jnz
     showpage:
     "You have viewed this page " say
     $count testpageData get_prop say
@@ -992,28 +1005,28 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 
     "Creating data...[br]" say
     String new *newStr store
-    newStr typeof String cmp makeNewObject jz
+    newStr typeof String eq makeNewObject jnz
     "New string not of String type." error
 
     makeNewObject:
     Object new *newObj store
-    newObj typeof Object cmp makeNewList jz
+    newObj typeof Object eq makeNewList jnz
     "New object not of Object type." error
 
     makeNewList:
     List new *newList store
-    newList typeof List cmp makeNewMap jz
+    newList typeof List eq makeNewMap jnz
     "New list not of List type." error
 
     makeNewMap:
     Map new *newMap store
-    newMap typeof Map cmp testNewObjectProperties jz
+    newMap typeof Map eq testNewObjectProperties jnz
     "New map not of Map type." error
 
 
     testNewObjectProperties:
     "Testing property manipulation of created object...[br]" say
-    $anInt newObj get_prop 0 cmp testObjectUnsetHas jz
+    $anInt newObj get_prop 0 eq testObjectUnsetHas jnz
     "New object returns value for unset property." error
 
     testObjectUnsetHas:
@@ -1022,7 +1035,7 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 
     testObjectSet:
     66 $anInt newObj set_prop
-    $anInt newObj get_prop 66 cmp testObjectSetHas jz
+    $anInt newObj get_prop 66 eq testObjectSetHas jnz
     "Updated property on new object did not retain value." error
 
     testObjectSetHas:
@@ -1032,23 +1045,23 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 
     testMapValues:
     "Testing values of new map...[br]" say
-    "key" newMap get_item 0 cmp testSetMapValue jz
+    "key" newMap get_item 0 eq testSetMapValue jnz
     "New map returns value for unset key...[br]" error
 
     testSetMapValue:
     "New Map Value" "key" newMap set_item
-    "key" newMap get_item "New Map Value" cmp testListValues jz
+    "key" newMap get_item "New Map Value" eq testListValues jnz
     "New map returns 0 for updated key...[br]" error
 
 
     testListValues:
     "Testing values of new list...[br]" say
-    newList get_size 0 cmp testListAddValue jz
+    newList get_size 0 eq testListAddValue jnz
     "New list is not empty." error
 
     testListAddValue:
     "New List Item" 0 newList add_item
-    0 newList get_item "New List Item" cmp testIsStatic jz
+    0 newList get_item "New List Item" eq testIsStatic jnz
     "List item not updated." error
 
     testIsStatic:
@@ -1077,7 +1090,7 @@ asm_function testStringManipulation(: testString) {
     "\n# Test String Manipulation\n" say
 
     "Check static string \"Fred\" has length four...[br]" say
-    "Fred" strlen 4 cmp strlenNewString jz
+    "Fred" strlen 4 eq strlenNewString jnz
     "Bad length on static string \"Fred\"." error
 
     strlenNewString:
@@ -1089,12 +1102,12 @@ asm_function testStringManipulation(: testString) {
     strcpyStrlen:
     "Copying \"Fred\" to dynamic string...[br]" say
     "Fred" testString strcpy
-    testString strlen 4 cmp stringCompares jz
+    testString strlen 4 eq stringCompares jnz
     "Bad length on copied string \"Fred\"." error
 
     stringCompares:
     "Comparing static and dynamic strings with [b]==[/b]...[br]" say
-    testString "Fred" cmp stringCompareStrcmp jnz
+    testString "Fred" eq stringCompareStrcmp jz
     "Identity of dynamic and static strings compared equal." error
 
     stringCompareStrcmp:
@@ -1167,12 +1180,12 @@ asm_function dispatcher(optionFunc extraValue) {
     false saveAllowed set_setting
     extraValue 1 optionFunc call
 
-    optionFunc showOptions cmp alldone jz
-    optionFunc testPages cmp alldone jz
-    optionFunc testPagesReal cmp alldone jz
-    optionFunc testPagesRemovePage cmp alldone jz
-    optionFunc receiveExtra cmp alldone jz
-    optionFunc testGetkey cmp alldone jz
+    optionFunc showOptions eq alldone jnz
+    optionFunc testPages eq alldone jnz
+    optionFunc testPagesReal eq alldone jnz
+    optionFunc testPagesRemovePage eq alldone jnz
+    optionFunc receiveExtra eq alldone jnz
+    optionFunc testGetkey eq alldone jnz
     "Return to main page" showOptions add_option
     dispatcher get_option
 

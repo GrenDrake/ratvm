@@ -22,25 +22,29 @@ struct OpcodeDef {
         StackPeek           = 15, // peek at the stack item X items from the top
         StackSize           = 16, // get the current size of the stack
         Call                = 17, // call a value as a function
-        GetProp             = 20,
-        HasProp             = 21, // check if property is set on object
-        SetProp             = 22, // set object property to value
-        GetItem             = 23, // get item from list (index) or map (key)
-        HasItem             = 24, // check if index (for list) or key (for map) exists
-        GetSize             = 25, // get size of list or map
-        SetItem             = 26, // set item in list (by index) of map (by key)
-        TypeOf              = 27, // get value type
-        DelItem             = 28, // remove an item from a list or a key from a map
-        AddItem             = 29, // add an item to a list (use set-item for maps)
-        AsType              = 30, // type conversion
-        Compare             = 31, // compare two values and push the result
-        Jump                = 32, // unconditional jump
-        JumpZero            = 33, // jump if top of stack == 0
-        JumpNotZero         = 34, // jump if top of stack != 0
-        JumpLessThan        = 35, // jump if top of stack < 0
-        JumpLessThanEqual   = 36, // jump if top of stack <= 0
-        JumpGreaterThan     = 37, // jump if top of stack > 0
-        JumpGreaterThanEqual= 38, // jump if top of stack >= 0
+        GetProp             = 19,
+        HasProp             = 20, // check if property is set on object
+        SetProp             = 21, // set object property to value
+        GetItem             = 22, // get item from list (index) or map (key)
+        HasItem             = 23, // check if index (for list) or key (for map) exists
+        GetSize             = 24, // get size of list or map
+        SetItem             = 25, // set item in list (by index) of map (by key)
+        TypeOf              = 26, // get value type
+        DelItem             = 27, // remove an item from a list or a key from a map
+        AddItem             = 28, // add an item to a list (use set-item for maps)
+        AsType              = 29, // type conversion
+
+        Equal               = 30, // compare two values and push the result
+        NotEqual            = 31, // compare two values and push the negated result
+        LessThan            = 32, // jump if top of stack < 0
+        LessThanEqual       = 33, // jump if top of stack <= 0
+        GreaterThan         = 34, // jump if top of stack > 0
+        GreaterThanEqual    = 35, // jump if top of stack >= 0
+
+        Jump                = 36, // unconditional jump
+        JumpZero            = 37, // jump if top of stack == 0
+        JumpNotZero         = 38, // jump if top of stack != 0
+
         Not                 = 39,
         Add                 = 40,
         Sub                 = 41,
