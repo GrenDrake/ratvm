@@ -502,6 +502,82 @@ asm_function testObjectProps() {
 
 
 // ////////////////////////////////////////////////////////////////////////////
+// Testing non-asm syntax constructs
+// ////////////////////////////////////////////////////////////////////////////
+function testSyntax(: value) {
+    (print "Testing IF true: ")
+    (store value 5)
+    (if value (print "Good\n") (error "IF true failed"))
+    (print "Testing IF false: ")
+    (if 0 (error "IF false failed") (print "Good\n"))
+    (print "Testing IF false with no else\n")
+    (if 0 (error "IF false failed"))
+
+    (print "Testing proc statement:")
+    (if 1
+        (proc
+            (print " first")
+            (print " second")
+            (print " third"))
+        (error "Reached unreachable else"))
+    (print "\n")
+
+    (print "Testing while:")
+    (store value 1)
+    (while (lte value 10)
+        (proc
+            (print " " value)
+            (store value (add value 1))))
+    (print "\n")
+
+    (print "Testing while with false initial.\n")
+    (store value 1)
+    (while 0 (error "While loop with false condition executed."))
+
+    (print "Testing continue / break:")
+    (store value 0)
+    (while 1
+        (proc
+            (if (gt value 50) (break))
+            (store value (add 1 value))
+            (if (neq (mod value 5) 0) (continue))
+            (print " " value)))
+    (print "\n")
+
+    (print "Testing do/while:")
+    (store value 1)
+    (do_while
+        (proc
+            (print " " value)
+            (store value (add value 1)))
+        (lte value 10))
+    (print "\n")
+
+    (print "Testing do/while with false condition: ")
+    (do_while
+        (print "in loop")
+        0)
+    (print "\n")
+
+    (print "Testing continue / break in do/while:")
+    (store value 0)
+    (do_while
+        (proc
+            (if (gt value 50) (break))
+            (store value (add 1 value))
+            (if (neq (mod value 5) 0) (continue))
+            (print " " value))
+        1)
+    (print "\n")
+    (print "Testing label statement: ")
+    (jmp label_for_testing)
+    (error "Failed to jump")
+    (label label_for_testing)
+    (print "Good\n")
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
 // Basic looping demo
 // ////////////////////////////////////////////////////////////////////////////
 asm_function testLoopDemo(: counter theValue) {
@@ -1064,6 +1140,8 @@ asm_function showOptions() {
     "Test object properties"    testObjectProps    add_option
     "Test dynamic objects"      testDynamic        add_option
     "Test string manipulation"  testStringManipulation  add_option
+
+    "Test syntax constructs"    testSyntax          add_option
 
     "Test output"               testOutput         add_option
     "Test info areas"           testInfoarea       add_option
