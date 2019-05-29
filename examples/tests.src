@@ -394,16 +394,16 @@ asm_function testMath(: counter) {
     "Failed 40 % 6 == 4." error
 
     testPow:
-    2 8 pow 256 eq testLeftShift jnz
+    8 2 pow 256 eq testLeftShift jnz
     "Failed 2 ^ 8 == 256." error
 
     testLeftShift:
     "Testing bit operations...[br]" say
-    1 4 left_shift 16 eq testRightShift jnz
+    4 1 left_shift 16 eq testRightShift jnz
     "Failed 1 << 4 == 16." error
 
     testRightShift:
-    32 4 right_shift 2 eq testBitAnd jnz
+    4 32 right_shift 2 eq testBitAnd jnz
     "Failed 32 >> 4 == 2." error
 
     testBitAnd:
