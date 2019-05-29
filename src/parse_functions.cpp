@@ -190,6 +190,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
         }
         state.next();
     }
+    function->code.add_8(OpcodeDef::Return);
 
     for (const Backpatch &patch : patches) {
         auto labelIter = function->labels.find(patch.name);
@@ -282,6 +283,8 @@ void FunctionBuilder::build(const AsmOpcode *opcode) {
 void build_function(GameData &gamedata, FunctionDef *function) {
     FunctionBuilder builder{function, gamedata};
 
+    function->addValue(function->origin, Value{Value::Integer, 0});
+    function->addOpcode(function->origin, OpcodeDef::Return);
     for (const AsmLine *line : function->asmCode) {
         line->build(builder);
     }
@@ -344,7 +347,6 @@ int parse_functions(GameData &gamedata) {
         } else {
             parse_std_function(gamedata, function, state);
         }
-        function->code.add_8(OpcodeDef::Return);
         function->code.padTo(4);
         gamedata.bytecode.append(function->code);
         function->codeEndPosition = gamedata.bytecode.size();

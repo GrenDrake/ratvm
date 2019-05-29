@@ -504,6 +504,11 @@ asm_function testObjectProps() {
 // ////////////////////////////////////////////////////////////////////////////
 // Testing non-asm syntax constructs
 // ////////////////////////////////////////////////////////////////////////////
+function testSyntaxReturn() {
+    (return 5)
+}
+function testSyntaxReturnDefault() {
+}
 function testSyntax(: value) {
     (print "Testing IF true: ")
     (store value 5)
@@ -574,6 +579,10 @@ function testSyntax(: value) {
     (error "Failed to jump")
     (label label_for_testing)
     (print "Good\n")
+
+    (print "Testing return values of standard functions.\n")
+    (if (neq (testSyntaxReturn) 5) (error "testSyntaxReturn returned wrong value."))
+    (if (neq (testSyntaxReturnDefault) 0) (error "testSyntaxReturnDefault returned wrong value."))
 }
 
 
