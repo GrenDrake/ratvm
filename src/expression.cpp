@@ -21,6 +21,7 @@ void stmt_continue(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_print_uf(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_proc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_while(GameData &gamedata, FunctionDef *function, List *list);
@@ -39,6 +40,7 @@ StatementType statementTypes[] = {
     { "if",         stmt_if       },
     { "label",      stmt_label    },
     { "print",      stmt_print    },
+    { "print_uf",   stmt_print_uf },
     { "proc",       stmt_proc     },
     { "while",      stmt_while    },
 };
@@ -315,6 +317,20 @@ void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
         return;
     }
     for (unsigned i = 1; i < list->values.size(); ++i) {
+        process_value(gamedata, function, list->values[i]);
+        function->addOpcode(list->values[0].origin, OpcodeDef::Say);
+    }
+}
+
+void stmt_print_uf(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() <= 1) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "print statement requires arguments."});
+        return;
+    }
+    process_value(gamedata, function, list->values[1]);
+    function->addOpcode(list->values[0].origin, OpcodeDef::SayUCFirst);
+
+    for (unsigned i = 2; i < list->values.size(); ++i) {
         process_value(gamedata, function, list->values[i]);
         function->addOpcode(list->values[0].origin, OpcodeDef::Say);
     }

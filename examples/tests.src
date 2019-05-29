@@ -510,6 +510,8 @@ function testSyntaxReturn() {
 function testSyntaxReturnDefault() {
 }
 function testSyntax(: value) {
+    (print_uf "this " "tests " "print_uf.\n")
+
     (print "Testing IF true: ")
     (store value 5)
     (if value (print "Good\n") (error "IF true failed"))
