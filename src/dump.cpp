@@ -244,7 +244,7 @@ void dump_ir(GameData &gamedata, std::ostream &out) {
         for (const std::string &name : function->local_names) {
             out << ' ' << name;
         }
-        out << " )\n";
+        out << " ) " << function->asmCode.size() << " operations\n";
         if (function->isAsm) out << "    (asm function)\n";
         for (const AsmLine *line : function->asmCode) {
             out << std::right << std::dec;
