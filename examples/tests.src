@@ -628,6 +628,10 @@ asm_function testOutput() {
     "italic text: [i]Lorem ipsum dolor sit amet.[/i][br]" say
     "bold italic: [b][i]Lorem ipsum dolor sit amet.[/i][/b][br]" say
     "italic bold: [i][b]Lorem ipsum dolor sit amet.[/b][/i]\n" say
+
+    "Testing multiline string. Linebreak occurs here -->
+
+    <--\n" say
 }
 
 // ////////////////////////////////////////////////////////////////////////////
