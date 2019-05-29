@@ -332,68 +332,9 @@ asm_function testJumps(: testValue) {
     "Failed jnz (0)." error
 
     test004:
-    1 test005 jnz
+    1 test017 jnz
     "Failed jnz (1)." error
 
-    test005:
-    1 0 lt test005_failed jnz
-    test006 jmp
-    test005_failed:
-    "Failed lt (1)." error
-
-    test006:
-    0 0 lt test006_failed jnz
-    test007 jmp
-    test006_failed:
-    "Failed lt (0)." error
-
-    test007:
-    -1 0 lt test008 jnz
-    "Failed lt (-1)." error
-
-    test008:
-    -1 0 gt test008_failed jnz
-    test009 jmp
-    test008_failed:
-    "Failed gt (-1)." error
-
-    test009:
-    0 0 gt test009_failed jnz
-    test010 jmp
-    test009_failed:
-    "Failed gt (0)." error
-
-    test010:
-    1 0 gt test011 jnz
-    "Failed gt (1)." error
-
-    test011:
-    -1 0 lte test012 jnz
-    "Failed lte (-1)." error
-
-    test012:
-    0 0 lte test013 jnz
-    "Failed lte (0)." error
-
-    test013:
-    1 0 lte test013_failed jnz
-    test014 jmp
-    test013_failed:
-    "Failed lte (1)." error
-
-    test014:
-    1 0 gte test015 jnz
-    "Failed gte (1)." error
-
-    test015:
-    0 0 gte test016 jnz
-    "Failed gte (0)." error
-
-    test016:
-    -1 0 gte test016_failed jnz
-    test017 jmp
-    test016_failed:
-    "Failed gte (-1)." error
 
     test017:
     "Test jump target in local variable...[br]" say
@@ -407,29 +348,9 @@ asm_function testJumps(: testValue) {
     "Failed jz w/ local." error
 
     test019:
-    test020 *testValue store
+    test024 *testValue store
     1 testValue jnz
     "Failed jnz w/ local." error
-
-    test020:
-    test021 *testValue store
-    -1 0 lt testValue jnz
-    "Failed lt w/ local." error
-
-    test021:
-    test022 *testValue store
-    1 0 gt testValue jnz
-    "Failed gt w/ local." error
-
-    test022:
-    test023 *testValue store
-    -1 0 lte testValue jnz
-    "Failed lte w/ local." error
-
-    test023:
-    test024 *testValue store
-    1 0 gte testValue jnz
-    "Failed gte w/ local." error
 
     test024:
     "Testing with value in local variable...[br]" say
@@ -439,25 +360,8 @@ asm_function testJumps(: testValue) {
 
     test025:
     1 *testValue store
-    testValue test026 jnz
+    testValue done jnz
     "Failed jnz w/ value in local." error
-
-    test026:
-    testValue 0 gt test027 jnz
-    "Failed gt w/ value in local." error
-
-    test027:
-    testValue 0 gte test028 jnz
-    "Failed gte w/ value in local." error
-
-    test028:
-    -1 *testValue store
-    testValue 0 lt test029 jnz
-    "Failed lt w/ value in local." error
-
-    test029:
-    testValue 0 lte done jnz
-    "Failed lte w/ value in local." error
 
     done:
 }
