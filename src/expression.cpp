@@ -18,6 +18,7 @@ void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_break(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_continue(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_proc(GameData &gamedata, FunctionDef *function, List *list);
@@ -34,7 +35,7 @@ StatementType statementTypes[] = {
     { "",           nullptr       },
     { "break",      stmt_break    },
     { "continue",   stmt_continue },
-    { "do_while",   nullptr       },
+    { "do_while",   stmt_do_while },
     { "if",         stmt_if       },
     { "label",      stmt_label    },
     { "print",      stmt_print    },
@@ -235,6 +236,38 @@ void stmt_continue(GameData &gamedata, FunctionDef *function, List *list) {
     const Origin &origin = list->values[0].origin;
     function->addValue(origin, Value{Value::Symbol, 0, function->continueLabels.back()});
     function->addOpcode(origin, OpcodeDef::Jump);
+}
+
+void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() != 3) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "While statement must have three expressions."});
+        return;
+    }
+
+    std::string start_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+    std::string condition_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+    std::string after_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+
+    function->continueLabels.push_back(condition_label);
+    function->breakLabels.push_back(after_label);
+
+    const Origin &origin = list->values[0].origin;
+
+    function->addLabel(origin, start_label);
+    process_value(gamedata, function, list->values[1]);
+    function->addLabel(origin, condition_label);
+    process_value(gamedata, function, list->values[2]);
+    function->addValue(origin, Value{Value::Symbol, 0, after_label});
+    function->addOpcode(origin, OpcodeDef::JumpZero);
+    function->addValue(origin, Value{Value::Symbol, 0, start_label});
+    function->addOpcode(origin, OpcodeDef::Jump);
+    function->addLabel(origin, after_label);
+
+    function->continueLabels.pop_back();
+    function->breakLabels.pop_back();
 }
 
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
