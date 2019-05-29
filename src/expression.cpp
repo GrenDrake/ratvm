@@ -20,6 +20,7 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_proc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_while(GameData &gamedata, FunctionDef *function, List *list);
 
 void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
 
@@ -34,7 +35,7 @@ StatementType statementTypes[] = {
     { "label",      stmt_label },
     { "print",      stmt_print },
     { "proc",       stmt_proc },
-    { "while",      nullptr },
+    { "while",      stmt_while },
 };
 
 const StatementType& getReservedWord(const std::string &word) {
@@ -255,6 +256,29 @@ void stmt_proc(GameData &gamedata, FunctionDef *function, List *list) {
     for (unsigned i = 1; i < list->values.size(); ++i) {
         process_value(gamedata, function, list->values[i]);
     }
+}
+
+void stmt_while(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() != 3) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "While statement must have three expressions."});
+        return;
+    }
+
+    std::string start_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+    std::string after_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+
+    const Origin &origin = list->values[0].origin;
+
+    function->addLabel(origin, start_label);
+    process_value(gamedata, function, list->values[1]);
+    function->addValue(origin, Value{Value::Symbol, 0, after_label});
+    function->addOpcode(origin, OpcodeDef::JumpZero);
+    process_value(gamedata, function, list->values[2]);
+    function->addValue(origin, Value{Value::Symbol, 0, start_label});
+    function->addOpcode(origin, OpcodeDef::Jump);
+    function->addLabel(origin, after_label);
 }
 
 
