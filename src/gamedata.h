@@ -146,6 +146,8 @@ struct FunctionDef {
     bool isAsm;
     std::vector<AsmLine*> asmCode;
     int nextLabel;
+    std::vector<std::string> continueLabels;
+    std::vector<std::string> breakLabels;
 };
 
 class GameData {
