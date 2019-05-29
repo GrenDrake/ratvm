@@ -233,15 +233,15 @@ asm_function testCompare(: testValue) {
 
 
     testCmpLT:
-    2 5 lt testCmpGT jnz
+    5 2 lt testCmpGT jnz
     "Failed 2 < 5." error
 
     testCmpGT:
-    5 2 gt testCmpLTE jnz
+    2 5 gt testCmpLTE jnz
     "Failed 5 > 2." error
 
     testCmpLTE:
-    2 5 lte testCmpLTE2 jnz
+    5 2 lte testCmpLTE2 jnz
     "Failed 2 <= 5." error
 
     testCmpLTE2:
@@ -249,7 +249,7 @@ asm_function testCompare(: testValue) {
     "Failed 5 <= 5." error
 
     testCmpGTE:
-    5 2 gte testCmpGTE2 jnz
+    2 5 gte testCmpGTE2 jnz
     "Failed 5 >= 2." error
 
     testCmpGTE2:
@@ -257,11 +257,11 @@ asm_function testCompare(: testValue) {
     "Failed 5 >= 5." error
 
     testCmpLtNeg:
-    -5 5 lt testCmpGtNeg jnz
+    5 -5 lt testCmpGtNeg jnz
     "Failed -5 < 5." error
 
     testCmpGtNeg:
-    5 -5 gt testNonInteger jnz
+    -5 5 gt testNonInteger jnz
     "Failed 5 > -5." error
 
 
@@ -293,11 +293,11 @@ asm_function testCompare(: testValue) {
     "Failed local == 5." error
 
     localLt:
-    2 testValue lt localGt jnz
+    testValue 2 lt localGt jnz
     "Failed 2 < local." error
 
     localGt:
-    testValue 2 gt done jnz
+    2 testValue gt done jnz
     "Failed local > 2." error
 
     done:
