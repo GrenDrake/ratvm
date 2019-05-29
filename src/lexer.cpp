@@ -80,7 +80,6 @@ void handle_string_escapes(GameData &gamedata, const Origin &origin, std::string
             while (whitespaceEnd < text.size() && isspace(text[whitespaceEnd])) {
                 ++whitespaceEnd;
             }
-            std::cerr << whitespaceEnd << ' ' << text.size() << '\n';
             if (spacesStart != 0 && whitespaceEnd != text.size()) {
                 text[spacesStart] = ' ';
                 text.erase(spacesStart + 1, whitespaceEnd - spacesStart - 1);
