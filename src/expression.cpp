@@ -310,6 +310,10 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
 }
 
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() <= 1) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "print statement requires arguments."});
+        return;
+    }
     for (unsigned i = 1; i < list->values.size(); ++i) {
         process_value(gamedata, function, list->values[i]);
         function->addOpcode(list->values[0].origin, OpcodeDef::Say);
