@@ -18,6 +18,7 @@ void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_proc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 
 void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
@@ -32,7 +33,7 @@ StatementType statementTypes[] = {
     { "if",         stmt_if    },
     { "label",      stmt_label },
     { "print",      stmt_print },
-    { "proc",       nullptr },
+    { "proc",       stmt_proc },
     { "while",      nullptr },
 };
 
@@ -244,6 +245,18 @@ void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
         function->addOpcode(list->values[0].origin, OpcodeDef::Say);
     }
 }
+
+void stmt_proc(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() < 2) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "proc statement must contain at least one statement."});
+        return;
+    }
+
+    for (unsigned i = 1; i < list->values.size(); ++i) {
+        process_value(gamedata, function, list->values[i]);
+    }
+}
+
 
 /* ************************************************************************** *
  * Core list processing function                                              *
