@@ -1198,6 +1198,7 @@ asm_function dispatcher(optionFunc extraValue) {
 
 asm_function main(fromRestore) {
     "GTRPGE Test Suite" infobarTitle set_setting
+    "GTRPGE Test Suite" infobarLeft set_setting
     fromRestore all_done jnz
 
     // set the "magic numbers" used for demonstrate the load/save code
