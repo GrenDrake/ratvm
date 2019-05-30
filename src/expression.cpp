@@ -329,7 +329,7 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
         return;
     }
 
-    std::string if_label = "__label_" + std::to_string(function->nextLabel);
+    std::string after_label = "__label_" + std::to_string(function->nextLabel);
     ++function->nextLabel;
     std::string else_label = "__label_" + std::to_string(function->nextLabel);
     ++function->nextLabel;
@@ -339,7 +339,7 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
     function->addValue(origin, Value{Value::Symbol, 0, else_label});
     function->addOpcode(origin, OpcodeDef::JumpZero);
     process_value(gamedata, function, list->values[2]);
-    function->addValue(origin, Value{Value::Symbol, 0, if_label});
+    function->addValue(origin, Value{Value::Symbol, 0, after_label});
     function->addOpcode(origin, OpcodeDef::Jump);
     function->addLabel(origin, else_label);
     if (list->values.size() >= 4) {
@@ -347,7 +347,7 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
     } else {
         function->addValue(list->values[0].origin, Value{Value::Integer, 0});
     }
-    function->addLabel(origin, if_label);
+    function->addLabel(origin, after_label);
 }
 
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
