@@ -105,7 +105,6 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
             ss << minimumCallOperands << ", but found " << list->values.size();
                 ss << ").";
             gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
-            checkListSize(list, minimumCallOperands, minimumCallOperands);
             return;
         } else {
             if (list->values[2].value.type != Value::Integer) {
@@ -115,11 +114,10 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
             wantedOpcodeCount = minimumCallOperands + list->values[2].value.value;
             if (list->values.size() != wantedOpcodeCount) {
                 std::stringstream ss;
-                ss << "Insufficent operands for call opcode (expected exactly ";
+                ss << "Incorrect number of operands for call opcode (expected exactly ";
                 ss << wantedOpcodeCount << ", but found " << list->values.size();
                 ss << ").";
                 gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
-                checkListSize(list, minimumCallOperands, minimumCallOperands);
                 return;
             }
         }
