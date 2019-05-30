@@ -47,7 +47,7 @@ void parse_constant(GameData &gamedata, ParseState &state) {
     const std::string &constantName = state.here()->text;
     state.next();
     Value value = parse_value(gamedata, state);
-    if (value.type == Value::Object || value.type == Value::Node) {
+    if (value.type == Value::Object || value.type == Value::Function) {
         std::stringstream ss;
         ss << "Declaration of " << constantName << " cannot declare objects or functions.";
         gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
@@ -105,7 +105,7 @@ int parse_function(GameData &gamedata, ParseState &state) {
         funcName = state.here()->text;
         gamedata.symbols.add(SymbolDef(origin,
                                         funcName,
-                                        Value{Value::Node, nextFunctionId}));
+                                        Value{Value::Function, nextFunctionId}));
         state.next();
     }
     state.skip(Token::OpenParan);
@@ -260,7 +260,7 @@ int parse_object(GameData &gamedata, ParseState &state) {
             return 0;
         }
         Value value = parse_value(gamedata, state);
-        if (value.type == Value::Node) {
+        if (value.type == Value::Function) {
             FunctionDef *function = gamedata.functions[value.value];
             if (function->name.empty()) {
                 function->name = objectName + "." + propName;
@@ -290,7 +290,7 @@ Value parse_value(GameData &gamedata, ParseState &state) {
         value = Value{Value::FlagSet, newId};
     } else if (state.matches("function") || state.matches("asm_function")) {
         int newId = parse_function(gamedata, state);
-        value = Value{Value::Node, newId};
+        value = Value{Value::Function, newId};
     } else if (state.matches(Token::Integer)) {
         int newId = state.here()->value;
         value = Value{Value::Integer, newId};

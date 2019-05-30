@@ -446,7 +446,7 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
     if (!list || list->values.empty()) return;
 
     switch (list->values[0].value.type) {
-        case Value::Node:
+        case Value::Function:
         case Value::LocalVar:
         case Value::Expression:
             handle_call_stmt(gamedata, function, list);

@@ -35,7 +35,7 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::Map:
             out << "Map";
             break;
-        case Value::Node:
+        case Value::Function:
             out << "Function";
             break;
         case Value::Property:

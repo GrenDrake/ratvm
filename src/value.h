@@ -11,7 +11,7 @@ struct Value {
         String      = 2,
         List        = 3,
         Map         = 4,
-        Node        = 5,
+        Function    = 5,
         Object      = 6,
         Property    = 7,
         JumpTarget  = 9,

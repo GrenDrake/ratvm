@@ -155,10 +155,10 @@ int GameData::checkObjectIdents() {
         if (!save && load) {
             errors.push_back(Error{object->origin, "Object has load property but no save property."});
         }
-        if (load && load->value.type != Value::Node) {
+        if (load && load->value.type != Value::Function) {
             errors.push_back(Error{object->origin, "Object load property must be function."});
         }
-        if (save && save->value.type != Value::Node) {
+        if (save && save->value.type != Value::Function) {
             errors.push_back(Error{object->origin, "Object save property must be function."});
         }
     }
