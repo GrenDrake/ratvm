@@ -585,6 +585,21 @@ function testSyntax(: value) {
     (print "Testing return values of standard functions.\n")
     (if (neq (testSyntaxReturn) 5) (error "testSyntaxReturn returned wrong value."))
     (if (neq (testSyntaxReturnDefault) 0) (error "testSyntaxReturnDefault returned wrong value."))
+
+    (print "AND 1 and 0: " (and 1 0) "[br]")
+    (print "AND 0 and 0: " (and 0 0) "[br]")
+    (print "AND 1 and 1: " (and 1 1) "[br]")
+    (print "AND 0 and 1: " (and 0 1) "[br]")
+    (print "AND 1 and 1 and 1: " (and 1 1 1) "[br]")
+    (print "AND 1 and 1 and 0: " (and 1 1 0) "[br]")
+
+    (print "OR 1 and 0: " (or 1 0) "[br]")
+    (print "OR 0 and 0: " (or 0 0) "[br]")
+    (print "OR 1 and 1: " (or 1 1) "[br]")
+    (print "OR 0 and 1: " (or 0 1) "[br]")
+    (print "OR 1 and 1 and 1: " (or 1 1 1) "[br]")
+    (print "OR 1 and 1 and 0: " (or 1 1 0) "[br]")
+    (print "OR 0 and 0 and 0: " (or 0 0 0) "[br]")
 }
 
 

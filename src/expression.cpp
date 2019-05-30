@@ -16,14 +16,16 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_getprop_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_and(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_break(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_continue(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_or(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print_uf(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_proc(GameData &gamedata, FunctionDef *function, List *list);
-void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_while(GameData &gamedata, FunctionDef *function, List *list);
 
 void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
@@ -34,11 +36,13 @@ void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
 
 StatementType statementTypes[] = {
     { "",           nullptr       },
+    { "and",        stmt_and    },
     { "break",      stmt_break    },
     { "continue",   stmt_continue },
     { "do_while",   stmt_do_while },
     { "if",         stmt_if       },
     { "label",      stmt_label    },
+    { "or",         stmt_or       },
     { "print",      stmt_print    },
     { "print_uf",   stmt_print_uf },
     { "proc",       stmt_proc     },
@@ -207,6 +211,58 @@ void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list)
 /* ************************************************************************** *
  * Handlers for reserved words                                                *
  * ************************************************************************** */
+
+void stmt_and(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() < 3) {
+        gamedata.errors.push_back(Error{list->values[1].origin, "and requires at least two arguments."});
+        return;
+    }
+
+    const Origin &origin = list->values[0].origin;
+    std::string after_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+    std::string false_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+
+    for (unsigned i = 1; i < list->values.size(); ++i) {
+        process_value(gamedata, function, list->values[i]);
+        function->addValue(origin, Value{Value::Symbol, 0, false_label});
+        function->addOpcode(list->values[0].origin, OpcodeDef::JumpZero);
+    }
+    function->addValue(origin, Value{Value::Integer, 1});
+    function->addValue(origin, Value{Value::Symbol, 0, after_label});
+    function->addOpcode(list->values[0].origin, OpcodeDef::Jump);
+
+    function->addLabel(origin, false_label);
+    function->addValue(origin, Value{Value::Integer, 0});
+    function->addLabel(origin, after_label);
+}
+
+void stmt_or(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() < 3) {
+        gamedata.errors.push_back(Error{list->values[1].origin, "and requires at least two arguments."});
+        return;
+    }
+
+    const Origin &origin = list->values[0].origin;
+    std::string after_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+    std::string true_label = "__label_" + std::to_string(function->nextLabel);
+    ++function->nextLabel;
+
+    for (unsigned i = 1; i < list->values.size(); ++i) {
+        process_value(gamedata, function, list->values[i]);
+        function->addValue(origin, Value{Value::Symbol, 0, true_label});
+        function->addOpcode(list->values[0].origin, OpcodeDef::JumpZero);
+    }
+    function->addValue(origin, Value{Value::Integer, 0});
+    function->addValue(origin, Value{Value::Symbol, 0, after_label});
+    function->addOpcode(list->values[0].origin, OpcodeDef::Jump);
+
+    function->addLabel(origin, true_label);
+    function->addValue(origin, Value{Value::Integer, 1});
+    function->addLabel(origin, after_label);
+}
 
 void stmt_break(GameData &gamedata, FunctionDef *function, List *list) {
     if (!checkListSize(list, 1, 1)) {
