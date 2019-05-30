@@ -149,6 +149,9 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
         }
     }
     function->addOpcode(list->values[0].origin, list->values[0].value.opcode->code);
+    if (list->values[0].value.opcode->outputs <= 0) {
+        function->addValue(list->values[0].origin, Value{Value::None});
+    }
 }
 
 void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
