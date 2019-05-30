@@ -626,13 +626,13 @@ asm_function testLoopDemo(: counter theValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test input commands
 // ////////////////////////////////////////////////////////////////////////////
-asm_function testInputs() {
-    "This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu." say
-    "Test key input"        testGetkey     add_option
-    "No extra value"        receiveExtra   add_option
-    "Extra value 6"         receiveExtra   6   add_option_x
-    "Extra value 73"        receiveExtra   73  add_option_x
-    dispatcher get_option
+function testInputs() {
+    ("This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu.")
+    (option "Test key input"        testGetkey)
+    (option "No extra value"        receiveExtra)
+    (option "Extra value 6"         receiveExtra   6)
+    (option "Extra value 73"        receiveExtra   73)
+    (get_option dispatcher)
 }
 asm_function receiveExtra(extra) {
     "Option extra value: " say extra say
@@ -1146,36 +1146,36 @@ asm_function doAllTests() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
-asm_function showOptions() {
-    true saveAllowed set_setting
-    "Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading." say
-    0 printMagicNumbers call
+function showOptions() {
+    (set_setting saveAllowed true)
+    ("Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading.")
+    (printMagicNumbers)
 
-    "All non-interactive tests" doAllTests         add_option
-    "Loop demo"                 testLoopDemo       add_option
+    (option "All non-interactive tests" doAllTests)
+    (option "Loop demo"                 testLoopDemo)
 
-    "Test jumps"                testJumps          add_option
-    "Test compare"              testCompare        add_option
-    "Test call"                 testCall           add_option
-    "Test stack commands"       testStack          add_option
-    "Test math"                 testMath           add_option
+    (option "Test jumps"                testJumps)
+    (option "Test compare"              testCompare)
+    (option "Test call"                 testCall)
+    (option "Test stack commands"       testStack)
+    (option "Test math"                 testMath)
 
-    "Test value types"          testValues         add_option
-    "Test list methods"         testLists          add_option
-    "Test map methods"          testMaps           add_option
-    "Test object properties"    testObjectProps    add_option
-    "Test dynamic objects"      testDynamic        add_option
-    "Test string manipulation"  testStringManipulation  add_option
+    (option "Test value types"          testValues)
+    (option "Test list methods"         testLists)
+    (option "Test map methods"          testMaps)
+    (option "Test object properties"    testObjectProps)
+    (option "Test dynamic objects"      testDynamic)
+    (option "Test string manipulation"  testStringManipulation)
 
-    "Test syntax constructs"    testSyntax          add_option
+    (option "Test syntax constructs"    testSyntax)
 
-    "Test output"               testOutput         add_option
-    "Test info areas"           testInfoarea       add_option
-    "Test random"               testRandom         add_option
+    (option "Test output"               testOutput)
+    (option "Test info areas"           testInfoarea)
+    (option "Test random"               testRandom)
 
-    "Test pages"                testPages          add_option
-    "Test input methods"        testInputs         add_option
-    dispatcher get_option
+    (option "Test pages"                testPages)
+    (option "Test input methods"        testInputs)
+    (get_option dispatcher)
 }
 
 

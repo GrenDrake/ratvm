@@ -21,6 +21,7 @@ void stmt_continue(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_option(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print_uf(GameData &gamedata, FunctionDef *function, List *list);
@@ -41,6 +42,7 @@ StatementType statementTypes[] = {
     { "do_while",   stmt_do_while },
     { "if",         stmt_if       },
     { "label",      stmt_label    },
+    { "option",     stmt_option   },
     { "or",         stmt_or       },
     { "print",      stmt_print    },
     { "print_uf",   stmt_print_uf },
@@ -348,6 +350,22 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
         function->addValue(list->values[0].origin, Value{Value::Integer, 0});
     }
     function->addLabel(origin, after_label);
+}
+
+void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
+    if (!checkListSize(list, 3, 4)) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "option statement takes two or three arguments."});
+        return;
+    }
+
+    process_value(gamedata, function, list->values[1]);
+    process_value(gamedata, function, list->values[2]);
+    if (list->values.size() >= 4) {
+        process_value(gamedata, function, list->values[3]);
+    } else {
+        function->addValue(list->values[0].origin, Value{Value::None});
+    }
+    function->addOpcode(list->values[0].origin, OpcodeDef::AddOptionExtra);
 }
 
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
