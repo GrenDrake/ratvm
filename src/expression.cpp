@@ -481,6 +481,11 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
         case Value::Reserved:
             handle_reserved_stmt(gamedata, function, list);
             break;
+        case Value::Symbol: {
+            std::stringstream ss;
+            ss << "Unrecognized name " << list->values[0].value.text << '.';
+            gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+            break; }
         default: {
             std::stringstream ss;
             ss << "Expression not permitted to begin with value of type ";
