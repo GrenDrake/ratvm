@@ -33,26 +33,26 @@ object second_obj;
 
 asm_function printMagicNumbers() {
     "\nThis morning's magic numbers are: " say
-    $number1 magic_1 get_prop say ", " say
-    $number2 magic_1 get_prop say ", and " say
-    $number3 magic_1 get_prop say
+    $number1 magic_1 get say ", " say
+    $number2 magic_1 get say ", and " say
+    $number3 magic_1 get say
     ". This evening's magic numbers are: " say
-    $number1 magic_2 get_prop say ", " say
-    $number2 magic_2 get_prop say ", and " say
-    $number3 magic_2 get_prop say ".\n" say
+    $number1 magic_2 get say ", " say
+    $number2 magic_2 get say ", and " say
+    $number3 magic_2 get say ".\n" say
 }
 
 object magic_1
     ident 1
     save asm_function(data) {
-        $number1 self get_prop 99 data add_item
-        $number2 self get_prop 99 data add_item
-        $number3 self get_prop 99 data add_item
+        $number1 self get 99 data ins
+        $number2 self get 99 data ins
+        $number3 self get 99 data ins
     }
     load asm_function(data) {
-        0 data get_item $number1 self set_prop
-        1 data get_item $number2 self set_prop
-        2 data get_item $number3 self set_prop
+        0 data get_item $number1 self set
+        1 data get_item $number2 self set
+        2 data get_item $number3 self set
     }
     number1 0
     number2 0
@@ -62,14 +62,14 @@ object magic_1
 object magic_2
     ident 2
     save asm_function(data) {
-        $number1 self get_prop 99 data add_item
-        $number2 self get_prop 99 data add_item
-        $number3 self get_prop 99 data add_item
+        $number1 self get 99 data ins
+        $number2 self get 99 data ins
+        $number3 self get 99 data ins
     }
     load asm_function(data) {
-        0 data get_item $number1 self set_prop
-        1 data get_item $number2 self set_prop
-        2 data get_item $number3 self set_prop
+        0 data get_item $number1 self set
+        1 data get_item $number2 self set
+        2 data get_item $number3 self set
     }
     number1 0
     number2 0
@@ -154,7 +154,7 @@ asm_function testCall() {
 
     testMethodCall:
     "Calling testCallObject.testMethod...[br]" say
-    3 2 1 3 $testMethod testCallObject get_prop call
+    3 2 1 3 $testMethod testCallObject get call
 }
 
 object testCallObject
@@ -288,7 +288,7 @@ asm_function testCompare(: testValue) {
 
     testWithLocals:
     "Testing using local variables...[br]" say
-    5 *testValue store
+    5 *testValue set
     testValue 5 eq localLt jnz
     "Failed local == 5." error
 
@@ -338,28 +338,28 @@ asm_function testJumps(: testValue) {
 
     test017:
     "Test jump target in local variable...[br]" say
-    test018 *testValue store
+    test018 *testValue set
     testValue jmp
     "Failed jmp w/ local." error
 
     test018:
-    test019 *testValue store
+    test019 *testValue set
     0 testValue jz
     "Failed jz w/ local." error
 
     test019:
-    test024 *testValue store
+    test024 *testValue set
     1 testValue jnz
     "Failed jnz w/ local." error
 
     test024:
     "Testing with value in local variable...[br]" say
-    0 *testValue store
+    0 *testValue set
     testValue test025 jz
     "Failed jz w/ value in local." error
 
     test025:
-    1 *testValue store
+    1 *testValue set
     testValue done jnz
     "Failed jnz w/ value in local." error
 
@@ -463,41 +463,41 @@ asm_function testMath(: counter) {
 // Test object property commands
 // ////////////////////////////////////////////////////////////////////////////
 asm_function testObjectProps() {
-    "\n# Testing object manipulation opcodes\n[b][testing get_prop][/b][br]" say
+    "\n# Testing object manipulation opcodes\n[b][testing get on objects][/b][br]" say
     "first_obj.aString: " say
-    $aString first_obj get_prop say
+    $aString first_obj get say
     " (should be \"Hello World!\")[br]" say
 
     "first_obj.anInt: " say
-    $anInt first_obj get_prop say
+    $anInt first_obj get say
     " (should be 2)[br]" say
 
     "second_obj.aString: " say
-    $aString second_obj get_prop say
+    $aString second_obj get say
     " (should be 0)[br]" say
 
-    "\n[b][testing has_prop][/b][br]" say
+    "\n[b][testing has on objects][/b][br]" say
     "first_obj has property anInt? " say
-    $anInt first_obj has_prop say
+    $anInt first_obj has say
     " (should be 1)[br]" say
 
     "second_obj has property aString? " say
-    $aString second_obj has_prop say
+    $aString second_obj has say
     " (should be 0)[br]" say
 
-    "\n[b][testing set_prop][/b][br]" say
+    "\n[b][testing setp on objects][/b][br]" say
     "setting second_obj.apple to \"Fred\"[br]second_obj.apple now equals " say
-    "Fred" $apple second_obj set_prop
-    $apple second_obj get_prop say
+    "Fred" $apple second_obj setp
+    $apple second_obj get say
 
     "\n[b][testing property types][/b]" say
-    "[br]first_obj.anInt (1): "      say $anInt      first_obj get_prop typeof say
-    "[br]first_obj.aString (2): "    say $aString    first_obj get_prop typeof say
-    "[br]first_obj.aList (3): "      say $aList      first_obj get_prop typeof say
-    "[br]first_obj.aMap (4): "       say $aMap       first_obj get_prop typeof say
-    "[br]first_obj.testMethod (5): " say $testMethod first_obj get_prop typeof say
-    "[br]first_obj.anObject (6): "   say $anObject   first_obj get_prop typeof say
-    "[br]first_obj.aProperty (7): "  say $aProperty  first_obj get_prop typeof say
+    "[br]first_obj.anInt (1): "      say $anInt      first_obj get typeof say
+    "[br]first_obj.aString (2): "    say $aString    first_obj get typeof say
+    "[br]first_obj.aList (3): "      say $aList      first_obj get typeof say
+    "[br]first_obj.aMap (4): "       say $aMap       first_obj get typeof say
+    "[br]first_obj.testMethod (5): " say $testMethod first_obj get typeof say
+    "[br]first_obj.anObject (6): "   say $anObject   first_obj get typeof say
+    "[br]first_obj.aProperty (7): "  say $aProperty  first_obj get typeof say
 }
 
 
@@ -513,7 +513,7 @@ function testSyntax(: value) {
     (print_uf "this " "tests " "print_uf.\n")
 
     (print "Testing IF true: ")
-    (store value 5)
+    (set value 5)
     (if value (print "Good\n") (error "IF true failed"))
     (print "Testing IF false: ")
     (if 0 (error "IF false failed") (print "Good\n"))
@@ -530,33 +530,33 @@ function testSyntax(: value) {
     (print "\n")
 
     (print "Testing while:")
-    (store value 1)
+    (set value 1)
     (while (lte value 10)
         (proc
             (print " " value)
-            (store value (add value 1))))
+            (set value (add value 1))))
     (print "\n")
 
     (print "Testing while with false initial.\n")
-    (store value 1)
+    (set value 1)
     (while 0 (error "While loop with false condition executed."))
 
     (print "Testing continue / break:")
-    (store value 0)
+    (set value 0)
     (while 1
         (proc
             (if (gt value 50) (break))
-            (store value (add 1 value))
+            (set value (add 1 value))
             (if (neq (mod value 5) 0) (continue))
             (print " " value)))
     (print "\n")
 
     (print "Testing do/while:")
-    (store value 1)
+    (set value 1)
     (do_while
         (proc
             (print " " value)
-            (store value (add value 1)))
+            (set value (add value 1)))
         (lte value 10))
     (print "\n")
 
@@ -567,11 +567,11 @@ function testSyntax(: value) {
     (print "\n")
 
     (print "Testing continue / break in do/while:")
-    (store value 0)
+    (set value 0)
     (do_while
         (proc
             (if (gt value 50) (break))
-            (store value (add 1 value))
+            (set value (add 1 value))
             (if (neq (mod value 5) 0) (continue))
             (print " " value))
         1)
@@ -608,11 +608,11 @@ function testSyntax(: value) {
 // ////////////////////////////////////////////////////////////////////////////
 asm_function testLoopDemo(: counter theValue) {
 // show a count up loop and calculate 2^10
-    0 *counter store
-    1 *theValue store
+    0 *counter set
+    1 *theValue set
     loopstart:
-    counter 1 add *counter store
-    2 theValue mult *theValue store
+    counter 1 add *counter set
+    2 theValue mult *theValue set
     counter say
     " " say
     counter 10 lt loopstart jnz
@@ -698,13 +698,13 @@ asm_function testValues(: localvar) {
     "Failed localvar default value == none." error
 
     test_local_2:
-    0 *localvar store
+    0 *localvar set
     localvar typeof Integer eq test_casts jnz
     "Failed typeof localvar == Integer." error
 
     test_casts:
     "Testing type casting...[br]" say
-    String localvar astype *localvar store
+    String localvar astype *localvar set
     localvar firstString eq all_done jnz
     "Failed localvar cast to string." error
 
@@ -754,11 +754,11 @@ asm_function testInfoarea() {
 asm_function testRandom(: counter) {
     "This will generate 100 random numbers between 50 and 60 below.\n" say
 
-    100 *counter store
+    100 *counter set
     loop_start:
     counter 0 lte loop_done jnz
     50 60 random say " " say
-    counter 1 sub *counter store
+    counter 1 sub *counter set
     loop_start jmp
     loop_done: "\n" say
 }
@@ -768,11 +768,11 @@ asm_function testRandom(: counter) {
 // ////////////////////////////////////////////////////////////////////////////
 asm_function printArray(theArray : counter length) {
     "[b]Array contents:[/b]" say
-    theArray get_size *length store
-    0 *counter store
+    theArray get_size *length set
+    0 *counter set
     arraydumploop:
     " " say counter theArray get_item say
-    counter 1 add *counter store
+    counter 1 add *counter set
     length counter gt arraydumploop jnz
     " (length: " say length say ")\n" say
 }
@@ -785,17 +785,17 @@ asm_function testLists(: counter random_value) {
     "Test list has wrong initial size." error
 
     test_add:
-    91 99 testList add_item
+    91 99 testList ins
     testList get_size 4 eq test_add_initial jnz
     "Test list has wrong size after add at end." error
 
     test_add_initial:
-    46 0 testList add_item
+    46 0 testList ins
     testList get_size 5 eq test_add_middle jnz
     "Test list has wrong size after add at beginning." error
 
     test_add_middle:
-    13 2 testList add_item
+    13 2 testList ins
     testList get_size 6 eq test_list_contents jnz
     "Test list has wrong size after add in middle." error
 
@@ -847,15 +847,15 @@ asm_function testLists(: counter random_value) {
 
     test_random:
     "Testing getting random list items...[br]" say
-    0 *counter store
+    0 *counter set
     randomloop:
-    testList get_random *random_value store
+    testList get_random *random_value set
     random_value 1 eq randomloop_good jnz
     random_value 2 eq randomloop_good jnz
     random_value 3 eq randomloop_good jnz
     "Got unexpected value when drawing random list values." error
     randomloop_good:
-    counter 1 add *counter store
+    counter 1 add *counter set
     200 counter gt randomloop jnz
 
     return
@@ -909,7 +909,7 @@ asm_function testMaps(: keys) {
 
     test_key_list:
     "Converting testMap keys to list...[br]" say
-    testMap get_keys *keys store
+    testMap get_keys *keys set
     0 keys get_item 1 eq found_bad_key jz
     1 keys get_item 2 eq found_bad_key jz
     2 keys get_item 3 eq found_bad_key jz
@@ -962,16 +962,16 @@ asm_function testPage1(key) {
     return
 
     leftkey:
-    $index testpageData get_prop 1 sub $index testpageData set_prop
+    $index testpageData get 1 sub $index testpageData setp
     showpage jmp
     rightkey:
-    $index testpageData get_prop 1 add $index testpageData set_prop
+    $index testpageData get 1 add $index testpageData setp
     showpage jmp
     upkey:
-    $index testpageData get_prop 10 mult $index testpageData set_prop
+    $index testpageData get 10 mult $index testpageData setp
     showpage jmp
     downkey:
-    $index testpageData get_prop 10 div $index testpageData set_prop
+    $index testpageData get 10 div $index testpageData setp
     showpage jmp
 
     showkey:
@@ -982,12 +982,12 @@ asm_function testPage1(key) {
     key -4 eq upkey jnz
     showpage:
     "You have viewed this page " say
-    $count testpageData get_prop say
+    $count testpageData get say
     " times. The index counter is " say
-    $index testpageData get_prop say
+    $index testpageData get say
     ". Use arrow keys to change."
     "Press space to return." testPage1 get_key
-    $count testpageData get_prop 1 add $count testpageData set_prop
+    $count testpageData get 1 add $count testpageData setp
 }
 asm_function otherPage() {
     "You selected a page other than the demo page! (Only the demo page has actual content.)" say
@@ -1005,42 +1005,42 @@ asm_function testDynamic(: newObj newStr newList newMap) {
     "\n#Testing Dynamic Creation\n" say
 
     "Creating data...[br]" say
-    String new *newStr store
+    String new *newStr set
     newStr typeof String eq makeNewObject jnz
     "New string not of String type." error
 
     makeNewObject:
-    Object new *newObj store
+    Object new *newObj set
     newObj typeof Object eq makeNewList jnz
     "New object not of Object type." error
 
     makeNewList:
-    List new *newList store
+    List new *newList set
     newList typeof List eq makeNewMap jnz
     "New list not of List type." error
 
     makeNewMap:
-    Map new *newMap store
+    Map new *newMap set
     newMap typeof Map eq testNewObjectProperties jnz
     "New map not of Map type." error
 
 
     testNewObjectProperties:
     "Testing property manipulation of created object...[br]" say
-    $anInt newObj get_prop 0 eq testObjectUnsetHas jnz
+    $anInt newObj get 0 eq testObjectUnsetHas jnz
     "New object returns value for unset property." error
 
     testObjectUnsetHas:
-    $anInt newObj has_prop testObjectSet jz
+    $anInt newObj has testObjectSet jz
     "New object claims to have anInt property." error
 
     testObjectSet:
-    66 $anInt newObj set_prop
-    $anInt newObj get_prop 66 eq testObjectSetHas jnz
+    66 $anInt newObj setp
+    $anInt newObj get 66 eq testObjectSetHas jnz
     "Updated property on new object did not retain value." error
 
     testObjectSetHas:
-    $anInt newObj has_prop testMapValues jnz
+    $anInt newObj has testMapValues jnz
     "New object denies having anInt property." error
 
 
@@ -1061,7 +1061,7 @@ asm_function testDynamic(: newObj newStr newList newMap) {
     "New list is not empty." error
 
     testListAddValue:
-    "New List Item" 0 newList add_item
+    "New List Item" 0 newList ins
     0 newList get_item "New List Item" eq testIsStatic jnz
     "List item not updated." error
 
@@ -1095,14 +1095,14 @@ asm_function testStringManipulation(: testString) {
     "Bad length on static string \"Fred\"." error
 
     strlenNewString:
-    String new *testString store
+    String new *testString set
     "Check new string has zero length...[br]" say
     testString strlen strcpyStrlen jz
     "Bad initial length on new string." error
 
     strcpyStrlen:
     "Copying \"Fred\" to dynamic string...[br]" say
-    "Fred" testString strcpy
+    "Fred" testString strcat
     testString strlen 4 eq stringCompares jnz
     "Bad length on copied string \"Fred\"." error
 
@@ -1202,12 +1202,12 @@ asm_function main(fromRestore) {
     fromRestore all_done jnz
 
     // set the "magic numbers" used for demonstrate the load/save code
-    10000 40000 random $number1 magic_1 set_prop
-    10000 40000 random $number2 magic_1 set_prop
-    10000 40000 random $number3 magic_1 set_prop
-    10000 40000 random $number1 magic_2 set_prop
-    10000 40000 random $number2 magic_2 set_prop
-    10000 40000 random $number3 magic_2 set_prop
+    10000 40000 random $number1 magic_1 setp
+    10000 40000 random $number2 magic_1 setp
+    10000 40000 random $number3 magic_1 setp
+    10000 40000 random $number1 magic_2 setp
+    10000 40000 random $number2 magic_2 setp
+    10000 40000 random $number3 magic_2 setp
 
     all_done:
     0 showOptions call
