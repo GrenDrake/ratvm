@@ -72,7 +72,7 @@ struct OpcodeDef {
         GetLine             = 62,
         AddOption           = 63,
         AddOptionExtra      = 64,
-        StringCopy          = 65,
+        StringClear         = 65,
         StringAppend        = 66,
         StringLength        = 67,
         StringCompare       = 68,

@@ -62,7 +62,7 @@ OpcodeDef opcodes[] = {
     {   "get_line",     OpcodeDef::GetLine,                 0, 0 },
     {   "add_option",   OpcodeDef::AddOption,               2, 0 },
     {   "add_option_x", OpcodeDef::AddOptionExtra,          3, 0 },
-    {   "strcpy",       OpcodeDef::StringCopy,              2, 0 },
+    {   "strclr",       OpcodeDef::StringClear,             1, 0 },
     {   "strcat",       OpcodeDef::StringAppend,            2, 0 },
     {   "strlen",       OpcodeDef::StringLength,            1, 1 },
     {   "strcmp",       OpcodeDef::StringCompare,           2, 1 },
