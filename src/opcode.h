@@ -33,7 +33,7 @@ struct OpcodeDef {
         SetItem             = 25, // set item in list (by index) of map (by key)
         TypeOf              = 26, // get value type
         DelItem             = 27, // remove an item from a list or a key from a map
-        AddItem             = 28, // add an item to a list (use set-item for maps)
+        InsItem             = 28, // inserts an item into a list in the specified position
         AsType              = 29, // type conversion
 
         Equal               = 30, // compare two values and push the result

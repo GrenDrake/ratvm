@@ -26,7 +26,7 @@ OpcodeDef opcodes[] = {
     {   "get_size",     OpcodeDef::GetSize,                 1, 1 },
     {   "set_item",     OpcodeDef::SetItem,                 3, 0 },
     {   "del_item",     OpcodeDef::DelItem,                 2, 0 },
-    {   "add_item",     OpcodeDef::AddItem,                 3, 0 },
+    {   "ins_item",     OpcodeDef::InsItem,                 3, 0 },
     {   "typeof",       OpcodeDef::TypeOf,                  1, 1 },
     {   "astype",       OpcodeDef::AsType,                  2, 1 },
     {   "eq",           OpcodeDef::Equal,                   2, 1 },
