@@ -50,9 +50,9 @@ object magic_1
         $number3 self get 99 data ins
     }
     load asm_function(data) {
-        0 data get_item $number1 self set
-        1 data get_item $number2 self set
-        2 data get_item $number3 self set
+        0 data get $number1 self set
+        1 data get $number2 self set
+        2 data get $number3 self set
     }
     number1 0
     number2 0
@@ -67,9 +67,9 @@ object magic_2
         $number3 self get 99 data ins
     }
     load asm_function(data) {
-        0 data get_item $number1 self set
-        1 data get_item $number2 self set
-        2 data get_item $number3 self set
+        0 data get $number1 self set
+        1 data get $number2 self set
+        2 data get $number3 self set
     }
     number1 0
     number2 0
@@ -771,7 +771,7 @@ asm_function printArray(theArray : counter length) {
     theArray get_size *length set
     0 *counter set
     arraydumploop:
-    " " say counter theArray get_item say
+    " " say counter theArray get say
     counter 1 add *counter set
     length counter gt arraydumploop jnz
     " (length: " say length say ")\n" say
@@ -800,17 +800,17 @@ asm_function testLists(: counter random_value) {
     "Test list has wrong size after add in middle." error
 
     test_list_contents:
-    0 testList get_item 46 eq test_list_contents_wrong jz
-    1 testList get_item  1 eq test_list_contents_wrong jz
-    2 testList get_item 13 eq test_list_contents_wrong jz
-    3 testList get_item  2 eq test_list_contents_wrong jz
-    4 testList get_item  3 eq test_list_contents_wrong jz
-    5 testList get_item 91 eq test_list_contents_wrong jz
+    0 testList get 46 eq test_list_contents_wrong jz
+    1 testList get  1 eq test_list_contents_wrong jz
+    2 testList get 13 eq test_list_contents_wrong jz
+    3 testList get  2 eq test_list_contents_wrong jz
+    4 testList get  3 eq test_list_contents_wrong jz
+    5 testList get 91 eq test_list_contents_wrong jz
 
 
     "Testing changing value in list...[br]" say
     second_obj 2 testList set_item
-    2 testList get_item second_obj eq test_deletion jnz
+    2 testList get second_obj eq test_deletion jnz
     "Failed to update list index." error
 
 
@@ -831,17 +831,17 @@ asm_function testLists(: counter random_value) {
     "Test list has wrong size after delete." error
 
     test_list_contents_2:
-    0 testList get_item  1 eq test_list_contents_wrong jz
-    1 testList get_item  2 eq test_list_contents_wrong jz
-    2 testList get_item  3 eq test_list_contents_wrong jz
+    0 testList get  1 eq test_list_contents_wrong jz
+    1 testList get  2 eq test_list_contents_wrong jz
+    2 testList get  3 eq test_list_contents_wrong jz
 
 
     "Testing bad list indexes...[br]" say
-    -1 testList get_item 0 eq test_list_badindex jnz
+    -1 testList get 0 eq test_list_badindex jnz
     "Accessing negative list index does not return 0." error
 
     test_list_badindex:
-    99 testList get_item 0 eq test_random jnz
+    99 testList get 0 eq test_random jnz
     "Accessing list index beyond list size does not return 0." error
 
 
@@ -874,23 +874,23 @@ asm_function testMaps(: keys) {
     "\n# Testing Map Operations\n" say
 
     "Fetching map keys...[br]" say
-    7 testMap get_item 0 eq test_valid_key jnz
+    7 testMap get 0 eq test_valid_key jnz
     "Accessing invalid element returns wrong value." error
 
     test_valid_key:
-    2 testMap get_item "End" eq test_update jnz
+    2 testMap get "End" eq test_update jnz
     "Retrieving map key \"2\" returned invalid result." error
 
     test_update:
     "Testing key update...[br]" say
     "Apple" 3 testMap set_item
-    3 testMap get_item "Apple" eq test_newkey jnz
+    3 testMap get "Apple" eq test_newkey jnz
     "Retrieving updated map key \"3\" returned invalid result." error
 
     test_newkey:
     "Testing inserting new key...[br]" say
     "item" "newkey" testMap set_item
-    "newkey" testMap get_item "item" eq test_haskey jnz
+    "newkey" testMap get "item" eq test_haskey jnz
     "Retrieving new map key returned invalid result." error
 
     test_haskey:
@@ -904,16 +904,16 @@ asm_function testMaps(: keys) {
 
     test_delete:
     "newkey" testMap del_item
-    "newkey" testMap get_item 0 eq test_key_list jnz
+    "newkey" testMap get 0 eq test_key_list jnz
     "Failed to delete newkey." error
 
     test_key_list:
     "Converting testMap keys to list...[br]" say
     testMap get_keys *keys set
-    0 keys get_item 1 eq found_bad_key jz
-    1 keys get_item 2 eq found_bad_key jz
-    2 keys get_item 3 eq found_bad_key jz
-    3 keys get_item 4 eq found_bad_key jz
+    0 keys get 1 eq found_bad_key jz
+    1 keys get 2 eq found_bad_key jz
+    2 keys get 3 eq found_bad_key jz
+    3 keys get 4 eq found_bad_key jz
     keys get_size 4 eq all_done jnz
     "Map keys list is wrong size." error
 
@@ -1046,12 +1046,12 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 
     testMapValues:
     "Testing values of new map...[br]" say
-    "key" newMap get_item 0 eq testSetMapValue jnz
+    "key" newMap get 0 eq testSetMapValue jnz
     "New map returns value for unset key...[br]" error
 
     testSetMapValue:
     "New Map Value" "key" newMap set_item
-    "key" newMap get_item "New Map Value" eq testListValues jnz
+    "key" newMap get "New Map Value" eq testListValues jnz
     "New map returns 0 for updated key...[br]" error
 
 
@@ -1062,7 +1062,7 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 
     testListAddValue:
     "New List Item" 0 newList ins
-    0 newList get_item "New List Item" eq testIsStatic jnz
+    0 newList get "New List Item" eq testIsStatic jnz
     "List item not updated." error
 
     testIsStatic:

@@ -24,7 +24,6 @@ struct OpcodeDef {
         StackSize           = 16, // get the current size of the stack
         Call                = 17, // call a value as a function
         /* unused: 18 */
-        GetProp             = 19,
         HasProp             = 20, // check if property is set on object
         SetProp             = 21, // set object property to value
         GetItem             = 22, // get item from list (index) or map (key)
