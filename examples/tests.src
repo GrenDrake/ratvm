@@ -768,7 +768,7 @@ asm_function testRandom(: counter) {
 // ////////////////////////////////////////////////////////////////////////////
 asm_function printArray(theArray : counter length) {
     "[b]Array contents:[/b]" say
-    theArray get_size *length set
+    theArray size *length set
     0 *counter set
     arraydumploop:
     " " say counter theArray get say
@@ -781,22 +781,22 @@ asm_function testLists(: counter random_value) {
     "\n# Testing List Operations\n" say
 
     "Testing list insertion...[br]" say
-    testList get_size 3 eq test_add jnz
+    testList size 3 eq test_add jnz
     "Test list has wrong initial size." error
 
     test_add:
     91 99 testList ins
-    testList get_size 4 eq test_add_initial jnz
+    testList size 4 eq test_add_initial jnz
     "Test list has wrong size after add at end." error
 
     test_add_initial:
     46 0 testList ins
-    testList get_size 5 eq test_add_middle jnz
+    testList size 5 eq test_add_middle jnz
     "Test list has wrong size after add at beginning." error
 
     test_add_middle:
     13 2 testList ins
-    testList get_size 6 eq test_list_contents jnz
+    testList size 6 eq test_list_contents jnz
     "Test list has wrong size after add in middle." error
 
     test_list_contents:
@@ -816,18 +816,18 @@ asm_function testLists(: counter random_value) {
 
     test_deletion:
     "Testing list deletion...[br]" say
-    2 testList del_item
-    testList get_size 5 eq test_del_first jnz
+    2 testList del
+    testList size 5 eq test_del_first jnz
     "Test list has wrong size after delete." error
 
     test_del_first:
-    0 testList del_item
-    testList get_size 4 eq test_del_last jnz
+    0 testList del
+    testList size 4 eq test_del_last jnz
     "Test list has wrong size after delete." error
 
     test_del_last:
-    3 testList del_item
-    testList get_size 3 eq test_list_contents_2 jnz
+    3 testList del
+    testList size 3 eq test_list_contents_2 jnz
     "Test list has wrong size after delete." error
 
     test_list_contents_2:
@@ -903,7 +903,7 @@ asm_function testMaps(: keys) {
     "Map claims to have key \"7\"." error
 
     test_delete:
-    "newkey" testMap del_item
+    "newkey" testMap del
     "newkey" testMap get 0 eq test_key_list jnz
     "Failed to delete newkey." error
 
@@ -914,7 +914,7 @@ asm_function testMaps(: keys) {
     1 keys get 2 eq found_bad_key jz
     2 keys get 3 eq found_bad_key jz
     3 keys get 4 eq found_bad_key jz
-    keys get_size 4 eq all_done jnz
+    keys size 4 eq all_done jnz
     "Map keys list is wrong size." error
 
     all_done:
@@ -1057,7 +1057,7 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 
     testListValues:
     "Testing values of new list...[br]" say
-    newList get_size 0 eq testListAddValue jnz
+    newList size 0 eq testListAddValue jnz
     "New list is not empty." error
 
     testListAddValue:
