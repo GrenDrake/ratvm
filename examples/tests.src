@@ -809,7 +809,7 @@ asm_function testLists(: counter random_value) {
 
 
     "Testing changing value in list...[br]" say
-    second_obj 2 testList set_item
+    second_obj 2 testList setp
     2 testList get second_obj eq test_deletion jnz
     "Failed to update list index." error
 
@@ -883,23 +883,23 @@ asm_function testMaps(: keys) {
 
     test_update:
     "Testing key update...[br]" say
-    "Apple" 3 testMap set_item
+    "Apple" 3 testMap setp
     3 testMap get "Apple" eq test_newkey jnz
     "Retrieving updated map key \"3\" returned invalid result." error
 
     test_newkey:
     "Testing inserting new key...[br]" say
-    "item" "newkey" testMap set_item
+    "item" "newkey" testMap setp
     "newkey" testMap get "item" eq test_haskey jnz
     "Retrieving new map key returned invalid result." error
 
     test_haskey:
     "Testing has_key...[br]" say
-    2 testMap has_item test_haskey_2 jnz
+    2 testMap has test_haskey_2 jnz
     "Map denies having key \"2\"." error
 
     test_haskey_2:
-    7 testMap has_item test_delete jz
+    7 testMap has test_delete jz
     "Map claims to have key \"7\"." error
 
     test_delete:
@@ -1050,7 +1050,7 @@ asm_function testDynamic(: newObj newStr newList newMap) {
     "New map returns value for unset key...[br]" error
 
     testSetMapValue:
-    "New Map Value" "key" newMap set_item
+    "New Map Value" "key" newMap setp
     "key" newMap get "New Map Value" eq testListValues jnz
     "New map returns 0 for updated key...[br]" error
 
