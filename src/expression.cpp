@@ -126,7 +126,8 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
 
     if (!checkListSize(list, wantedOpcodeCount, wantedOpcodeCount)) {
         std::stringstream ss;
-        ss << "Opcode expected " << opcode->inputs << " operands, but found " << list->values.size() - 2 << '.';
+        ss << "Opcode expected " << opcode->inputs << " operands, but found ";
+        ss << list->values.size() - 1 << '.';
         gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
         return;
     }
@@ -225,7 +226,7 @@ void stmt_and(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() < 3) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "and requires at least two arguments."});
+        gamedata.errors.push_back(Error{list->values[1].origin, "or requires at least two arguments."});
         return;
     }
 
@@ -283,7 +284,7 @@ void stmt_continue(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() != 3) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "While statement must have three expressions."});
+        gamedata.errors.push_back(Error{list->values[0].origin, "Do-While statement must have two expressions."});
         return;
     }
 
@@ -327,7 +328,7 @@ void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() < 3 || list->values.size() > 4) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "If expression must have two or three values."});
+        gamedata.errors.push_back(Error{list->values[0].origin, "If expression must have two or three expressions."});
         return;
     }
 
@@ -353,13 +354,17 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
 }
 
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
-    if (!checkListSize(list, 3, 4)) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "option statement takes two or three arguments."});
+    if (!checkListSize(list, 2, 4)) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "option statement takes one to three arguments."});
         return;
     }
 
     process_value(gamedata, function, list->values[1]);
-    process_value(gamedata, function, list->values[2]);
+    if (list->values.size() >= 3) {
+        process_value(gamedata, function, list->values[2]);
+    } else {
+        function->addValue(list->values[0].origin, Value{Value::None});
+    }
     if (list->values.size() >= 4) {
         process_value(gamedata, function, list->values[3]);
     } else {
@@ -381,7 +386,7 @@ void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_print_uf(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() <= 1) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "print statement requires arguments."});
+        gamedata.errors.push_back(Error{list->values[0].origin, "print_uf statement requires arguments."});
         return;
     }
     process_value(gamedata, function, list->values[1]);
@@ -406,7 +411,7 @@ void stmt_proc(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_while(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() != 3) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "While statement must have three expressions."});
+        gamedata.errors.push_back(Error{list->values[0].origin, "While statement must have two expressions."});
         return;
     }
 
