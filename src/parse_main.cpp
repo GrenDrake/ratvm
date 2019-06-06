@@ -196,8 +196,13 @@ int parse_map(GameData &gamedata, ParseState &state) {
             return 0;
         }
         Value v1 = parse_value(gamedata, state);
-        state.skip(Token::Colon);
-        Value v2 = parse_value(gamedata, state);
+        Value v2{Value::None};
+        try {
+            state.skip(Token::Colon);
+            v2 = parse_value(gamedata, state);
+        } catch (BuildError &e) {
+            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        }
 
         map->rows.push_back(GameMap::MapRow{v1, v2});
     }
