@@ -370,7 +370,7 @@ void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
     } else {
         function->addValue(list->values[0].origin, Value{Value::None});
     }
-    function->addOpcode(list->values[0].origin, OpcodeDef::AddOptionExtra);
+    function->addOpcode(list->values[0].origin, OpcodeDef::AddOption);
 }
 
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {

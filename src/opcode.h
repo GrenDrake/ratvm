@@ -68,7 +68,6 @@ struct OpcodeDef {
         GetOption           = 61,
         GetLine             = 62,
         AddOption           = 63,
-        AddOptionExtra      = 64,
         StringClear         = 65,
         StringAppend        = 66,
         StringLength        = 67,
