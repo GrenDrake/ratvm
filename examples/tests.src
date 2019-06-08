@@ -636,7 +636,7 @@ function testInputs() {
 }
 asm_function receiveExtra(extra) {
     "Option extra value: " say extra say
-    "Back to inputs menu" testInputs add_option
+    "Back to inputs menu" testInputs none add_option
     dispatcher get_option
 }
 asm_function testGetkey() {
@@ -645,7 +645,7 @@ asm_function testGetkey() {
 }
 asm_function testGetkeyReceive(key) {
     "Resulting character code: " say key say ".\n" say
-    "Back to inputs menu" testInputs add_option
+    "Back to inputs menu" testInputs none add_option
     dispatcher get_option
 }
 
@@ -935,8 +935,8 @@ asm_function testPages() {
 }
 asm_function testPagesReal() {
     "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
-    "Remove \"Another Page\"" testPagesRemovePage add_option
-    "Cleanup and return to main list" testPagesCleanup add_option
+    "Remove \"Another Page\"" testPagesRemovePage none add_option
+    "Cleanup and return to main list" testPagesCleanup none add_option
     dispatcher get_option
 }
 asm_function testPagesRemovePage() {
@@ -991,7 +991,7 @@ asm_function testPage1(key) {
 }
 asm_function otherPage() {
     "You selected a page other than the demo page! (Only the demo page has actual content.)" say
-    "Continue" none add_option
+    "Continue" none none add_option
     endOtherPage get_option
 }
 asm_function endOtherPage() {
@@ -1189,7 +1189,7 @@ asm_function dispatcher(optionFunc extraValue) {
     optionFunc testPagesRemovePage eq alldone jnz
     optionFunc receiveExtra eq alldone jnz
     optionFunc testGetkey eq alldone jnz
-    "Return to main page" showOptions add_option
+    "Return to main page" showOptions none add_option
     dispatcher get_option
 
     alldone:
