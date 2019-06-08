@@ -354,7 +354,7 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
 }
 
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
-    if (!checkListSize(list, 2, 4)) {
+    if (!checkListSize(list, 2, 5)) {
         gamedata.errors.push_back(Error{list->values[0].origin, "option statement takes one to three arguments."});
         return;
     }
@@ -367,6 +367,11 @@ void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
     }
     if (list->values.size() >= 4) {
         process_value(gamedata, function, list->values[3]);
+    } else {
+        function->addValue(list->values[0].origin, Value{Value::None});
+    }
+    if (list->values.size() >= 5) {
+        process_value(gamedata, function, list->values[4]);
     } else {
         function->addValue(list->values[0].origin, Value{Value::None});
     }
