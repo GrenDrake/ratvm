@@ -18,8 +18,10 @@ void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list)
 void stmt_and(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_break(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_continue(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_dec(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_inc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list);
@@ -39,8 +41,10 @@ StatementType statementTypes[] = {
     { "and",        stmt_and    },
     { "break",      stmt_break    },
     { "continue",   stmt_continue },
+    { "dec",        stmt_dec      },
     { "do_while",   stmt_do_while },
     { "if",         stmt_if       },
+    { "inc",        stmt_inc      },
     { "label",      stmt_label    },
     { "option",     stmt_option   },
     { "or",         stmt_or       },
@@ -282,6 +286,28 @@ void stmt_continue(GameData &gamedata, FunctionDef *function, List *list) {
     function->addOpcode(origin, OpcodeDef::Jump);
 }
 
+void stmt_dec(GameData &gamedata, FunctionDef *function, List *list) {
+    if (!checkListSize(list, 2, 3)) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "inc expression takes one or two arguments."});
+        return;
+    }
+
+    if (list->values[1].value.type != Value::LocalVar) {
+        gamedata.errors.push_back(Error{list->values[1].origin, "inc requires name of local variable."});
+        return;
+    }
+
+    if (list->values.size() == 3) {
+        process_value(gamedata, function, list->values[2]);
+    } else {
+        function->addValue(list->values[0].origin, Value{Value::Integer, 1});
+    }
+    process_value(gamedata, function, list->values[1]);
+    function->addOpcode(list->values[0].origin, OpcodeDef::Sub);
+    function->addValue(list->values[1].origin, Value{Value::VarRef, list->values[1].value.value});
+    function->addOpcode(list->values[0].origin, OpcodeDef::Store);
+}
+
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() != 3) {
         gamedata.errors.push_back(Error{list->values[0].origin, "Do-While statement must have two expressions."});
@@ -351,6 +377,28 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
         function->addValue(list->values[0].origin, Value{Value::Integer, 0});
     }
     function->addLabel(origin, after_label);
+}
+
+void stmt_inc(GameData &gamedata, FunctionDef *function, List *list) {
+    if (!checkListSize(list, 2, 3)) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "inc expression takes one or two arguments."});
+        return;
+    }
+
+    if (list->values[1].value.type != Value::LocalVar) {
+        gamedata.errors.push_back(Error{list->values[1].origin, "inc requires name of local variable."});
+        return;
+    }
+
+    if (list->values.size() == 3) {
+        process_value(gamedata, function, list->values[2]);
+    } else {
+        function->addValue(list->values[0].origin, Value{Value::Integer, 1});
+    }
+    process_value(gamedata, function, list->values[1]);
+    function->addOpcode(list->values[0].origin, OpcodeDef::Add);
+    function->addValue(list->values[1].origin, Value{Value::VarRef, list->values[1].value.value});
+    function->addOpcode(list->values[0].origin, OpcodeDef::Store);
 }
 
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
