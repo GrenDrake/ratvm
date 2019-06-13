@@ -530,11 +530,11 @@ function testSyntax(: value) {
     (print "\n")
 
     (print "Testing while:")
-    (set value 1)
-    (while (lte value 10)
+    (set value 20)
+    (while (gt value 0)
         (proc
             (print " " value)
-            (set value (add value 1))))
+            (dec value 2)))
     (print "\n")
 
     (print "Testing while with false initial.\n")
@@ -546,7 +546,7 @@ function testSyntax(: value) {
     (while 1
         (proc
             (if (gt value 50) (break))
-            (set value (add 1 value))
+            (inc value)
             (if (neq (mod value 5) 0) (continue))
             (print " " value)))
     (print "\n")
@@ -556,8 +556,8 @@ function testSyntax(: value) {
     (do_while
         (proc
             (print " " value)
-            (set value (add value 1)))
-        (lte value 10))
+            (inc value 3))
+        (lte value 20))
     (print "\n")
 
     (print "Testing do/while with false condition: ")
@@ -567,11 +567,11 @@ function testSyntax(: value) {
     (print "\n")
 
     (print "Testing continue / break in do/while:")
-    (set value 0)
+    (set value 55)
     (do_while
         (proc
-            (if (gt value 50) (break))
-            (set value (add 1 value))
+            (if (lte value 0) (break))
+            (dec value)
             (if (neq (mod value 5) 0) (continue))
             (print " " value))
         1)
