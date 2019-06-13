@@ -23,7 +23,8 @@ struct OpcodeDef {
         StackPeek           = 15, // peek at the stack item X items from the top
         StackSize           = 16, // get the current size of the stack
         Call                = 17, // call a value as a function
-        /* unused: 18 - 21 */
+        /* unused: 18 - 20 */
+        Sort                = 21,
         GetItem             = 22, // get item from list (index) or map (key)
         HasItem             = 23, // check if index (for list) or key (for map) exists
         GetSize             = 24, // get size of list or map
