@@ -72,7 +72,6 @@ void translate_symbols(GameData &gamedata) {
 
     for (SymbolDef &symbol : gamedata.defaults.symbols) {
         if (!gamedata.symbols.get(symbol.name)) {
-            std::cout << "DEFAULT FOR " << symbol.name << "\n";
             if (symbol.value.type == Value::Symbol) {
                 const SymbolDef *realValue = gamedata.symbols.get(symbol.value.text);
                 if (!realValue) {
