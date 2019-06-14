@@ -70,6 +70,30 @@ void translate_symbols(GameData &gamedata) {
         flagset.finalValue = result;
     }
 
+    for (SymbolDef &symbol : gamedata.defaults.symbols) {
+        if (!gamedata.symbols.get(symbol.name)) {
+            std::cout << "DEFAULT FOR " << symbol.name << "\n";
+            if (symbol.value.type == Value::Symbol) {
+                const SymbolDef *realValue = gamedata.symbols.get(symbol.value.text);
+                if (!realValue) {
+                    std::stringstream ss;
+                    ss << "Default value for " << symbol.name;
+                    ss << " is undefined value " << symbol.value.text;
+                    ss << ".";
+                    gamedata.errors.push_back(Error{symbol.origin, ss.str()});
+                } else {
+                    try {
+                        gamedata.symbols.add(SymbolDef{symbol.origin, symbol.name, realValue->value});
+                    } catch (BuildError &e) {
+                        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+                    }
+                }
+            } else {
+                gamedata.symbols.add(symbol);
+            }
+        }
+    }
+
     for (SymbolDef &symbol : gamedata.symbols.symbols) {
         if (symbol.value.type == Value::FlagSet) {
             translate_value(gamedata, symbol.value);

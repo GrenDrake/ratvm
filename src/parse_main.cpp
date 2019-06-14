@@ -25,6 +25,7 @@
 // Parse function declarations
 
 static void parse_constant(GameData &gamedata, ParseState &state);
+static void parse_default(GameData &gamedata, ParseState &state);
 static int parse_flags(GameData &gamedata, ParseState &state);
 static int parse_function(GameData &gamedata, ParseState &state);
 static int parse_list(GameData &gamedata, ParseState &state);
@@ -56,6 +57,40 @@ void parse_constant(GameData &gamedata, ParseState &state) {
                                     constantName,
                                     value));
     // state.skip(Token::Semicolon);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Parse a default declaration value
+static void parse_default(GameData &gamedata, ParseState &state) {
+    Origin origin = state.here()->origin;
+    state.next(); // skip "default"
+    try {
+        state.require(Token::Identifier);
+    } catch (BuildError &e) {
+        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        state.next();
+        return;
+    }
+    const std::string &defaultName = state.here()->text;
+    state.next();
+    Value value = parse_value(gamedata, state);
+    if (value.type == Value::Object || value.type == Value::Function) {
+        std::stringstream ss;
+        ss << "Declaration of default value for " << defaultName;
+        ss << " cannot declare objects or functions.";
+        gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+    }
+    const SymbolDef *oldDefault = gamedata.defaults.get(defaultName);
+    if (!oldDefault) {
+        gamedata.defaults.add(SymbolDef(origin,
+                                        defaultName,
+                                        value));
+    } else {
+        std::stringstream ss;
+        ss << "Default value for " << defaultName;
+        ss << " already declared at " << oldDefault->origin << ".";
+        gamedata.errors.push_back(Error{origin, ss.str()});
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -349,6 +384,8 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
 
         if (state.matches("declare")) {
             parse_constant(gamedata, state);
+        } else if (state.matches("default")) {
+            parse_default(gamedata, state);
         } else if (state.matches("object")) {
             int objectId = parse_object(gamedata, state);
             if (objectId > 0) {

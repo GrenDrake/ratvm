@@ -166,6 +166,7 @@ public:
 
     std::vector<Error> errors;
     SymbolTable symbols;
+    SymbolTable defaults;
     std::vector<GameObject*> objects;
     std::vector<std::string> propertyNames;
     std::vector<std::string> stringTable;

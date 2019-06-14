@@ -78,6 +78,24 @@ object magic_2
 
 
 // ////////////////////////////////////////////////////////////////////////////
+// Test default values commands
+// ////////////////////////////////////////////////////////////////////////////
+default undeclaredValue 5
+default declaredValue 10
+declare declaredValue 20
+declare otherDeclaredValue 40
+default otherDeclaredValue 30
+default aFunction testDefaults
+
+function testDefaults() {
+    ("\n# Testing default values\n")
+    (if (neq undeclaredValue 5) (error "undeclaredValue has wrong value"))
+    (if (neq declaredValue 20) (error "declaredValue has wrong value"))
+    (if (neq otherDeclaredValue 40) (error "otherDeclaredValue has wrong value"))
+    (if (neq aFunction testDefaults) (error "aFunction has wrong value"))
+}
+
+// ////////////////////////////////////////////////////////////////////////////
 // Test stack commands
 // ////////////////////////////////////////////////////////////////////////////
 asm_function testStack() {
@@ -1135,6 +1153,7 @@ asm_function doAllTests() {
     0 testCall call
     0 testStack call
     0 testMath call
+    0 testDefaults call
 
     0 testValues call
     0 testLists call
@@ -1160,6 +1179,7 @@ function showOptions() {
     (option "Test call"                 testCall)
     (option "Test stack commands"       testStack)
     (option "Test math"                 testMath)
+    (option "Test default values"       testDefaults)
 
     (option "Test value types"          testValues)
     (option "Test list methods"         testLists)
