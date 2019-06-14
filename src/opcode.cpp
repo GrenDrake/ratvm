@@ -57,7 +57,7 @@ OpcodeDef opcodes[] = {
     {   "set_setting",  OpcodeDef::SetSetting,              2, 0 },
     {   "get_key",      OpcodeDef::GetKey,                  2, 0 },
     {   "get_option",   OpcodeDef::GetOption,               1, 0 },
-    {   "get_line",     OpcodeDef::GetLine,                 0, 0 },
+    {   "get_line",     OpcodeDef::GetLine,                 1, 0 },
     {   "add_option",   OpcodeDef::AddOption,               4, 0 },
     {   "strclr",       OpcodeDef::StringClear,             1, 0 },
     {   "strcat",       OpcodeDef::StringAppend,            2, 0 },
