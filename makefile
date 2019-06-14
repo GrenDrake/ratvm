@@ -1,6 +1,6 @@
 CXXFLAGS= -std=c++11 -g -Wall
 
-BUILD_OBJS=src/build.o src/general.o src/lexer.o src/preprocess.o \
+BUILD_OBJS=src/build.o src/general.o src/lexer.o \
 		   src/parse_main.o src/translate.o src/gamedata.o src/generate.o \
 		   src/value.o src/parse_functions.o src/parsestate.o src/bytestream.o \
 		   src/dump.o src/opcode.o src/expression.o
@@ -11,6 +11,8 @@ FILESCAN=./filescan
 
 TEST_BYTESTREAM_OBJS=tests/bytestream.o src/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
+
+TESTSRC=examples/tests.src
 
 all: $(BUILD) $(FILESCAN) tests game.bin
 
@@ -26,9 +28,8 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
 
-game.bin: $(BUILD) examples/tests.src
-	cd examples && ../build -data -functions -bytecode -asm -ir tests.src
-	mv examples/game.bin examples/data.txt .
+game.bin: $(BUILD) $(TESTSRC)
+	./build -data -functions -bytecode -asm -ir $(TESTSRC)
 	cp game.bin ../gtrpge-javascript/
 
 runner:

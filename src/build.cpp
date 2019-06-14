@@ -21,7 +21,7 @@
 void dump_errors(GameData &gamedata);
 
 int main(int argc, char *argv[]) {
-    std::string sourceFile = "source.src";
+    std::vector<std::string> sourceFiles;
     std::string outputFile = "game.bin";
     bool dump_tokens = false;
     bool dump_data = false;
@@ -32,7 +32,6 @@ int main(int argc, char *argv[]) {
     bool dump_asmCode = false;
     bool dump_irFlag = false;
     bool skipIdentCheck = false;
-    int next_filename = 0;
 
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-data") == 0) {
@@ -54,17 +53,24 @@ int main(int argc, char *argv[]) {
             dump_irFlag = true;
         } else if (strcmp(argv[i], "-skip-ident-check") == 0) {
             skipIdentCheck = true;
-        } else if (next_filename < 2) {
-            if (next_filename == 0) {
-                sourceFile = argv[i];
-            } else {
-                outputFile = argv[i];
+        } else if (strcmp(argv[i], "-o") == 0) {
+            ++i;
+            if (i >= argc) {
+                std::cerr << "-o argument requries name of output file.\n";
+                return 1;
             }
-            ++next_filename;
-        } else {
-            std::cerr << "Unexpected argument " << argv[i] << ".\n";
+            outputFile = argv[i];
+        } else if (argv[i][0] == '-') {
+            std::cerr << "Unrecognized argument " << argv[i] << ".\n";
             return 1;
+        } else {
+            sourceFiles.push_back(argv[i]);
         }
+    }
+
+    if (sourceFiles.empty()) {
+        std::cerr << "No source files specified.\n";
+        return 1;
     }
 
     int nextIdent = -1;
@@ -73,9 +79,10 @@ int main(int argc, char *argv[]) {
     add_default_constants(gamedata);
 
     try {
-        tokens = lex_file(gamedata, sourceFile);
-        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
-        preprocess_tokens(gamedata, tokens);
+        for (const std::string &file : sourceFiles) {
+            std::vector<Token> newTokens = lex_file(gamedata, file);
+            tokens.insert(tokens.end(), newTokens.begin(), newTokens.end());
+        }
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
         parse_tokens(gamedata, tokens);
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
@@ -91,7 +98,7 @@ int main(int argc, char *argv[]) {
         generate(gamedata, outputFile);
         if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
     } catch (BuildError &e) {
-        std::cerr << "Error: " << e.what() << '\n';
+        std::cerr << "Error: " << e.getMessage() << '\n';
         return 1;
     }
 
