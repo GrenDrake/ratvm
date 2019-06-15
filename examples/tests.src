@@ -647,6 +647,7 @@ asm_function testLoopDemo(: counter theValue) {
 function testInputs() {
     ("This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu.")
     (option "Test key input"        testGetkey)
+    (option "Test line input"       testLineInput)
     (option "No extra value"        receiveExtra)
     (option "Extra value 6"         receiveExtra   6)
     (option "Extra value 73"        receiveExtra   73)
@@ -666,6 +667,20 @@ asm_function testGetkeyReceive(key) {
     "Resulting character code: " say key say ".\n" say
     "Back to inputs menu" testInputs none none add_option
     dispatcher get_option
+}
+object lineInputHolder
+    lastLine "(nothing yet)"
+;
+function testLineInput() {
+    ("Testing line input option.\nThe last line you entered was: ")
+    (print (get lineInputHolder $lastLine) "\n")
+    (get_line testLineInputReceive "Enter some text:")
+}
+function testLineInputReceive(text) {
+    ("You entered: \"" text "\".\n")
+    (setp lineInputHolder $lastLine text)
+    (option "Back to inputs menu" testInputs)
+    (get_option dispatcher)
 }
 
 
@@ -1210,6 +1225,7 @@ asm_function dispatcher(optionFunc extraValue) {
     optionFunc testPagesRemovePage eq alldone jnz
     optionFunc receiveExtra eq alldone jnz
     optionFunc testGetkey eq alldone jnz
+    optionFunc testLineInput eq alldone jnz
     "Return to main page" showOptions none none add_option
     dispatcher get_option
 
