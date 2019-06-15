@@ -175,7 +175,6 @@ public:
     std::vector<FunctionDef*> functions;
     std::vector<FlagSet> flagsets;
     ByteStream bytecode;
-    std::vector<std::string> sourceFiles;
 
     unsigned stringsStart, listsStart, mapsStart, objectsStart;
     unsigned functionsStart, bytecodeStart, fileEnd;
