@@ -786,13 +786,20 @@ asm_function testInfoarea() {
 // Test RNG
 // ////////////////////////////////////////////////////////////////////////////
 asm_function testRandom(: counter) {
-    "This will generate 100 random numbers between 50 and 60 below.\n" say
+    "This will generate 200 random numbers between 50 and 60 below.\n" say
 
-    100 *counter set
+    200 *counter set
     loop_start:
-    counter 0 lte loop_done jnz
+    counter 0 gte loop_done jnz
     50 60 random say " " say
-    counter 1 sub *counter set
+    1 counter sub *counter set
+    counter loop_start jz
+    20 counter mod 0 eq no_nl jz
+    "[br]" say
+    loop_start jmp
+    no_nl:
+    10 counter mod 0 eq loop_start jz
+    " : " say
     loop_start jmp
     loop_done: "\n" say
 }
