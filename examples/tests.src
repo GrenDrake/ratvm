@@ -633,7 +633,7 @@ asm_function testLoopDemo(: counter theValue) {
     2 theValue mult *theValue set
     counter say
     " " say
-    counter 10 lt loopstart jnz
+    counter 10 gt loopstart jnz
     "Loop finished!\n" say
     "Final result: " say
     theValue say
