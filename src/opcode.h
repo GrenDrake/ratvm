@@ -74,7 +74,7 @@ struct OpcodeDef {
         StringLength        = 67,
         StringCompare       = 68,
         Error               = 69,
-        /* unused: 70 */
+        Origin              = 70,
         AddPage             = 71,
         DelPage             = 72,
         EndPage             = 73,

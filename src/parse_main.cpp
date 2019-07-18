@@ -147,6 +147,7 @@ int parse_function(GameData &gamedata, ParseState &state) {
 
     FunctionDef *function = new FunctionDef;
     function->origin = origin;
+    function->origin.fileNameString = gamedata.getStringId(origin.file);
     function->name = funcName;
     function->globalId = nextFunctionId++;
     function->isAsm = isAsm;
@@ -198,6 +199,7 @@ int parse_list(GameData &gamedata, ParseState &state) {
     GameList *list = new GameList;
     gamedata.lists.push_back(list);
     list->origin = origin;
+    list->origin.fileNameString = gamedata.getStringId(origin.file);
     list->globalId = nextListId++;
     while (!state.matches(Token::CloseSquare)) {
         if (state.eof()) {
@@ -222,6 +224,7 @@ int parse_map(GameData &gamedata, ParseState &state) {
     GameMap *map = new GameMap;
     gamedata.maps.push_back(map);
     map->origin = origin;
+    map->origin.fileNameString = gamedata.getStringId(origin.file);
     map->globalId = nextMapId++;
     state.skip(Token::OpenBrace);
     while (!state.matches(Token::CloseBrace)) {
@@ -263,6 +266,7 @@ int parse_object(GameData &gamedata, ParseState &state) {
 
     GameObject *object = new GameObject;
     object->origin = origin;
+    object->origin.fileNameString = gamedata.getStringId(origin.file);
     object->name = objectName;
     object->globalId = nextObjectId++;
     gamedata.objects.push_back(object);

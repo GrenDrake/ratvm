@@ -92,7 +92,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     for (unsigned i = 0; i < gamedata.lists.size(); ++i) {
         const GameList *list = gamedata.lists[i];
         if (list == nullptr) continue;
-        write_32(out, 0);
+        write_32(out, list->origin.fileNameString);
         write_32(out, list->origin.line);
         write_16(out, list->items.size());
         for (const Value &value : list->items) {
@@ -107,7 +107,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     for (unsigned i = 0; i < gamedata.maps.size(); ++i) {
         const GameMap *map = gamedata.maps[i];
         if (map == nullptr) continue;
-        write_32(out, 0);
+        write_32(out, map->origin.fileNameString);
         write_32(out, map->origin.line);
         write_16(out, map->rows.size());
         for (const GameMap::MapRow &row : map->rows) {
@@ -123,7 +123,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     write_32(out, gamedata.objects.size() - 1);
     for (const GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
-        write_32(out, 0);
+        write_32(out, object->origin.fileNameString);
         write_32(out, object->origin.line);
         write_16(out, object->properties.size());
         for (const GameProperty &property : object->properties) {
@@ -139,7 +139,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
         const FunctionDef *function = gamedata.functions[i];
         if (function == nullptr) continue;
-        write_32(out, 0);
+        write_32(out, function->origin.fileNameString);
         write_32(out, function->origin.line);
         write_16(out, function->argument_count);
         write_16(out, function->local_count);

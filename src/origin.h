@@ -15,13 +15,14 @@
 class Origin {
 public:
     Origin()
-    : file("(internal)"), line(0), column(0)
+    : file("(internal)"), fileNameString(-1), line(0), column(0)
     { }
     Origin(const std::string &file, int line, int column)
-    : file(file), line(line), column(column)
+    : file(file), fileNameString(-1), line(line), column(column)
     { }
 
     std::string file;
+    int fileNameString;
     int line, column;
 };
 
