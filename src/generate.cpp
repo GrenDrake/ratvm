@@ -123,6 +123,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     write_32(out, gamedata.objects.size() - 1);
     for (const GameObject *object : gamedata.objects) {
         if (object == nullptr) continue;
+        write_32(out, object->nameString);
         write_32(out, object->origin.fileNameString);
         write_32(out, object->origin.line);
         write_16(out, object->properties.size());
@@ -139,6 +140,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     for (unsigned i = 0; i < gamedata.functions.size(); ++i) {
         const FunctionDef *function = gamedata.functions[i];
         if (function == nullptr) continue;
+        write_32(out, function->nameString);
         write_32(out, function->origin.fileNameString);
         write_32(out, function->origin.line);
         write_16(out, function->argument_count);

@@ -32,6 +32,7 @@ struct GameObject {
     std::vector<GameProperty> properties;
     std::string name;
     int globalId;
+    int nameString;
 };
 
 struct GameList {
@@ -136,6 +137,7 @@ struct FunctionDef {
     Origin origin;
     int argument_count;
     int local_count;
+    int nameString;
     std::vector<std::string> local_names;
     std::map<std::string, unsigned> labels;
     std::string name;

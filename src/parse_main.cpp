@@ -27,11 +27,11 @@
 static void parse_constant(GameData &gamedata, ParseState &state);
 static void parse_default(GameData &gamedata, ParseState &state);
 static int parse_flags(GameData &gamedata, ParseState &state);
-static int parse_function(GameData &gamedata, ParseState &state);
+static int parse_function(GameData &gamedata, ParseState &state, const std::string &defaultName);
 static int parse_list(GameData &gamedata, ParseState &state);
 static int parse_map(GameData &gamedata, ParseState &state);
-static int parse_object(GameData &gamedata, ParseState &state);
-static Value parse_value(GameData &gamedata, ParseState &state);
+static int parse_object(GameData &gamedata, ParseState &state, const std::string &defaultName);
+static Value parse_value(GameData &gamedata, ParseState &state, const std::string &defaultName);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a value (formerly constant) declaration
@@ -47,7 +47,7 @@ void parse_constant(GameData &gamedata, ParseState &state) {
     }
     const std::string &constantName = state.here()->text;
     state.next();
-    Value value = parse_value(gamedata, state);
+    Value value = parse_value(gamedata, state, constantName);
     if (value.type == Value::Object || value.type == Value::Function) {
         std::stringstream ss;
         ss << "Declaration of " << constantName << " cannot declare objects or functions.";
@@ -73,7 +73,7 @@ static void parse_default(GameData &gamedata, ParseState &state) {
     }
     const std::string &defaultName = state.here()->text;
     state.next();
-    Value value = parse_value(gamedata, state);
+    Value value = parse_value(gamedata, state, defaultName);
     if (value.type == Value::Object || value.type == Value::Function) {
         std::stringstream ss;
         ss << "Declaration of default value for " << defaultName;
@@ -124,7 +124,7 @@ int parse_flags(GameData &gamedata, ParseState &state) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a function
-int parse_function(GameData &gamedata, ParseState &state) {
+int parse_function(GameData &gamedata, ParseState &state, const std::string &defaultName) {
     static int nextFunctionId = 1;
     bool isAsm = false;
     const Origin &origin = state.here()->origin;
@@ -142,6 +142,8 @@ int parse_function(GameData &gamedata, ParseState &state) {
                                         funcName,
                                         Value{Value::Function, nextFunctionId}));
         state.next();
+    } else {
+        funcName = defaultName;
     }
     state.skip(Token::OpenParan);
 
@@ -149,6 +151,7 @@ int parse_function(GameData &gamedata, ParseState &state) {
     function->origin = origin;
     function->origin.fileNameString = gamedata.getStringId(origin.file);
     function->name = funcName;
+    function->nameString = gamedata.getStringId(funcName);
     function->globalId = nextFunctionId++;
     function->isAsm = isAsm;
     gamedata.functions.push_back(function);
@@ -207,7 +210,7 @@ int parse_list(GameData &gamedata, ParseState &state) {
             gamedata.errors.push_back(Error{origin, "Unexpected end of file in list."});
             return 0;
         }
-        Value value = parse_value(gamedata, state);
+        Value value = parse_value(gamedata, state, "");
         list->items.push_back(value);
     }
 
@@ -233,11 +236,11 @@ int parse_map(GameData &gamedata, ParseState &state) {
             gamedata.errors.push_back(Error{origin, "Unexpected end of file in map."});
             return 0;
         }
-        Value v1 = parse_value(gamedata, state);
+        Value v1 = parse_value(gamedata, state, "");
         Value v2{Value::None};
         try {
             state.skip(Token::Colon);
-            v2 = parse_value(gamedata, state);
+            v2 = parse_value(gamedata, state, "");
         } catch (BuildError &e) {
             gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
         }
@@ -251,7 +254,7 @@ int parse_map(GameData &gamedata, ParseState &state) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a single object
-int parse_object(GameData &gamedata, ParseState &state) {
+int parse_object(GameData &gamedata, ParseState &state, const std::string &defaultName) {
     static int nextObjectId = 1;
     unsigned internalNameId = gamedata.getPropertyId("internal_name");
 
@@ -262,12 +265,15 @@ int parse_object(GameData &gamedata, ParseState &state) {
     if (state.matches(Token::Identifier)) {
         objectName = state.here()->text;
         state.next();
+    } else {
+        objectName = defaultName;
     }
 
     GameObject *object = new GameObject;
     object->origin = origin;
     object->origin.fileNameString = gamedata.getStringId(origin.file);
     object->name = objectName;
+    object->nameString = gamedata.getStringId(objectName);
     object->globalId = nextObjectId++;
     gamedata.objects.push_back(object);
     if (!objectName.empty()) {
@@ -303,14 +309,13 @@ int parse_object(GameData &gamedata, ParseState &state) {
             gamedata.errors.push_back(Error{origin, "Unexpected end of file in object definition."});
             return 0;
         }
-        Value value = parse_value(gamedata, state);
-        if (value.type == Value::Function) {
-            FunctionDef *function = gamedata.functions[value.value];
-            if (function->name.empty()) {
-                function->name = objectName + "." + propName;
-            }
+        std::string defaultName = objectName + "." + propName;
+        Value value = parse_value(gamedata, state, defaultName);
+        try {
+            object->addProperty(propOrigin, propId, value);
+        } catch (BuildError &e) {
+            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
         }
-        object->addProperty(propOrigin, propId, value);
     }
 
     state.next();
@@ -319,7 +324,7 @@ int parse_object(GameData &gamedata, ParseState &state) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a data value
-Value parse_value(GameData &gamedata, ParseState &state) {
+Value parse_value(GameData &gamedata, ParseState &state, const std::string &defaultName) {
     const Origin &origin = state.here()->origin;
     Value value;
 
@@ -327,13 +332,13 @@ Value parse_value(GameData &gamedata, ParseState &state) {
         gamedata.errors.push_back(Error{origin, "Unexpected end of file."});
         return Value{};
     } else if (state.matches("object")) {
-        int newId = parse_object(gamedata, state);
+        int newId = parse_object(gamedata, state, defaultName);
         value = Value{Value::Object, newId};
     } else if (state.matches("flags")) {
         int newId = parse_flags(gamedata, state);
         value = Value{Value::FlagSet, newId};
     } else if (state.matches("function") || state.matches("asm_function")) {
-        int newId = parse_function(gamedata, state);
+        int newId = parse_function(gamedata, state, defaultName);
         value = Value{Value::Function, newId};
     } else if (state.matches(Token::Integer)) {
         int newId = state.here()->value;
@@ -391,7 +396,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
         } else if (state.matches("default")) {
             parse_default(gamedata, state);
         } else if (state.matches("object")) {
-            int objectId = parse_object(gamedata, state);
+            int objectId = parse_object(gamedata, state, "");
             if (objectId > 0) {
                 GameObject *object = gamedata.objects[objectId];
                 if (object && object->name.empty()) {
@@ -399,7 +404,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
                 }
             }
         } else if (state.matches("function") || state.matches("asm_function")) {
-            int functionId = parse_function(gamedata, state);
+            int functionId = parse_function(gamedata, state, "");
             if (functionId > 0) {
                 FunctionDef *function = gamedata.functions[functionId];
                 if (function && function->name.empty()) {
