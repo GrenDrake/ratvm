@@ -19,6 +19,7 @@
 #include "token.h"
 
 const int FILETYPE_ID = 0x47505254;
+const unsigned char STRING_XOR_KEY = 0x7B;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions to handle writing fixed-size data
@@ -37,7 +38,7 @@ void write_8(std::ostream &out, uint8_t value) {
 void write_str(std::ostream &out, const std::string &text) {
     write_16(out, text.size());
     for (char c : text) {
-        write_8(out, c);
+        write_8(out, c ^ STRING_XOR_KEY);
     }
 }
 
