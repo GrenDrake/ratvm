@@ -44,6 +44,11 @@ int main(int argc, char *argv[]) {
         data.dump();
         return 0;
     }
+
+    for (int i = 0; i < INFO_COUNT; ++i) {
+        data.infoText[i] = "";
+    }
+    data.infoText[INFO_TITLE] = gameFile;
     try {
         gameloop(data, doQuick);
     } catch (GameError &e) {

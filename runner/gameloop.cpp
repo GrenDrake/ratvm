@@ -20,6 +20,13 @@ void gameloop(GameData &gamedata, bool doQuick) {
     Value nextValue, nextExtra;
     bool hasNext;
     while (1) {
+        std::cout << "\n*** " << gamedata.infoText[INFO_TITLE] << " ***\n";
+        std::cout << gamedata.infoText[INFO_LEFT];
+        std::cout << " : ";
+        std::cout << gamedata.infoText[INFO_RIGHT];
+        std::cout << " : ";
+        std::cout << gamedata.infoText[INFO_BOTTOM];
+        std::cout << '\n';
 
         hasNext = false;
         do {

@@ -12,6 +12,18 @@
 const int FILETYPE_ID = 0x47505254;
 const int HEADER_SIZE = 64;
 
+const int INFO_TITLE  = 0;
+const int INFO_LEFT   = 1;
+const int INFO_RIGHT  = 2;
+const int INFO_BOTTOM = 3;
+const int INFO_COUNT  = 4;
+
+const int SETTING_SAVE_ALLOWED   = 0;
+const int SETTING_INFOBAR_LEFT   = 1;
+const int SETTING_INFOBAR_RIGHT  = 2;
+const int SETTING_INFOBAR_FOOTER = 3;
+const int SETTING_INFOBAR_TITLE  = 4;
+
 struct DataItem {
     unsigned ident;
     int srcFile, srcLine, srcName;
@@ -120,6 +132,7 @@ struct GameData {
     unsigned staticObjects;
     Value noneValue;
 
+    std::array<std::string, INFO_COUNT> infoText;
     gtCallStack callStack;
 private:
     Value runFunctionCore(unsigned functionId, std::vector<Value> argList);

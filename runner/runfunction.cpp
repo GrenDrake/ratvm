@@ -159,6 +159,15 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                         index.requireType(Value::Property);
                         result = objects[from.value].get(index.value);
                         break;
+                    case Value::List: {
+                        index.requireType(Value::Integer);
+                        const ListDef &listDef = getList(from.value);
+                        if (index.value < 0 || index.value >= static_cast<int>(listDef.items.size())) {
+                            result = Value(Value::Integer, 0);
+                        } else {
+                            result = listDef.items[index.value];
+                        }
+                        break; }
                     default:
                         throw GameError("get requires list, map, or object.");
                 }
@@ -174,6 +183,15 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                         index.requireType(Value::Property);
                         result = objects[from.value].has(index.value);
                         break;
+                    case Value::List: {
+                        index.requireType(Value::Integer);
+                        const ListDef &listDef = getList(from.value);
+                        if (index.value < 0 || index.value >= static_cast<int>(listDef.items.size())) {
+                            result = false;
+                        } else {
+                            result = true;
+                        }
+                        break; }
                     default:
                         throw GameError("has requires list, map, or object.");
                 }
@@ -195,14 +213,46 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                         index.requireType(Value::Property);
                         objects[from.value].set(index.value, toValue);
                         break;
+                    case Value::List:
+                        index.requireType(Value::Integer);
+                        getList(from.value).items[index.value] = toValue;
+                        break;
                     default:
                         throw GameError("setp requires list, map, or object.");
                 }
-
                 break; }
             case OpcodeDef::TypeOf: {
                 Value ofWhat = callStack.pop();
                 callStack.push(Value{Value::Integer, static_cast<int>(ofWhat.type)});
+                break; }
+            case OpcodeDef::DelItem: {
+                Value target = callStack.pop();
+                Value index = callStack.pop();
+                target.requireType(Value::List, Value::Map);
+                if (target.type == Value::List) {
+                    index.requireType(Value::Integer);
+                    ListDef &listDef = getList(target.value);
+                    if (index.value >= 0 || index.value < static_cast<int>(listDef.items.size())) {
+                        listDef.items.erase(listDef.items.begin() + index.value);
+                    }
+                } else {
+                    throw GameError("not implemented");
+                }
+                break; }
+            case OpcodeDef::InsItem: {
+                Value theList = callStack.pop();
+                Value theIndex = callStack.pop();
+                Value theValue = callStack.pop();
+                theList.requireType(Value::List);
+                theIndex.requireType(Value::Integer);
+                theValue.forbidType(Value::VarRef);
+                ListDef &listDef = getList(theList.value);
+                if (theIndex.value < 0) theIndex.value = 0;
+                if (theIndex.value > static_cast<int>(listDef.items.size())) {
+                    theIndex.value = listDef.items.size();
+                }
+                listDef.items.insert(listDef.items.begin() + theIndex.value,
+                                     theValue);
                 break; }
             case OpcodeDef::AsType: {
                 Value ofWhat = callStack.pop();
@@ -362,6 +412,17 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                 int result = min.value + rand() % (max.value - min.value);
                 callStack.push(Value{Value::Integer, result});
                 break; }
+            case OpcodeDef::GetRandom: {
+                Value theList = callStack.pop();
+                theList.requireType(Value::List);
+                const ListDef &listDef = getList(theList.value);
+                if (listDef.items.size() == 0) {
+                    callStack.push(Value(Value::Integer, 0));
+                } else {
+                    int choice = rand() % listDef.items.size();
+                    callStack.push(listDef.items[choice]);
+                }
+                break; }
 
             case OpcodeDef::StackSwap: {
                 Value idx1 = callStack.pop();
@@ -376,6 +437,26 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
             case OpcodeDef::SetSetting: {
                 Value settingNumber = callStack.pop();
                 Value newValue = callStack.pop();
+                settingNumber.requireType(Value::Integer);
+
+                switch(settingNumber.value) {
+                    case SETTING_INFOBAR_LEFT:
+                        newValue.requireType(Value::String);
+                        infoText[INFO_LEFT] = getString(newValue.value).text;
+                        break;
+                    case SETTING_INFOBAR_RIGHT:
+                        newValue.requireType(Value::String);
+                        infoText[INFO_RIGHT] = getString(newValue.value).text;
+                        break;
+                    case SETTING_INFOBAR_FOOTER:
+                        newValue.requireType(Value::String);
+                        infoText[INFO_BOTTOM] = getString(newValue.value).text;
+                        break;
+                    case SETTING_INFOBAR_TITLE:
+                        newValue.requireType(Value::String);
+                        infoText[INFO_TITLE] = getString(newValue.value).text;
+                        break;
+                }
                 break; }
 
             case OpcodeDef::GetOption: {

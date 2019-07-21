@@ -32,6 +32,7 @@ struct Value {
 
     void requireType(Value::Type theType);
     void requireType(Value::Type typeOne, Value::Type typeTwo);
+    void forbidType(Value::Type theType);
     bool isTrue() const;
     int compare(const Value &rhs) const;
 };

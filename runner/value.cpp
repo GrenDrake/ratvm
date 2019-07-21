@@ -82,6 +82,13 @@ void Value::requireType(Value::Type typeOne, Value::Type typeTwo) {
     }
 }
 
+void Value::forbidType(Value::Type theType) {
+    if (type == theType) {
+        std::stringstream ss;
+        ss << "Found value of forbidden type " << theType << ".";
+    }
+}
+
 bool Value::isTrue() const {
     return type != None && value != 0;
 }
