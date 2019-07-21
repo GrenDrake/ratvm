@@ -35,6 +35,20 @@ public:
         gtStack stack;
     };
 
+    Value peek(int index = 0) const {
+        return mFrames.back().stack.peek(index);
+    }
+    void push(const Value &value) {
+        mFrames.back().stack.push(value);
+    }
+    Value popRaw() {
+        return mFrames.back().stack.popRaw();
+    }
+    Value pop() {
+        return mFrames.back().stack.pop();
+    }
+
+
     void create(unsigned functionId);
     void drop();
     gtStack& getStack();
