@@ -1,9 +1,10 @@
 CXXFLAGS= -std=c++11 -g -Wall
 
-BUILD_OBJS=src/build.o src/general.o src/lexer.o \
-		   src/parse_main.o src/translate.o src/gamedata.o src/generate.o \
-		   src/value.o src/parse_functions.o src/parsestate.o src/bytestream.o \
-		   src/dump.o src/opcode.o src/expression.o
+BUILD_OBJS=build/build.o build/general.o build/lexer.o \
+		   build/parse_main.o build/translate.o build/gamedata.o \
+		   build/value.o build/parse_functions.o build/parsestate.o \
+		   build/generate.o build/bytestream.o build/dump.o build/opcode.o \
+		   build/expression.o
 BUILD=./gbuild
 
 RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
@@ -12,10 +13,10 @@ RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
 			runner/bytestream.o runner/value.o
 RUNNER=./grun
 
-FILESCAN_OBJS=src/filescan.o src/value.o src/bytestream.o
+FILESCAN_OBJS=build/filescan.o build/value.o build/bytestream.o
 FILESCAN=./filescan
 
-TEST_BYTESTREAM_OBJS=tests/bytestream.o src/bytestream.o
+TEST_BYTESTREAM_OBJS=tests/bytestream.o build/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
 
 TESTSRC=examples/tests.src
@@ -43,7 +44,7 @@ game.bin: $(BUILD) $(TESTSRC)
 
 
 clean:
-	$(RM) src/*.o runner/*.o tests/*.o
+	$(RM) build/*.o runner/*.o tests/*.o
 	$(RM) $(BUILD) $(FILESCAN) $(RUNNER) $(TEST_BYTESTREAM)
 
 .PHONY: all clean tests

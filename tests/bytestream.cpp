@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "../src/bytestream.h"
+#include "../build/bytestream.h"
 #include "testing.h"
 
 
