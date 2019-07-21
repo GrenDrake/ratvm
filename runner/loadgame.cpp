@@ -7,7 +7,7 @@
 #include "bytestream.h"
 #include "value.h"
 
-const unsigned char string_xor_key = 0x7B;
+const unsigned char STRING_XOR_KEY = 0x7B;
 
 uint32_t read_32(std::istream &in);
 uint16_t read_16(std::istream &in);
@@ -161,7 +161,7 @@ std::string read_str(std::istream &in) {
     int length = read_16(in);
     std::string text(length, ' ');
     for (int i = 0; i < length; ++i) {
-        text[i] = read_8(in) ^ string_xor_key;
+        text[i] = read_8(in) ^ STRING_XOR_KEY;
     }
     return text;
 }
