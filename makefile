@@ -13,23 +13,17 @@ RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
 			runner/bytestream.o runner/value.o
 RUNNER=./grun
 
-FILESCAN_OBJS=build/filescan.o build/value.o build/bytestream.o
-FILESCAN=./filescan
-
 TEST_BYTESTREAM_OBJS=tests/bytestream.o build/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
 
 TESTSRC=examples/tests.src
 
-all: $(BUILD) $(FILESCAN) $(RUNNER) tests game.bin
+all: $(BUILD) $(RUNNER) tests game.bin
 
 tests: $(TEST_BYTESTREAM)
 
 $(BUILD): $(BUILD_OBJS)
 	$(CXX) $(BUILD_OBJS) -o $(BUILD)
-
-$(FILESCAN): $(FILESCAN_OBJS)
-	$(CXX) $(FILESCAN_OBJS) -o $(FILESCAN)
 
 $(RUNNER): $(RUNNER_OBJS)
 	$(CXX) $(RUNNER_OBJS) -o $(RUNNER)
@@ -45,6 +39,6 @@ game.bin: $(BUILD) $(TESTSRC)
 
 clean:
 	$(RM) build/*.o runner/*.o tests/*.o
-	$(RM) $(BUILD) $(FILESCAN) $(RUNNER) $(TEST_BYTESTREAM)
+	$(RM) $(BUILD) $(RUNNER) $(TEST_BYTESTREAM)
 
 .PHONY: all clean tests
