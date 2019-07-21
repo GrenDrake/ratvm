@@ -6,6 +6,12 @@ BUILD_OBJS=src/build.o src/general.o src/lexer.o \
 		   src/dump.o src/opcode.o src/expression.o
 BUILD=./build
 
+RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
+			runner/formatter.o runner/runfunction.o runner/stack.o \
+			runner/loadgame.o runner/dump.o  \
+			runner/bytestream.o runner/value.o
+RUNNER=./run
+
 FILESCAN_OBJS=src/filescan.o src/value.o src/bytestream.o
 FILESCAN=./filescan
 
@@ -14,7 +20,7 @@ TEST_BYTESTREAM=./test_bytestream
 
 TESTSRC=examples/tests.src
 
-all: $(BUILD) $(FILESCAN) tests game.bin
+all: $(BUILD) $(FILESCAN) $(RUNNER) tests game.bin
 
 tests: $(TEST_BYTESTREAM)
 
@@ -24,6 +30,9 @@ $(BUILD): $(BUILD_OBJS)
 $(FILESCAN): $(FILESCAN_OBJS)
 	$(CXX) $(FILESCAN_OBJS) -o $(FILESCAN)
 
+$(RUNNER): $(RUNNER_OBJS)
+	$(CXX) $(RUNNER_OBJS) -o $(RUNNER)
+
 $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
@@ -32,11 +41,9 @@ game.bin: $(BUILD) $(TESTSRC)
 	./build -data -functions -bytecode -asm -ir $(TESTSRC)
 	cp game.bin ../gtrpge-javascript/
 
-runner:
-	cd gtrpge-runner && make
-	cp gtrpge-runner/runner .
 
 clean:
-	$(RM) src/*.o tests/*.o $(BUILD) $(FILESCAN)
+	$(RM) src/*.o runner/*.o tests/*.o
+	$(RM) $(BUILD) $(FILESCAN) $(RUNNER) $(TEST_BYTESTREAM)
 
-.PHONY: all clean tests runner
+.PHONY: all clean tests

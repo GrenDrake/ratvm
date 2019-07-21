@@ -1,5 +1,6 @@
 *.o
 build
+run
 filescan
 runner
 test_bytestream
