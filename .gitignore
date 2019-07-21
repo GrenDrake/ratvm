@@ -1,8 +1,7 @@
 *.o
-build
-run
+gbuild
+grun
 filescan
-runner
 test_bytestream
 game.bin
 tokens.txt
