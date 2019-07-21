@@ -80,7 +80,8 @@ void dump_list(const List *list, std::ostream &out) {
 }
 
 bool checkListSize(const List *list, int minSize, int maxSize) {
-    if (list->values.size() >= minSize && list->values.size() <= maxSize) {
+    int listSize = list->values.size();
+    if (listSize >= minSize && listSize <= maxSize) {
         return true;
     }
     return false;
@@ -100,7 +101,7 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     }
 
     const OpcodeDef *opcode = list->values[0].value.opcode;
-    int wantedOpcodeCount = opcode->inputs + 1;
+    unsigned wantedOpcodeCount = opcode->inputs + 1;
 
     if (opcode->code == OpcodeDef::Call) {
         const int minimumCallOperands = 3;
