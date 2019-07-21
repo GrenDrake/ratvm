@@ -4,13 +4,13 @@ BUILD_OBJS=src/build.o src/general.o src/lexer.o \
 		   src/parse_main.o src/translate.o src/gamedata.o src/generate.o \
 		   src/value.o src/parse_functions.o src/parsestate.o src/bytestream.o \
 		   src/dump.o src/opcode.o src/expression.o
-BUILD=./build
+BUILD=./gbuild
 
 RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
 			runner/formatter.o runner/runfunction.o runner/stack.o \
 			runner/loadgame.o runner/dump.o  \
 			runner/bytestream.o runner/value.o
-RUNNER=./run
+RUNNER=./grun
 
 FILESCAN_OBJS=src/filescan.o src/value.o src/bytestream.o
 FILESCAN=./filescan
@@ -38,7 +38,7 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(TEST_BYTESTREAM)
 
 game.bin: $(BUILD) $(TESTSRC)
-	./build -data -functions -bytecode -asm -ir $(TESTSRC)
+	$(BUILD) -data -functions -bytecode -asm -ir $(TESTSRC)
 	cp game.bin ../gtrpge-javascript/
 
 
