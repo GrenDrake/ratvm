@@ -162,11 +162,7 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                     case Value::List: {
                         index.requireType(Value::Integer);
                         const ListDef &listDef = getList(from.value);
-                        if (index.value < 0 || index.value >= static_cast<int>(listDef.items.size())) {
-                            result = Value(Value::Integer, 0);
-                        } else {
-                            result = listDef.items[index.value];
-                        }
+                        result = listDef.get(index.value);
                         break; }
                     case Value::Map: {
                         const MapDef &mapDef = getMap(from.value);
@@ -190,11 +186,7 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                     case Value::List: {
                         index.requireType(Value::Integer);
                         const ListDef &listDef = getList(from.value);
-                        if (index.value < 0 || index.value >= static_cast<int>(listDef.items.size())) {
-                            result = false;
-                        } else {
-                            result = true;
-                        }
+                        result = listDef.has(index.value);
                         break; }
                     case Value::Map: {
                         const MapDef &mapDef = getMap(from.value);
@@ -223,7 +215,7 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                         break;
                     case Value::List:
                         index.requireType(Value::Integer);
-                        getList(from.value).items[index.value] = toValue;
+                        getList(from.value).set(index.value, toValue);
                         break;
                     case Value::Map: {
                         MapDef &mapDef = getMap(from.value);
@@ -244,9 +236,7 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                 if (target.type == Value::List) {
                     index.requireType(Value::Integer);
                     ListDef &listDef = getList(target.value);
-                    if (index.value >= 0 || index.value < static_cast<int>(listDef.items.size())) {
-                        listDef.items.erase(listDef.items.begin() + index.value);
-                    }
+                    listDef.del(index.value);
                 } else if (target.type == Value::Map) {
                     MapDef &mapDef = getMap(target.value);
                     mapDef.del(index);

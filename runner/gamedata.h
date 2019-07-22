@@ -36,6 +36,11 @@ struct StringDef : public DataItem {
 
 struct ListDef : public DataItem {
     std::vector<Value> items;
+
+    Value get(int key) const;
+    bool has(int key) const;
+    void set(int key, const Value &value);
+    void del(int key);
 };
 struct MapDef : public DataItem  {
     struct Row {

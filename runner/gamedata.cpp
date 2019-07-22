@@ -5,6 +5,35 @@
 
 std::string formatText(const std::string &text);
 
+Value ListDef::get(int key) const {
+    if (key < 0 || key >= static_cast<int>(items.size())) {
+        return Value(Value::Integer, 0);
+    } else {
+        return items[key];
+    }
+}
+
+bool ListDef::has(int key) const {
+    if (key < 0 || key >= static_cast<int>(items.size())) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void ListDef::set(int key, const Value &value) {
+    if (key >= 0 && key < static_cast<int>(items.size())) {
+        items[key] = value;
+    }
+}
+
+void ListDef::del(int key) {
+    if (key >= 0 || key < static_cast<int>(items.size())) {
+        items.erase(items.begin() + key);
+    }
+}
+
+
 Value MapDef::get(const Value &key) const {
     for (const Row &row : rows) {
         if (row.key == key) return row.value;
