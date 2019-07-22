@@ -168,6 +168,10 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                             result = listDef.items[index.value];
                         }
                         break; }
+                    case Value::Map: {
+                        const MapDef &mapDef = getMap(from.value);
+                        result = mapDef.get(index);
+                        break; }
                     default:
                         throw GameError("get requires list, map, or object.");
                 }
@@ -191,6 +195,10 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                         } else {
                             result = true;
                         }
+                        break; }
+                    case Value::Map: {
+                        const MapDef &mapDef = getMap(from.value);
+                        result = mapDef.has(index);
                         break; }
                     default:
                         throw GameError("has requires list, map, or object.");
@@ -217,6 +225,10 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                         index.requireType(Value::Integer);
                         getList(from.value).items[index.value] = toValue;
                         break;
+                    case Value::Map: {
+                        MapDef &mapDef = getMap(from.value);
+                        mapDef.set(index, toValue);
+                        break; }
                     default:
                         throw GameError("setp requires list, map, or object.");
                 }
@@ -235,6 +247,9 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                     if (index.value >= 0 || index.value < static_cast<int>(listDef.items.size())) {
                         listDef.items.erase(listDef.items.begin() + index.value);
                     }
+                } else if (target.type == Value::Map) {
+                    MapDef &mapDef = getMap(target.value);
+                    mapDef.del(index);
                 } else {
                     throw GameError("not implemented");
                 }

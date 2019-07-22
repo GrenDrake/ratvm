@@ -13,6 +13,15 @@
 #include "gamedata.h"
 #include "value.h"
 
+bool operator==(const Value &lhs, const Value &rhs) {
+    if (lhs.type == Value::None && rhs.type == Value::None) {
+        return true;
+    }
+    if (lhs.type  != rhs.type)  return false;
+    if (lhs.value != rhs.value) return false;
+    return true;
+}
+
 std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
     switch(type) {
         case Value::None:

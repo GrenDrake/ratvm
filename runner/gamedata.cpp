@@ -5,6 +5,42 @@
 
 std::string formatText(const std::string &text);
 
+Value MapDef::get(const Value &key) const {
+    for (const Row &row : rows) {
+        if (row.key == key) return row.value;
+    }
+    return Value(Value::Integer, 0);
+}
+
+bool MapDef::has(const Value &key) const {
+    for (const Row &row : rows) {
+        if (row.key == key) return true;
+    }
+    return false;
+}
+
+void MapDef::set(const Value &key, const Value &value) {
+    for (Row &row : rows) {
+        if (row.key == key) {
+            row.value = value;
+            return;
+        }
+    }
+    rows.push_back(Row{key, value});
+}
+
+void MapDef::del(const Value &key) {
+    auto iter = rows.begin();
+    while (iter != rows.end()) {
+        if (iter->key == key) {
+            rows.erase(iter);
+            return;
+        }
+        ++iter;
+    }
+}
+
+
 Value ObjectDef::get(unsigned propId) const {
     auto iter = properties.find(propId);
     if (iter == properties.end()) return Value{Value::Integer, 0};

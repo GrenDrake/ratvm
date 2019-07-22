@@ -42,6 +42,11 @@ struct MapDef : public DataItem  {
         Value key, value;
     };
     std::vector<Row> rows;
+
+    Value get(const Value &key) const;
+    bool has(const Value &key) const;
+    void set(const Value &key, const Value &value);
+    void del(const Value &key);
 };
 struct ObjectDef : public DataItem  {
     std::map<unsigned, Value> properties;

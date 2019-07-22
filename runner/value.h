@@ -37,6 +37,7 @@ struct Value {
     int compare(const Value &rhs) const;
 };
 
+bool operator==(const Value &lhs, const Value &rhs);
 std::ostream& operator<<(std::ostream &out, const Value::Type &type);
 std::ostream& operator<<(std::ostream &out, const Value &value);
 
