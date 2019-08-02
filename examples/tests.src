@@ -869,6 +869,26 @@ asm_function testLists(: counter random_value) {
     5 testList get 91 eq test_list_contents_wrong jz
 
 
+    "Testing list pop/push...[br]" say
+    1024 testList list_push
+    testList size 7 eq test_list_push_value jnz
+    "list_push did not increase list size." error
+
+    test_list_push_value:
+    6 testList get 1024 neq test_list_pop jz
+    "Pushed list item has wrong value"
+
+    test_list_pop:
+    testList list_pop *counter set
+    testList size 6 eq test_list_pop_value jnz
+    "list_pop did not decrease list size." error
+
+    test_list_pop_value:
+    1024 counter eq test_list_set jnz
+    "list_pop returned wrong value" error
+
+
+    test_list_set:
     "Testing changing value in list...[br]" say
     second_obj 2 testList setp
     2 testList get second_obj eq test_deletion jnz

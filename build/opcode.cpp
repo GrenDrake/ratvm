@@ -18,6 +18,8 @@ OpcodeDef opcodes[] = {
     {   "stack_peek",   OpcodeDef::StackPeek,               1, 0 },
     {   "stack_size",   OpcodeDef::StackSize,               0, 1 },
     {   "call",         OpcodeDef::Call,                    2, 1 },
+    {   "list_push",    OpcodeDef::ListPush,                2, 0 },
+    {   "list_pop",     OpcodeDef::ListPop,                 1, 0 },
     {   "sort",         OpcodeDef::Sort,                    1, 0 },
     {   "get",          OpcodeDef::GetItem,                 2, 1 },
     {   "has",          OpcodeDef::HasItem,                 2, 1 },

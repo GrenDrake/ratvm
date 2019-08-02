@@ -1,6 +1,7 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 
+#include <array>
 #include <string>
 #include <map>
 #include <vector>
