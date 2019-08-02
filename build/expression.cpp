@@ -244,7 +244,7 @@ void stmt_or(GameData &gamedata, FunctionDef *function, List *list) {
     for (unsigned i = 1; i < list->values.size(); ++i) {
         process_value(gamedata, function, list->values[i]);
         function->addValue(origin, Value{Value::Symbol, 0, true_label});
-        function->addOpcode(list->values[0].origin, OpcodeDef::JumpZero);
+        function->addOpcode(list->values[0].origin, OpcodeDef::JumpNotZero);
     }
     function->addValue(origin, Value{Value::Integer, 0});
     function->addValue(origin, Value{Value::Symbol, 0, after_label});
