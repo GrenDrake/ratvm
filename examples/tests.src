@@ -805,6 +805,26 @@ asm_function testRandom(: counter) {
 }
 
 // ////////////////////////////////////////////////////////////////////////////
+// Test Fetching Debug / Origin Info
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testOrigins() {
+    //fromRestore all_done jnz
+    "main: "            say main            origin say "\n" say
+    "testInt: "         say testInt         origin say "\n" say
+    "testStr: "         say testStr         origin say "\n" say
+    "testList: "        say testList        origin say "\n" say
+    "testMap: "         say testMap         origin say "\n" say
+    "testProperty: "    say testProperty    origin say "\n" say
+    "testFlags: "       say testFlags       origin say "\n" say
+    "first_obj: "       say first_obj       origin say "\n" say
+    // "dynamic: "         say List new        origin say "\n" say
+
+    // "firstobj.testmethod: " say
+    // $testMethod first_obj get origin say
+    // "\n" say
+}
+
+// ////////////////////////////////////////////////////////////////////////////
 // Test List Methods
 // ////////////////////////////////////////////////////////////////////////////
 asm_function printArray(theArray : counter length) {
@@ -1215,6 +1235,7 @@ function showOptions() {
     (option "Test output"               testOutput)
     (option "Test info areas"           testInfoarea)
     (option "Test random"               testRandom)
+    (option "Test origins"              testOrigins)
 
     (option "Test pages"                testPages)
     (option "Test input methods"        testInputs)
