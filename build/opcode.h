@@ -3,6 +3,8 @@
 
 #include <string>
 
+const int FORBID_ALWAYS = 0x01;
+
 struct OpcodeDef {
     enum CodeOpcode {
         Return              = 0,
@@ -89,6 +91,7 @@ struct OpcodeDef {
     int code;
     int inputs;
     int outputs;
+    int permissions;
 
     int count;
 };

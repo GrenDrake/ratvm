@@ -2,12 +2,12 @@
 
 OpcodeDef opcodes[] = {
     {   "return",       OpcodeDef::Return,                  1, 0 },
-    {   "push_0",       OpcodeDef::Push0,                   0, 1 },
-    {   "push_1",       OpcodeDef::Push1,                   0, 1 },
-    {   "push_none",    OpcodeDef::PushNone,                0, 1 },
-    {   "push_8",       OpcodeDef::Push8,                   0, 1 },
-    {   "push_16",      OpcodeDef::Push16,                  0, 1 },
-    {   "push_32",      OpcodeDef::Push32,                  0, 1 },
+    {   "push_0",       OpcodeDef::Push0,                   0, 1, FORBID_ALWAYS },
+    {   "push_1",       OpcodeDef::Push1,                   0, 1, FORBID_ALWAYS },
+    {   "push_none",    OpcodeDef::PushNone,                0, 1, FORBID_ALWAYS },
+    {   "push_8",       OpcodeDef::Push8,                   0, 1, FORBID_ALWAYS },
+    {   "push_16",      OpcodeDef::Push16,                  0, 1, FORBID_ALWAYS },
+    {   "push_32",      OpcodeDef::Push32,                  0, 1, FORBID_ALWAYS },
     {   "set",          OpcodeDef::Store,                   2, 0 },
     {   "say_uf",       OpcodeDef::SayUCFirst,              1, 0 },
     {   "say",          OpcodeDef::Say,                     1, 0 },

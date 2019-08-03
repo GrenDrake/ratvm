@@ -154,6 +154,9 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 }
                 Value result = evalIdentifier(gamedata, function, state.here()->text);
                 if (result.type == Value::Opcode) {
+                    if (result.opcode->permissions & FORBID_ALWAYS) {
+                        gamedata.errors.push_back(Error{state.here()->origin, "Opcode " + result.opcode->name + " may not be used explicitly."});
+                    }
                     function->code.add_8(result.opcode->code);
                 } else if (result.type == Value::Reserved) {
                     std::stringstream ss;

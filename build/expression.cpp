@@ -103,6 +103,10 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     }
 
     const OpcodeDef *opcode = list->values[0].value.opcode;
+    if (opcode->permissions & FORBID_ALWAYS) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "Opcode " + opcode->name + " may not be used explicitly."});
+        return;
+    }
     unsigned wantedOpcodeCount = opcode->inputs + 1;
 
     if (opcode->code == OpcodeDef::Call) {
