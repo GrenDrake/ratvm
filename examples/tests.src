@@ -144,9 +144,10 @@ asm_function testStack() {
 
     testSwap:
     "Testing stack swapping...[br]" say
+    9 7 5 // add some dummy values
     0 2 stack_swap
-    0 stack_peek 2 eq testSwapError jz
-    2 stack_peek 6 eq testSwapError jz
+    0 stack_peek 9 eq testSwapError jz
+    2 stack_peek 5 eq testSwapError jz
 
     return
 
