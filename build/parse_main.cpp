@@ -306,10 +306,12 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
         }
         std::string defaultName = objectName + "." + propName;
         Value value = parse_value(gamedata, state, defaultName);
-        try {
-            object->addProperty(propOrigin, propId, value);
-        } catch (BuildError &e) {
-            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        if (propId != -1) {
+            try {
+                object->addProperty(propOrigin, propId, value);
+            } catch (BuildError &e) {
+                gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            }
         }
     }
 
