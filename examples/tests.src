@@ -16,13 +16,13 @@ declare testProperty $testFunc
 declare testFlags flags( 6 7 8 testInt )
 
 object first_obj
-    anInt 2
-    aString "Hello World!"
-    aProperty $apple
-    anObject object ;
-    aMap { $fruit: $apple }
-    aList [ 4 ]
-    testMethod function() { }
+    $anInt 2
+    $aString "Hello World!"
+    $aProperty $apple
+    $anObject object ;
+    $aMap { $fruit: $apple }
+    $aList [ 4 ]
+    $testMethod function() { }
 ;
 object second_obj;
 
@@ -43,37 +43,37 @@ asm_function printMagicNumbers() {
 }
 
 object magic_1
-    ident 1
-    save asm_function(data) {
+    $ident 1
+    $save asm_function(data) {
         $number1 self get 99 data ins
         $number2 self get 99 data ins
         $number3 self get 99 data ins
     }
-    load asm_function(data) {
+    $load asm_function(data) {
         0 data get $number1 self set
         1 data get $number2 self set
         2 data get $number3 self set
     }
-    number1 0
-    number2 0
-    number3 0
+    $number1 0
+    $number2 0
+    $number3 0
 ;
 
 object magic_2
-    ident 2
-    save asm_function(data) {
+    $ident 2
+    $save asm_function(data) {
         $number1 self get 99 data ins
         $number2 self get 99 data ins
         $number3 self get 99 data ins
     }
-    load asm_function(data) {
+    $load asm_function(data) {
         0 data get $number1 self set
         1 data get $number2 self set
         2 data get $number3 self set
     }
-    number1 0
-    number2 0
-    number3 0
+    $number1 0
+    $number2 0
+    $number3 0
 ;
 
 
@@ -176,7 +176,7 @@ asm_function testCall() {
 }
 
 object testCallObject
-    testMethod asm_function(arg1 arg2 arg3) {
+    $testMethod asm_function(arg1 arg2 arg3) {
         "[i]testMethod:[/i] Checking value of self...[br]" say
         self testCallObject eq testArg1 jnz
         "Incorrect value of self." error
@@ -669,7 +669,7 @@ asm_function testGetkeyReceive(key) {
     dispatcher get_option
 }
 object lineInputHolder
-    lastLine "(nothing yet)"
+    $lastLine "(nothing yet)"
 ;
 function testLineInput() {
     ("Testing line input option.\nThe last line you entered was: ")
@@ -1013,8 +1013,8 @@ asm_function testPagesCleanup() {
 }
 
 object testpageData
-    count 1
-    index 0
+    $count 1
+    $index 0
 ;
 asm_function testPage1(key) {
     key typeof Integer eq showpage jz

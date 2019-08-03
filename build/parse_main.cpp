@@ -288,19 +288,14 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
     while (!state.matches(Token::Semicolon)) {
         unsigned propId = 0;
         std::string propName;
-        if (state.matches(Token::Identifier)) {
+        try {
+            state.require(Token::Property);
+            propId = state.here()->value;
             propName = state.here()->text;
-            propId = gamedata.getPropertyId(propName);
-        } else {
-            try {
-                state.require(Token::Property);
-                propId = state.here()->value;
-                propName = state.here()->text;
-            } catch (BuildError &e) {
-                gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
-                propId = -1;
-                propName = "bad_prop";
-            }
+        } catch (BuildError &e) {
+            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            propId = -1;
+            propName = "bad_prop";
         }
         const Origin &propOrigin = state.here()->origin;
         state.next();
