@@ -35,6 +35,7 @@ void add_default_constants(GameData &gamedata) {
     gamedata.getPropertyId("(invalid)");
     gamedata.getPropertyId("internal_name");
     gamedata.getPropertyId("ident");
+    gamedata.getPropertyId("parent");
     gamedata.getPropertyId("save");
     gamedata.getPropertyId("load");
 }

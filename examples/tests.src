@@ -24,7 +24,13 @@ object first_obj
     $aList [ 4 ]
     $testMethod function() { }
 ;
-object second_obj;
+object second_obj
+    $parent parent_obj
+;
+
+object parent_obj
+    $inheritedProperty 2048
+;
 
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -508,6 +514,19 @@ asm_function testObjectProps() {
     "Fred" $apple second_obj setp
     $apple second_obj get say
 
+    "\ntesting inherited properties...[br]" say
+    $inheritedProperty second_obj has 0 eq inherited_has_prop jz
+    $inheritedProperty second_obj get 2048 eq inherited_wrong_value jz
+    $inheritedProperty first_obj get 0 eq noparent_doesnt_have jz
+    $doesNotExist second_obj get 0 eq parent_doesnt_have jz
+
+    property_types jmp
+    inherited_has_prop:     "HAS reports object own parent's property" error
+    inherited_wrong_value:  "inherited property returns wrong value" error
+    noparent_doesnt_have:   "unparented object returns wrong value for non-existant property" error
+    parent_doesnt_have:     "parented object returns wrong value for non-existant property" error
+
+    property_types:
     "\n[b][testing property types][/b]" say
     "[br]first_obj.anInt (1): "      say $anInt      first_obj get typeof say
     "[br]first_obj.aString (2): "    say $aString    first_obj get typeof say
