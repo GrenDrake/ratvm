@@ -644,7 +644,12 @@ function testSyntax(: value) {
     (set value (new String))
     (makestr value "This is " 55 " good.")
     (if (strcmp value "This is 55 good.")
-        (error "Did not create string correctly."))
+        (error "makestr did not create string correctly."))
+
+    ("Testing newstr...[br]")
+    (set value (newstr "I ate " 3 " turnips."))
+    (if (strcmp value "I ate 3 turnips.")
+        (error "newstr did not create string correctly."))
 }
 
 

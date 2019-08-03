@@ -24,6 +24,7 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_inc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_makestr(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_newstr(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
@@ -48,6 +49,7 @@ StatementType statementTypes[] = {
     { "inc",        stmt_inc      },
     { "label",      stmt_label    },
     { "makestr",    stmt_makestr  },
+    { "newstr",     stmt_newstr   },
     { "option",     stmt_option   },
     { "or",         stmt_or       },
     { "print",      stmt_print    },
@@ -420,6 +422,20 @@ void stmt_makestr(GameData &gamedata, FunctionDef *function, List *list) {
         function->addOpcode(list->values[0].origin, OpcodeDef::StringAppend);
     }
     process_value(gamedata, function, list->values[1]);
+}
+
+void stmt_newstr(GameData &gamedata, FunctionDef *function, List *list) {
+    function->addValue(list->values[0].origin, Value{Value::Integer, static_cast<int>(Value::String)});
+    function->addOpcode(list->values[0].origin, OpcodeDef::New);
+
+    for (unsigned i = 1; i < list->values.size(); ++i) {
+         function->addOpcode(list->values[0].origin, OpcodeDef::StackDup);
+        process_value(gamedata, function, list->values[i]);
+        function->addValue(list->values[0].origin, Value{Value::Integer, 0});
+        function->addValue(list->values[0].origin, Value{Value::Integer, 1});
+        function->addOpcode(list->values[0].origin, OpcodeDef::StackSwap);
+        function->addOpcode(list->values[0].origin, OpcodeDef::StringAppend);
+    }
 }
 
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
