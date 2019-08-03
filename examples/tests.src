@@ -547,14 +547,14 @@ function testSyntaxReturn() {
 function testSyntaxReturnDefault() {
 }
 function testSyntax(: value) {
-    (print_uf "this " "tests " "print_uf.\n")
+    (print_uf "this " "tests " "print_uf.[br]")
 
     (print "Testing IF true: ")
     (set value 5)
-    (if value (print "Good\n") (error "IF true failed"))
+    (if value (print "Good[br]") (error "IF true failed"))
     (print "Testing IF false: ")
-    (if 0 (error "IF false failed") (print "Good\n"))
-    (print "Testing IF false with no else\n")
+    (if 0 (error "IF false failed") (print "Good[br]"))
+    (print "Testing IF false with no else[br]")
     (if 0 (error "IF false failed"))
 
     (print "Testing proc statement:")
@@ -564,7 +564,7 @@ function testSyntax(: value) {
             (print " second")
             (print " third"))
         (error "Reached unreachable else"))
-    (print "\n")
+    (print "[br]")
 
     (print "Testing while:")
     (set value 20)
@@ -572,9 +572,9 @@ function testSyntax(: value) {
         (proc
             (print " " value)
             (dec value 2)))
-    (print "\n")
+    (print "[br]")
 
-    (print "Testing while with false initial.\n")
+    (print "Testing while with false initial.[br]")
     (set value 1)
     (while 0 (error "While loop with false condition executed."))
 
@@ -586,7 +586,7 @@ function testSyntax(: value) {
             (inc value)
             (if (neq (mod value 5) 0) (continue))
             (print " " value)))
-    (print "\n")
+    (print "[br]")
 
     (print "Testing do/while:")
     (set value 1)
@@ -595,13 +595,13 @@ function testSyntax(: value) {
             (print " " value)
             (inc value 3))
         (lte value 20))
-    (print "\n")
+    (print "[br]")
 
     (print "Testing do/while with false condition: ")
     (do_while
         (print "in loop")
         0)
-    (print "\n")
+    (print "[br]")
 
     (print "Testing continue / break in do/while:")
     (set value 55)
@@ -612,14 +612,14 @@ function testSyntax(: value) {
             (if (neq (mod value 5) 0) (continue))
             (print " " value))
         1)
-    (print "\n")
+    (print "[br]")
     (print "Testing label statement: ")
     (jmp label_for_testing)
     (error "Failed to jump")
     (label label_for_testing)
-    (print "Good\n")
+    (print "Good[br]")
 
-    (print "Testing return values of standard functions.\n")
+    (print "Testing return values of standard functions.[br]")
     (if (neq (testSyntaxReturn) 5) (error "testSyntaxReturn returned wrong value."))
     (if (neq (testSyntaxReturnDefault) 0) (error "testSyntaxReturnDefault returned wrong value."))
 
@@ -639,7 +639,7 @@ function testSyntax(: value) {
     (if (not (or 1 1 0)) (error "(or 1 1 0) evalulated to false (should be true)"))
     (if (not (or 1 1 1)) (error "(or 1 1 1) evalulated to false (should be true)"))
 
-    ("Testing makestr...\n")
+    ("Testing makestr...[br]")
     (set value (new String))
     (makestr value "This is " 55 " good.")
     (if (strcmp value "This is 55 good.")
