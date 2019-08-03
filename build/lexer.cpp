@@ -131,6 +131,23 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             }
             continue;
         }
+        if (c == '/' && peek(state) == '*') {
+            next(state);
+            next(state);
+            while (here(state) != '*' || peek(state) != '/') {
+                if (here(state) == '/' && peek(state) == '*') {
+                    gamedata.errors.push_back(Error{state.origin, "Block comments may not be nested."});
+                }
+                if (here(state) == 0) {
+                    gamedata.errors.push_back(Error{state.origin, "End-of-file in block comment."});
+                }
+                next(state);
+            }
+            next(state);
+            next(state);
+            continue;
+        }
+
 
         if (c == ';') {
             tokens.push_back(Token(state.origin, Token::Semicolon));
