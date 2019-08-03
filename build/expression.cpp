@@ -23,6 +23,7 @@ void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_inc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_makestr(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list);
@@ -46,6 +47,7 @@ StatementType statementTypes[] = {
     { "if",         stmt_if       },
     { "inc",        stmt_inc      },
     { "label",      stmt_label    },
+    { "makestr",    stmt_makestr  },
     { "option",     stmt_option   },
     { "or",         stmt_or       },
     { "print",      stmt_print    },
@@ -400,6 +402,20 @@ void stmt_inc(GameData &gamedata, FunctionDef *function, List *list) {
     function->addOpcode(list->values[0].origin, OpcodeDef::Add);
     function->addValue(list->values[1].origin, Value{Value::VarRef, list->values[1].value.value});
     function->addOpcode(list->values[0].origin, OpcodeDef::Store);
+}
+
+void stmt_makestr(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() < 3) {
+        gamedata.errors.push_back(Error{list->values[0].origin, "makestr requires at least two arguments."});
+        return;
+    }
+
+    for (unsigned i = 2; i < list->values.size(); ++i) {
+        process_value(gamedata, function, list->values[i]);
+        process_value(gamedata, function, list->values[1]);
+        function->addOpcode(list->values[0].origin, OpcodeDef::StringAppend);
+    }
+    process_value(gamedata, function, list->values[1]);
 }
 
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {

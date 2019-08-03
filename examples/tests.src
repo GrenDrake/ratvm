@@ -636,7 +636,13 @@ function testSyntax(: value) {
     (print "OR 0 and 1: " (or 0 1) "[br]")
     (print "OR 1 and 1 and 1: " (or 1 1 1) "[br]")
     (print "OR 1 and 1 and 0: " (or 1 1 0) "[br]")
-    (print "OR 0 and 0 and 0: " (or 0 0 0) "[br]")
+    (print "OR 0 and 0 and 0: " (or 0 0 0) "\n")
+
+    ("Testing makestr...\n")
+    (set value (new String))
+    (makestr value "This is " 55 " good.")
+    (if (strcmp value "This is 55 good.")
+        (error "Did not create string correctly."))
 }
 
 
