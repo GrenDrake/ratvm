@@ -24,9 +24,7 @@ object first_obj
     $aList [ 4 ]
     $testMethod function() { }
 ;
-object second_obj
-    $parent parent_obj
-;
+object second_obj : parent_obj;
 
 object parent_obj
     $inheritedProperty 2048

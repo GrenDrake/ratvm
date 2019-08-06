@@ -257,16 +257,24 @@ int parse_map(GameData &gamedata, ParseState &state) {
 int parse_object(GameData &gamedata, ParseState &state, const std::string &defaultName) {
     static int nextObjectId = 1;
     unsigned internalNameId = gamedata.getPropertyId("internal_name");
+    unsigned parentId = gamedata.getPropertyId("parent");
 
     const Origin &origin = state.here()->origin;
     state.next(); // skip "object"
 
     std::string objectName = "";
+    std::string parentName = "";
     if (state.matches(Token::Identifier)) {
         objectName = state.here()->text;
         state.next();
     } else {
         objectName = defaultName;
+    }
+    if (state.matches(Token::Colon)) {
+        state.next();
+        state.require(Token::Identifier);
+        parentName = state.here()->text;
+        state.next();
     }
 
     GameObject *object = new GameObject;
@@ -283,6 +291,14 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
         int nameStringId = gamedata.getStringId(objectName);
         object->addProperty(state.here()->origin, internalNameId,
                             Value{Value::String, nameStringId});
+    }
+    if (!parentName.empty()) {
+        try {
+            object->addProperty(state.here()->origin, parentId,
+                                Value{Value::Symbol, 0, parentName});
+        } catch (BuildError &e) {
+            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        }
     }
 
     while (!state.matches(Token::Semicolon)) {
