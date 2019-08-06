@@ -304,6 +304,10 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
     while (!state.matches(Token::Semicolon)) {
         unsigned propId = 0;
         std::string propName;
+        if (state.eof()) {
+            gamedata.errors.push_back(Error{origin, "Unexpected end-of-file while parsing object"});
+            return 0;
+        }
         try {
             state.require(Token::Property);
             propId = state.here()->value;
