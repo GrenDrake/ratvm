@@ -674,43 +674,45 @@ asm_function testLoopDemo(: counter theValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test input commands
 // ////////////////////////////////////////////////////////////////////////////
-function testInputs() {
-    ("This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu.")
-    (option "Test key input"        testGetkey)
-    (option "Test line input"       testLineInput)
-    (option "No extra value"        receiveExtra)
-    (option "Extra value 6"         receiveExtra   6)
-    (option "Extra value 73"        receiveExtra   73)
-    (option "Value 0 (key: G)"      receiveExtra   0    'g')
-    (get_option dispatcher)
+function testInputs(: choice xtra) {
+    (set choice 1)
+    (while 1 (proc
+        ("This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu.")
+        (option "Test key input"        testGetkey)
+        (option "Test line input"       testLineInput)
+        (option "No extra value"        receiveExtra)
+        (option "Extra value 6"         receiveExtra   6)
+        (option "Extra value 73"        receiveExtra   73)
+        (option "Value 0 (key: G)"      receiveExtra   0    'g')
+        (option "Return to main menu"   none)
+        (set choice (get_option xtra))
+        (if choice
+            (dispatcher choice xtra)
+            (return 0))))
 }
 asm_function receiveExtra(extra) {
     "Option extra value: " say extra say
     "Back to inputs menu" testInputs none none add_option
-    dispatcher get_option
+     none get_option
 }
-asm_function testGetkey() {
-    "This will demonstrate and test the get_key input type." say
-    "Try pressing a key." testGetkeyReceive get_key
-}
-asm_function testGetkeyReceive(key) {
-    "Resulting character code: " say key say ".\n" say
-    "Back to inputs menu" testInputs none none add_option
-    dispatcher get_option
+function testGetkey(: inKey) {
+    ("This will demonstrate and test the get_key input type. Press 'Z' to return to the previous menu.")
+    (while 1 (proc
+        (set inKey (get_key "Try pressing a key."))
+        ("Resulting character code: " inKey ".\n")
+        (if (eq inKey 'z') (return 0)))
 }
 object lineInputHolder
     $lastLine "(nothing yet)"
 ;
-function testLineInput() {
+function testLineInput(: theLine) {
     ("Testing line input option.\nThe last line you entered was: ")
     (print (get lineInputHolder $lastLine) "\n")
-    (get_line testLineInputReceive "Enter some text:")
-}
-function testLineInputReceive(text) {
-    ("You entered: \"" text "\".\n")
-    (setp lineInputHolder $lastLine text)
+    (set theLine (get_line "Enter some text:"))
+    ("You entered: \"" theLine "\".\n")
+    (setp lineInputHolder $lastLine theLine)
     (option "Back to inputs menu" testInputs)
-    (get_option dispatcher)
+    (get_option none)
 }
 
 
@@ -1048,7 +1050,7 @@ asm_function testPagesReal() {
     "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
     "Remove \"Another Page\"" testPagesRemovePage none none add_option
     "Cleanup and return to main list" testPagesCleanup none none add_option
-    dispatcher get_option
+    none get_option
 }
 asm_function testPagesRemovePage() {
     "Another Page" del_page
@@ -1103,7 +1105,7 @@ asm_function testPage1(key) {
 asm_function otherPage() {
     "You selected a page other than the demo page! (Only the demo page has actual content.)" say
     "Continue" none none none add_option
-    endOtherPage get_option
+    endOtherPage none get_option
 }
 asm_function endOtherPage() {
     end_page
@@ -1258,38 +1260,41 @@ asm_function doAllTests() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
-function showOptions() {
-    (set_setting saveAllowed true)
-    ("Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading.")
-    (printMagicNumbers)
+function showOptions(: choice) {
+    (while 1 (proc
+        (set_setting saveAllowed true)
+        ("Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading.")
+        (printMagicNumbers)
 
-    (option "All non-interactive tests" doAllTests)
-    (option "Loop demo"                 testLoopDemo)
+        (option "All non-interactive tests" doAllTests)
+        (option "Loop demo"                 testLoopDemo)
 
-    (option "Test jumps"                testJumps)
-    (option "Test compare"              testCompare)
-    (option "Test call"                 testCall)
-    (option "Test stack commands"       testStack)
-    (option "Test math"                 testMath)
-    (option "Test default values"       testDefaults)
+        (option "Test jumps"                testJumps)
+        (option "Test compare"              testCompare)
+        (option "Test call"                 testCall)
+        (option "Test stack commands"       testStack)
+        (option "Test math"                 testMath)
+        (option "Test default values"       testDefaults)
 
-    (option "Test value types"          testValues)
-    (option "Test list methods"         testLists)
-    (option "Test map methods"          testMaps)
-    (option "Test object properties"    testObjectProps)
-    (option "Test dynamic objects"      testDynamic)
-    (option "Test string manipulation"  testStringManipulation)
+        (option "Test value types"          testValues)
+        (option "Test list methods"         testLists)
+        (option "Test map methods"          testMaps)
+        (option "Test object properties"    testObjectProps)
+        (option "Test dynamic objects"      testDynamic)
+        (option "Test string manipulation"  testStringManipulation)
 
-    (option "Test syntax constructs"    testSyntax)
+        (option "Test syntax constructs"    testSyntax)
 
-    (option "Test output"               testOutput)
-    (option "Test info areas"           testInfoarea)
-    (option "Test random"               testRandom)
-    (option "Test origins"              testOrigins)
+        (option "Test output"               testOutput)
+        (option "Test info areas"           testInfoarea)
+        (option "Test random"               testRandom)
+        (option "Test origins"              testOrigins)
 
-    (option "Test pages"                testPages)
-    (option "Test input methods"        testInputs)
-    (get_option dispatcher)
+        (option "Test pages"                testPages)
+        (option "Test input methods"        testInputs)
+        (set choice (get_option none))
+        (dispatcher choice)
+        ))
 }
 
 
@@ -1304,17 +1309,17 @@ asm_function dispatcher(optionFunc extraValue) {
     optionFunc receiveExtra eq alldone jnz
     optionFunc testGetkey eq alldone jnz
     optionFunc testLineInput eq alldone jnz
+    optionFunc testInputs eq alldone jnz
     "Return to main page" showOptions none none add_option
-    dispatcher get_option
+    none get_option
 
     alldone:
     0 return
 }
 
-asm_function main(fromRestore) {
+asm_function main() {
     "GTRPGE Test Suite" infobarTitle set_setting
     "GTRPGE Test Suite" infobarLeft set_setting
-    fromRestore all_done jnz
 
     // set the "magic numbers" used for demonstrate the load/save code
     10000 40000 random $number1 magic_1 setp
@@ -1324,7 +1329,6 @@ asm_function main(fromRestore) {
     10000 40000 random $number2 magic_2 setp
     10000 40000 random $number3 magic_2 setp
 
-    all_done:
     0 showOptions call
 }
 

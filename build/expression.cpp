@@ -147,8 +147,11 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
 
     for (unsigned i = list->values.size() - 1; i >= 1; --i) {
         const ListValue &theValue = list->values[i];
-        if (i == 1 && list->values[0].value.opcode->code == OpcodeDef::Store) {
-            if (theValue.value.type != Value::LocalVar) {
+        if (i == 1 && (list->values[0].value.opcode->code == OpcodeDef::Store ||
+            list->values[0].value.opcode->code == OpcodeDef::GetOption)) {
+            if (theValue.value.type == Value::None && list->values[0].value.opcode->code == OpcodeDef::GetOption) {
+                function->addValue(theValue.origin, Value{Value::None});
+            } else if (theValue.value.type != Value::LocalVar) {
                 gamedata.errors.push_back(Error{theValue.origin,
                     "Store opcode must reference local variable."});
             } else {
