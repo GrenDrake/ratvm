@@ -23,6 +23,7 @@ void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_inc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_list(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_makestr(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_newstr(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list);
@@ -48,6 +49,7 @@ StatementType statementTypes[] = {
     { "if",         stmt_if       },
     { "inc",        stmt_inc      },
     { "label",      stmt_label    },
+    { "list",       stmt_list     },
     { "makestr",    stmt_makestr  },
     { "newstr",     stmt_newstr   },
     { "option",     stmt_option   },
@@ -411,6 +413,20 @@ void stmt_inc(GameData &gamedata, FunctionDef *function, List *list) {
     function->addOpcode(list->values[0].origin, OpcodeDef::Add);
     function->addValue(list->values[1].origin, Value{Value::VarRef, list->values[1].value.value});
     function->addOpcode(list->values[0].origin, OpcodeDef::Store);
+}
+
+void stmt_list(GameData &gamedata, FunctionDef *function, List *list) {
+    function->addValue(list->values[0].origin, Value{Value::Integer, static_cast<int>(Value::List)});
+    function->addOpcode(list->values[0].origin, OpcodeDef::New);
+
+    for (unsigned i = 1; i < list->values.size(); ++i) {
+         function->addOpcode(list->values[0].origin, OpcodeDef::StackDup);
+        process_value(gamedata, function, list->values[i]);
+        function->addValue(list->values[0].origin, Value{Value::Integer, 0});
+        function->addValue(list->values[0].origin, Value{Value::Integer, 1});
+        function->addOpcode(list->values[0].origin, OpcodeDef::StackSwap);
+        function->addOpcode(list->values[0].origin, OpcodeDef::ListPush);
+    }
 }
 
 void stmt_makestr(GameData &gamedata, FunctionDef *function, List *list) {
