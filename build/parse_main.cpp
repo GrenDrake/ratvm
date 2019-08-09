@@ -142,6 +142,7 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
                 hasError = true;
                 gamedata.addError(origin, ErrorMsg::Error, ss.str());
             } else {
+                GameList *theList = gamedata.lists[old->value.value];
                 std::vector<Value> newItems;
                 state.next();
                 while (!state.eof() && !state.matches(Token::CloseSquare)) {
@@ -152,20 +153,15 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
                         return;
                     }
                     Value v = parse_value(gamedata, state, "");
-                    newItems.push_back(v);
+                    theList->items.push_back(v);
                 }
                 state.next();
-
-                GameList *theList = gamedata.lists[old->value.value];
-                theList->items.insert(theList->items.end(),
-                                      newItems.begin(),
-                                      newItems.end());
             }
             break;
         default:
             if (oldType != Value::None) {
                 ss << "Invalid value to extend " << oldType << " " << oldName << ".";
-            hasError = true;
+                hasError = true;
                 gamedata.addError(origin, ErrorMsg::Error, ss.str());
             }
     }
