@@ -855,9 +855,18 @@ asm_function testStringManipulation(: testString) {
 
     stringAppend:
     "Appending to test string...[br]" say
+    testString str_clear
+    "fred" testString str_append
     " Lives!" testString str_append
-    "Fred Lives!" testString str_compare doneStrings jz
+    "fred Lives!" testString str_compare stringAppendUF jz
     "String append malfunctioned." error
+
+    stringAppendUF:
+    "Appending to test string with initial upper...[br]" say
+    testString str_clear
+    "abc" testString str_append_uf
+    "Abc" testString str_compare doneStrings jz
+    "String append UF malfunctioned." error
 
     doneStrings:
 }

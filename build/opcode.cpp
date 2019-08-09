@@ -63,6 +63,7 @@ OpcodeDef opcodes[] = {
     {   "add_option",   OpcodeDef::AddOption,               4, 0 },
     {   "str_clear",    OpcodeDef::StringClear,             1, 0 },
     {   "str_append",   OpcodeDef::StringAppend,            2, 0 },
+    {   "str_append_uf",OpcodeDef::StringAppendUF,          2, 0 },
     {   "str_length",   OpcodeDef::StringLength,            1, 1 },
     {   "str_compare",  OpcodeDef::StringCompare,           2, 1 },
     {   "error",        OpcodeDef::Error,                   1, 0 },
