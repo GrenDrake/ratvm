@@ -17,6 +17,7 @@ struct ParseState {
     void require(Token::Type type) const;
     void skip(Token::Type type);
     void skip(const std::string &text);
+    void skipTo(Token::Type type);
 
     GameData &gamedata;
     const std::vector<Token> &tokens;

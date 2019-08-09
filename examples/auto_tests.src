@@ -15,6 +15,8 @@ declare testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" }
 declare testProperty $testFunc
 declare testFlags flags( 6 7 8 testInt )
 
+extend testList [ 100 200 ];
+
 object first_obj
     $anInt 2
     $aString "Hello World!"
@@ -590,7 +592,7 @@ asm_function printArray(theArray : counter length) {
     arraydumploop:
     " " say counter theArray get say
     counter 1 add *counter set
-    length counter gt arraydumploop jnz
+    length counter lt arraydumploop jnz
     " (length: " say length say ")\n" say
 }
 
@@ -598,22 +600,22 @@ asm_function testLists(: counter random_value) {
     "\n# Testing List Operations\n" say
 
     "Testing list insertion...[br]" say
-    testList size 3 eq test_add jnz
+    testList size 5 eq test_add jnz
     "Test list has wrong initial size." error
 
     test_add:
     91 99 testList ins
-    testList size 4 eq test_add_initial jnz
+    testList size 6 eq test_add_initial jnz
     "Test list has wrong size after add at end." error
 
     test_add_initial:
     46 0 testList ins
-    testList size 5 eq test_add_middle jnz
+    testList size 7 eq test_add_middle jnz
     "Test list has wrong size after add at beginning." error
 
     test_add_middle:
     13 2 testList ins
-    testList size 6 eq test_list_contents jnz
+    testList size 8 eq test_list_contents jnz
     "Test list has wrong size after add in middle." error
 
     test_list_contents:
@@ -622,12 +624,14 @@ asm_function testLists(: counter random_value) {
     2 testList get 13 eq test_list_contents_wrong jz
     3 testList get  2 eq test_list_contents_wrong jz
     4 testList get  3 eq test_list_contents_wrong jz
-    5 testList get 91 eq test_list_contents_wrong jz
+    5 testList get 100 eq test_list_contents_wrong jz
+    6 testList get 200 eq test_list_contents_wrong jz
+    7 testList get 91 eq test_list_contents_wrong jz
 
 
     "Testing list pop/push...[br]" say
     1024 testList list_push
-    testList size 7 eq test_list_push_value jnz
+    testList size 9 eq test_list_push_value jnz
     "list_push did not increase list size." error
 
     test_list_push_value:
@@ -636,7 +640,7 @@ asm_function testLists(: counter random_value) {
 
     test_list_pop:
     testList list_pop *counter set
-    testList size 6 eq test_list_pop_value jnz
+    testList size 8 eq test_list_pop_value jnz
     "list_pop did not decrease list size." error
 
     test_list_pop_value:
@@ -654,23 +658,25 @@ asm_function testLists(: counter random_value) {
     test_deletion:
     "Testing list deletion...[br]" say
     2 testList del
-    testList size 5 eq test_del_first jnz
+    testList size 7 eq test_del_first jnz
     "Test list has wrong size after delete." error
 
     test_del_first:
     0 testList del
-    testList size 4 eq test_del_last jnz
+    testList size 6 eq test_del_last jnz
     "Test list has wrong size after delete." error
 
     test_del_last:
-    3 testList del
-    testList size 3 eq test_list_contents_2 jnz
+    5 testList del
+    testList size 5 eq test_list_contents_2 jnz
     "Test list has wrong size after delete." error
 
     test_list_contents_2:
     0 testList get  1 eq test_list_contents_wrong jz
     1 testList get  2 eq test_list_contents_wrong jz
     2 testList get  3 eq test_list_contents_wrong jz
+    3 testList get  100 eq test_list_contents_wrong jz
+    4 testList get  200 eq test_list_contents_wrong jz
 
 
     "Testing bad list indexes...[br]" say
@@ -690,6 +696,8 @@ asm_function testLists(: counter random_value) {
     random_value 1 eq randomloop_good jnz
     random_value 2 eq randomloop_good jnz
     random_value 3 eq randomloop_good jnz
+    random_value 100 eq randomloop_good jnz
+    random_value 200 eq randomloop_good jnz
     "Got unexpected value when drawing random list values." error
     randomloop_good:
     counter 1 add *counter set

@@ -77,3 +77,9 @@ void ParseState::skip(const std::string &text) {
     ss << here()->text << "~.";
     throw BuildError(here()->origin, ss.str());
 }
+
+void ParseState::skipTo(Token::Type type) {
+    while (!eof() && here()->type != type) {
+        next();
+    }
+}

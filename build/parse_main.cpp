@@ -26,6 +26,7 @@
 
 static void parse_constant(GameData &gamedata, ParseState &state);
 static void parse_default(GameData &gamedata, ParseState &state);
+static void parse_extend(GameData &gamedata, ParseState &state);
 static int parse_flags(GameData &gamedata, ParseState &state);
 static int parse_function(GameData &gamedata, ParseState &state, const std::string &defaultName);
 static int parse_list(GameData &gamedata, ParseState &state);
@@ -91,6 +92,95 @@ static void parse_default(GameData &gamedata, ParseState &state) {
         ss << " already declared at " << oldDefault->origin << ".";
         gamedata.addError(origin, ErrorMsg::Warning, ss.str());
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Parse the extends directive
+static void parse_extend(GameData &gamedata, ParseState &state) {
+    bool hasError = false;
+    Origin origin = state.here()->origin;
+    state.next(); // skip "default"
+
+    try {
+        state.require(Token::Identifier);
+    } catch (BuildError &e) {
+        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
+        state.next();
+        hasError = true;
+        return;
+    }
+
+    Value::Type oldType = Value::None;
+    const std::string &oldName = state.here()->text;
+    const SymbolDef *old = gamedata.symbols.get(oldName);
+    if (!old) {
+        gamedata.addError(origin, ErrorMsg::Error, "Can only extend existing values.");
+        hasError = true;
+    } else {
+        oldType = old->value.type;
+        if (oldType != Value::List) {
+            std::stringstream ss;
+            ss << "Cannot extend values of type " << oldType << ".";
+            gamedata.addError(origin, ErrorMsg::Error, ss.str());
+            state.skipTo(Token::Semicolon);
+            state.next();
+            return;
+        }
+    }
+
+    state.next();
+    if (state.eof()) {
+        gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file.");
+        return;
+    }
+
+    std::stringstream ss;
+    switch(state.here()->type) {
+        case Token::OpenSquare:
+            if (oldType != Value::List) {
+                ss << "Cannot expand " << oldName << " as list.";
+                hasError = true;
+                gamedata.addError(origin, ErrorMsg::Error, ss.str());
+            } else {
+                std::vector<Value> newItems;
+                state.next();
+                while (!state.eof() && !state.matches(Token::CloseSquare)) {
+                    if (state.matches(Token::Semicolon)) {
+                        gamedata.addError(state.here()->origin, ErrorMsg::Error,
+                                "List values must be terminated with ].");
+                        state.next();
+                        return;
+                    }
+                    Value v = parse_value(gamedata, state, "");
+                    newItems.push_back(v);
+                }
+                state.next();
+
+                GameList *theList = gamedata.lists[old->value.value];
+                theList->items.insert(theList->items.end(),
+                                      newItems.begin(),
+                                      newItems.end());
+            }
+            break;
+        default:
+            if (oldType != Value::None) {
+                ss << "Invalid value to extend " << oldType << " " << oldName << ".";
+            hasError = true;
+                gamedata.addError(origin, ErrorMsg::Error, ss.str());
+            }
+    }
+
+    if (hasError) {
+        state.skipTo(Token::Semicolon);
+    } else {
+        try {
+            state.require(Token::Semicolon);
+        } catch (BuildError &e) {
+            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
+            state.skipTo(Token::Semicolon);
+        }
+    }
+    state.next();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -412,6 +502,8 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
             parse_constant(gamedata, state);
         } else if (state.matches("default")) {
             parse_default(gamedata, state);
+        } else if (state.matches("extend")) {
+            parse_extend(gamedata, state);
         } else if (state.matches("object")) {
             int objectId = parse_object(gamedata, state, "");
             if (objectId > 0) {
