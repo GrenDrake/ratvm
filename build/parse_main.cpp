@@ -118,7 +118,7 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
         hasError = true;
     } else {
         oldType = old->value.type;
-        if (oldType != Value::List) {
+        if (oldType != Value::List && oldType != Value::Map) {
             std::stringstream ss;
             ss << "Cannot extend values of type " << oldType << ".";
             gamedata.addError(origin, ErrorMsg::Error, ss.str());
@@ -143,7 +143,6 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
                 gamedata.addError(origin, ErrorMsg::Error, ss.str());
             } else {
                 GameList *theList = gamedata.lists[old->value.value];
-                std::vector<Value> newItems;
                 state.next();
                 while (!state.eof() && !state.matches(Token::CloseSquare)) {
                     if (state.matches(Token::Semicolon)) {
@@ -158,6 +157,36 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
                 state.next();
             }
             break;
+
+        case Token::OpenBrace:
+            if (oldType != Value::Map) {
+                ss << "Cannot expand " << oldName << " as map.";
+                hasError = true;
+                gamedata.addError(origin, ErrorMsg::Error, ss.str());
+            } else {
+                GameMap *theMap = gamedata.maps[old->value.value];
+                state.next();
+                while (!state.eof() && !state.matches(Token::CloseBrace)) {
+                    if (state.matches(Token::Semicolon)) {
+                        gamedata.addError(state.here()->origin, ErrorMsg::Error,
+                                "Map must be terminated with }.");
+                        state.next();
+                        return;
+                    }
+                    Value key = parse_value(gamedata, state, "");
+                    try {
+                        state.require(Token::Colon);
+                        state.next();
+                    } catch (BuildError &e) {
+                        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
+                    }
+                    Value value = parse_value(gamedata, state, "");
+                    theMap->rows.push_back(GameMap::MapRow{key, value});
+                }
+                state.next();
+            }
+            break;
+
         default:
             if (oldType != Value::None) {
                 ss << "Invalid value to extend " << oldType << " " << oldName << ".";

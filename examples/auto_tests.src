@@ -11,11 +11,18 @@ declare firstString "this is the first string"
 declare testInt 7384
 declare testStr "A Name"
 declare testList [ 1 2 3 ]
-declare testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" }
+declare testMap {
+    1: "The"
+    2: "End"
+}
 declare testProperty $testFunc
 declare testFlags flags( 6 7 8 testInt )
 
 extend testList [ 100 200 ];
+extend testMap {
+    3: "Is"
+    4: "Far"
+};
 
 object first_obj
     $anInt 2
