@@ -156,13 +156,6 @@ function testSyntax(: value) {
     (if (neq (testSyntaxReturn) 5) (error "testSyntaxReturn returned wrong value."))
     (if (neq (testSyntaxReturnDefault) 0) (error "testSyntaxReturnDefault returned wrong value."))
 
-    ("Testing list shortcut expression.[br]")
-    (set value (list 1 2 3))
-    (if (neq (size value) 3) (error "Created list has wrong size."))
-    (if (neq (get value 0) 1) (error "Created list has wrong first value"))
-    (if (neq (get value 1) 2) (error "Created list has wrong second value"))
-    (if (neq (get value 2) 3) (error "Created list has wrong third value"))
-
     ("Testing and/or constructs.[br]")
     (if (and 1 0) (error "(and 1 0) evalulated to true (should be false)"))
     (if (and 0 1) (error "(and 0 1) evalulated to true (should be false)"))

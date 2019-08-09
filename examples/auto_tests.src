@@ -669,13 +669,21 @@ asm_function testLists(: counter random_value) {
     counter 1 add *counter set
     200 counter gt randomloop jnz
 
+    0 testListBuilder call
     return
 
     test_list_contents_wrong:
     "\n" say testList 1 printArray call
     "List has wrong contents." error
     return
-
+}
+function testListBuilder(: theList) {
+    ("Testing list builder expression...[br]")
+    (set theList (list 1 2 3))
+    (if (neq (size theList) 3) (error "Created list has wrong size."))
+    (if (neq (get theList 0) 1) (error "Created list has wrong first value"))
+    (if (neq (get theList 1) 2) (error "Created list has wrong second value"))
+    (if (neq (get theList 2) 3) (error "Created list has wrong third value"))
 }
 
 // ////////////////////////////////////////////////////////////////////////////
