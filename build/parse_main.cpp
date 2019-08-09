@@ -472,6 +472,7 @@ Value parse_value(GameData &gamedata, ParseState &state, const std::string &defa
         std::stringstream ss;
         ss << "Encountered value of invalid type " << state.here()->type << ".";
         gamedata.addError(origin, ErrorMsg::Error, ss.str());
+        state.next();
     }
     return value;
 }
