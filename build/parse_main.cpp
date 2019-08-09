@@ -41,7 +41,7 @@ void parse_constant(GameData &gamedata, ParseState &state) {
     try {
         state.require(Token::Identifier);
     } catch (BuildError &e) {
-        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
         state.next();
         return;
     }
@@ -51,7 +51,7 @@ void parse_constant(GameData &gamedata, ParseState &state) {
     if (value.type == Value::Object || value.type == Value::Function) {
         std::stringstream ss;
         ss << "Declaration of " << constantName << " cannot declare objects or functions.";
-        gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+        gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
     }
     gamedata.symbols.add(SymbolDef(origin,
                                     constantName,
@@ -67,7 +67,7 @@ static void parse_default(GameData &gamedata, ParseState &state) {
     try {
         state.require(Token::Identifier);
     } catch (BuildError &e) {
-        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
         state.next();
         return;
     }
@@ -78,7 +78,7 @@ static void parse_default(GameData &gamedata, ParseState &state) {
         std::stringstream ss;
         ss << "Declaration of default value for " << defaultName;
         ss << " cannot declare objects or functions.";
-        gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+        gamedata.addError(state.here()->origin, ErrorMsg::Warning, ss.str());
     }
     const SymbolDef *oldDefault = gamedata.defaults.get(defaultName);
     if (!oldDefault) {
@@ -89,7 +89,7 @@ static void parse_default(GameData &gamedata, ParseState &state) {
         std::stringstream ss;
         ss << "Default value for " << defaultName;
         ss << " already declared at " << oldDefault->origin << ".";
-        gamedata.errors.push_back(Error{origin, ss.str()});
+        gamedata.addError(origin, ErrorMsg::Warning, ss.str());
     }
 }
 
@@ -113,7 +113,7 @@ int parse_flags(GameData &gamedata, ParseState &state) {
         } else {
             std::stringstream ss;
             ss << "Invalid token " << state.here()->type << " in flags.";
-            gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+            gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
         }
         state.next();
     }
@@ -169,7 +169,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
         try {
             state.require(Token::Identifier);
         } catch (BuildError &e) {
-            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
             state.next();
             continue;
         }
@@ -182,7 +182,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     state.skip(Token::OpenBrace);
     while (!state.matches(Token::CloseBrace)) {
         if (state.eof()) {
-            gamedata.errors.push_back(Error{origin, "Unexpected end of file in function."});
+            gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file in function.");
             return 0;
         }
         function->tokens.push_back(*state.here());
@@ -207,7 +207,7 @@ int parse_list(GameData &gamedata, ParseState &state) {
     while (!state.matches(Token::CloseSquare)) {
         if (state.eof()) {
             delete list;
-            gamedata.errors.push_back(Error{origin, "Unexpected end of file in list."});
+            gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file in list.");
             return 0;
         }
         Value value = parse_value(gamedata, state, "");
@@ -233,7 +233,7 @@ int parse_map(GameData &gamedata, ParseState &state) {
     while (!state.matches(Token::CloseBrace)) {
         if (state.eof()) {
             delete map;
-            gamedata.errors.push_back(Error{origin, "Unexpected end of file in map."});
+            gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file in map.");
             return 0;
         }
         Value v1 = parse_value(gamedata, state, "");
@@ -242,7 +242,7 @@ int parse_map(GameData &gamedata, ParseState &state) {
             state.skip(Token::Colon);
             v2 = parse_value(gamedata, state, "");
         } catch (BuildError &e) {
-            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
         }
 
         map->rows.push_back(GameMap::MapRow{v1, v2});
@@ -297,7 +297,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
             object->addProperty(state.here()->origin, parentId,
                                 Value{Value::Symbol, 0, parentName});
         } catch (BuildError &e) {
-            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
         }
     }
 
@@ -305,7 +305,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
         unsigned propId = 0;
         std::string propName;
         if (state.eof()) {
-            gamedata.errors.push_back(Error{origin, "Unexpected end-of-file while parsing object"});
+            gamedata.addError(origin, ErrorMsg::Error, "Unexpected end-of-file while parsing object");
             return 0;
         }
         try {
@@ -313,7 +313,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
             propId = state.here()->value;
             propName = state.here()->text;
         } catch (BuildError &e) {
-            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
             propId = -1;
             propName = "bad_prop";
         }
@@ -321,7 +321,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
         state.next();
 
         if (state.eof()) {
-            gamedata.errors.push_back(Error{origin, "Unexpected end of file in object definition."});
+            gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file in object definition.");
             return 0;
         }
         std::string defaultName = objectName + "." + propName;
@@ -330,7 +330,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
             try {
                 object->addProperty(propOrigin, propId, value);
             } catch (BuildError &e) {
-                gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+                gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
             }
         }
     }
@@ -346,7 +346,7 @@ Value parse_value(GameData &gamedata, ParseState &state, const std::string &defa
     Value value;
 
     if (state.eof()) {
-        gamedata.errors.push_back(Error{origin, "Unexpected end of file."});
+        gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file.");
         return Value{};
     } else if (state.matches("object")) {
         int newId = parse_object(gamedata, state, defaultName);
@@ -381,7 +381,7 @@ Value parse_value(GameData &gamedata, ParseState &state, const std::string &defa
     } else {
         std::stringstream ss;
         ss << "Encountered value of invalid type " << state.here()->type << ".";
-        gamedata.errors.push_back(Error{origin, ss.str()});
+        gamedata.addError(origin, ErrorMsg::Error, ss.str());
     }
     return value;
 }
@@ -403,7 +403,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
         try {
             state.require(Token::Identifier);
         } catch (BuildError &e) {
-            gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
             state.next();
             continue;
         }
@@ -417,7 +417,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
             if (objectId > 0) {
                 GameObject *object = gamedata.objects[objectId];
                 if (object && object->name.empty()) {
-                    gamedata.errors.push_back(Error{object->origin, "Anonymous object at top level"});
+                    gamedata.addError(object->origin, ErrorMsg::Warning, "Anonymous object at top level can never be referenced.");
                 }
             }
         } else if (state.matches("function") || state.matches("asm_function")) {
@@ -425,14 +425,14 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
             if (functionId > 0) {
                 FunctionDef *function = gamedata.functions[functionId];
                 if (function && function->name.empty()) {
-                    gamedata.errors.push_back(Error{function->origin, "Anonymous function at top level"});
+                    gamedata.addError(function->origin, ErrorMsg::Warning, "Anonymous function at top level can never be referenced.");
                 }
             }
         } else {
             const Token *token = state.here();
             std::stringstream ss;
             ss << "Unexpected top level directive " << token->text << ".";
-            gamedata.errors.push_back(Error{token->origin, ss.str()});
+            gamedata.addError(token->origin, ErrorMsg::Error, ss.str());
             state.next();
         }
 

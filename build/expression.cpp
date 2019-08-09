@@ -102,13 +102,13 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values[0].value.type != Value::Opcode) {
         std::stringstream ss;
         ss << "Expected opcode, but found " << list->values[0].value.type << '.';
-        gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
         return;
     }
 
     const OpcodeDef *opcode = list->values[0].value.opcode;
     if (opcode->permissions & FORBID_ALWAYS) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "Opcode " + opcode->name + " may not be used explicitly."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error, "Opcode " + opcode->name + " may not be used explicitly.");
         return;
     }
     unsigned wantedOpcodeCount = opcode->inputs + 1;
@@ -120,11 +120,11 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
             ss << "Insufficent operands for call opcode (expected at least ";
             ss << minimumCallOperands << ", but found " << list->values.size();
                 ss << ").";
-            gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+            gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
             return;
         } else {
             if (list->values[2].value.type != Value::Integer) {
-                gamedata.errors.push_back(Error{list->values[2].origin, "Argument count must be integer."});
+                gamedata.addError(list->values[2].origin, ErrorMsg::Error, "Argument count must be integer.");
                 return;
             }
             wantedOpcodeCount = minimumCallOperands + list->values[2].value.value;
@@ -133,7 +133,7 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
                 ss << "Incorrect number of operands for call opcode (expected exactly ";
                 ss << wantedOpcodeCount << ", but found " << list->values.size();
                 ss << ").";
-                gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+                gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
                 return;
             }
         }
@@ -143,7 +143,7 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
         std::stringstream ss;
         ss << "Opcode expected " << opcode->inputs << " operands, but found ";
         ss << list->values.size() - 1 << '.';
-        gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
         return;
     }
 
@@ -154,8 +154,8 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
             if (theValue.value.type == Value::None && list->values[0].value.opcode->code == OpcodeDef::GetOption) {
                 function->addValue(theValue.origin, Value{Value::None});
             } else if (theValue.value.type != Value::LocalVar) {
-                gamedata.errors.push_back(Error{theValue.origin,
-                    "Store opcode must reference local variable."});
+                gamedata.addError(theValue.origin, ErrorMsg::Error,
+                    "Store opcode must reference local variable.");
             } else {
                 function->addValue(theValue.origin, Value{Value::VarRef, theValue.value.value});
             }
@@ -208,7 +208,7 @@ void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list)
 
     std::stringstream ss;
     ss << word << " is not a valid expression command.";
-    gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+    gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
 }
 
 
@@ -218,7 +218,8 @@ void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list)
 
 void stmt_and(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() < 3) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "and requires at least two arguments."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "and requires at least two arguments.");
         return;
     }
 
@@ -244,7 +245,8 @@ void stmt_and(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() < 3) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "or requires at least two arguments."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "or requires at least two arguments.");
         return;
     }
 
@@ -270,12 +272,14 @@ void stmt_or(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_break(GameData &gamedata, FunctionDef *function, List *list) {
     if (!checkListSize(list, 1, 1)) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "break statement cannot take arguments."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "break statement cannot take arguments.");
         return;
     }
 
     if (function->breakLabels.empty()) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "break statement found outside loop."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "break statement found outside loop.");
         return;
     }
 
@@ -286,12 +290,14 @@ void stmt_break(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_continue(GameData &gamedata, FunctionDef *function, List *list) {
     if (!checkListSize(list, 1, 1)) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "continue statement cannot take arguments."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "continue statement cannot take arguments.");
         return;
     }
 
     if (function->continueLabels.empty()) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "continue statement found outside loop."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "continue statement found outside loop.");
         return;
     }
 
@@ -302,12 +308,14 @@ void stmt_continue(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_dec(GameData &gamedata, FunctionDef *function, List *list) {
     if (!checkListSize(list, 2, 3)) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "inc expression takes one or two arguments."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "inc expression takes one or two arguments.");
         return;
     }
 
     if (list->values[1].value.type != Value::LocalVar) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "inc requires name of local variable."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "inc requires name of local variable.");
         return;
     }
 
@@ -324,7 +332,8 @@ void stmt_dec(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() != 3) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "Do-While statement must have two expressions."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "Do-While statement must have two expressions.");
         return;
     }
 
@@ -359,7 +368,7 @@ void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
         if (list->values[1].value.type != Value::Symbol) {
             std::stringstream ss;
             ss << "Label name must be undefined identifier";
-            gamedata.errors.push_back(Error{list->values[1].origin, ss.str()});
+            gamedata.addError(list->values[1].origin, ErrorMsg::Error, ss.str());
         } else {
             function->addLabel(list->values[1].origin, list->values[1].value.text);
         }
@@ -368,7 +377,8 @@ void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() < 3 || list->values.size() > 4) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "If expression must have two or three expressions."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "If expression must have two or three expressions.");
         return;
     }
 
@@ -395,12 +405,14 @@ void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_inc(GameData &gamedata, FunctionDef *function, List *list) {
     if (!checkListSize(list, 2, 3)) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "inc expression takes one or two arguments."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "inc expression takes one or two arguments.");
         return;
     }
 
     if (list->values[1].value.type != Value::LocalVar) {
-        gamedata.errors.push_back(Error{list->values[1].origin, "inc requires name of local variable."});
+        gamedata.addError(list->values[1].origin, ErrorMsg::Error,
+            "inc requires name of local variable.");
         return;
     }
 
@@ -431,7 +443,8 @@ void stmt_list(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_makestr(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() < 3) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "makestr requires at least two arguments."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "makestr requires at least two arguments.");
         return;
     }
 
@@ -459,7 +472,8 @@ void stmt_newstr(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
     if (!checkListSize(list, 2, 5)) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "option statement takes one to three arguments."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "option statement takes one to three arguments.");
         return;
     }
 
@@ -484,7 +498,8 @@ void stmt_option(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() <= 1) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "print statement requires arguments."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "print statement requires arguments.");
         return;
     }
     for (unsigned i = 1; i < list->values.size(); ++i) {
@@ -495,7 +510,8 @@ void stmt_print(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_print_uf(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() <= 1) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "print_uf statement requires arguments."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "print_uf statement requires arguments.");
         return;
     }
     process_value(gamedata, function, list->values[1]);
@@ -509,7 +525,8 @@ void stmt_print_uf(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_proc(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() < 2) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "proc statement must contain at least one statement."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "proc statement must contain at least one statement.");
         return;
     }
 
@@ -520,7 +537,8 @@ void stmt_proc(GameData &gamedata, FunctionDef *function, List *list) {
 
 void stmt_while(GameData &gamedata, FunctionDef *function, List *list) {
     if (list->values.size() != 3) {
-        gamedata.errors.push_back(Error{list->values[0].origin, "While statement must have two expressions."});
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "While statement must have two expressions.");
         return;
     }
 
@@ -558,12 +576,12 @@ void process_value(GameData &gamedata, FunctionDef *function, ListValue &value) 
         case Value::Opcode: {
             std::stringstream ss;
             ss << "Invalid expression value of type " << value.value.type << '.';
-            gamedata.errors.push_back(Error{value.origin, ss.str()});
+            gamedata.addError(value.origin, ErrorMsg::Error, ss.str());
             break; }
         case Value::Symbol: {
             std::stringstream ss;
             ss << "Undefined symbol " << value.value.text << '.';
-            gamedata.errors.push_back(Error{value.origin, ss.str()});
+            gamedata.addError(value.origin, ErrorMsg::Error, ss.str());
             break; }
         case Value::Expression:
             process_list(gamedata, function, value.list);
@@ -598,13 +616,13 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
         case Value::Symbol: {
             std::stringstream ss;
             ss << "Unrecognized name " << list->values[0].value.text << '.';
-            gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+            gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
             break; }
         default: {
             std::stringstream ss;
             ss << "Expression not permitted to begin with value of type ";
             ss << list->values[0].value.type << '.';
-            gamedata.errors.push_back(Error{list->values[0].origin, ss.str()});
+            gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
             break; }
     }
 }

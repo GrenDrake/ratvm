@@ -104,7 +104,7 @@ void handle_string_escapes(GameData &gamedata, const Origin &origin, std::string
             default: {
                 std::stringstream ss;
                 ss << "Unknown string escape \\" << text[i + 1] << '.';
-                gamedata.errors.push_back(Error{origin, ss.str()});
+                gamedata.addError(origin, ErrorMsg::Error, ss.str());
             }
         }
     }
@@ -136,10 +136,10 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             next(state);
             while (here(state) != '*' || peek(state) != '/') {
                 if (here(state) == '/' && peek(state) == '*') {
-                    gamedata.errors.push_back(Error{state.origin, "Block comments may not be nested."});
+                    gamedata.addError(state.origin, ErrorMsg::Error, "Block comments may not be nested.");
                 }
                 if (here(state) == 0) {
-                    gamedata.errors.push_back(Error{state.origin, "End-of-file in block comment."});
+                    gamedata.addError(state.origin, ErrorMsg::Error, "End-of-file in block comment.");
                 }
                 next(state);
             }
@@ -198,7 +198,7 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
                 next(state);
             }
             if (state.pos == start) {
-                gamedata.errors.push_back(Error{state.origin, "Numbers must consist of at least one digit."});
+                gamedata.addError(state.origin, ErrorMsg::Error, "Numbers must consist of at least one digit.");
             }
             std::string text = state.text.substr(start, state.pos - start);
             int value = parseAsInt(text);
@@ -222,14 +222,14 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
                     std::stringstream ss;
                     ss << "WARNING String exceeds max string length of ";
                     ss << (UINT16_MAX - 1) << "; excess data truncated.";
-                    gamedata.errors.push_back(Error{origin, ss.str()});
+                    gamedata.addError(origin, ErrorMsg::Error, ss.str());
                     text.erase(UINT16_MAX);
                 }
                 tokens.push_back(Token(origin, Token::String, text));
             } else {
                 if (text.size() != 1) {
-                    gamedata.errors.push_back(Error{origin,
-                        "character literal has invalid length"});
+                    gamedata.addError(origin, ErrorMsg::Error,
+                        "character literal has invalid length");
                 } else {
                     tokens.push_back(Token(origin, Token::Integer, text[0]));
                 }
@@ -246,8 +246,8 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             }
             std::string text = state.text.substr(start, state.pos - start);
             if (text.empty()) {
-                    gamedata.errors.push_back(Error{origin,
-                        "found empty property name"});
+                    gamedata.addError(origin, ErrorMsg::Error,
+                        "found empty property name");
             }
             unsigned propertyId = gamedata.getPropertyId(text);
             tokens.push_back(Token(origin, Token::Property, text, propertyId));
@@ -266,7 +266,7 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
         } else {
             std::stringstream ss;
             ss << "Unexpected '" << (char)c << "' encountered.";
-            gamedata.errors.push_back(Error{state.origin, ss.str()});
+            gamedata.addError(state.origin, ErrorMsg::Error, ss.str());
             next(state);
         }
 

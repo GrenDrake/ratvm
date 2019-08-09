@@ -136,7 +136,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 if (argumentNumber < 0) {
                     std::stringstream ss;
                     ss << "Symbol \"" << state.here()->text << "\" is not a local variable name.";
-                    gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+                    gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
                 }
                 bytecode_push_value(function->code, Value::VarRef, argumentNumber);
                 break; }
@@ -146,7 +146,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                     if (nameInUse(gamedata, function, state.here()->text, -1)) {
                         std::stringstream ss;
                         ss << "Symbol \"" << state.here()->text << "\" already defined.";
-                        gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+                        gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
                     }
                     function->labels.insert(std::make_pair(state.here()->text, function->code.size()));
                     state.next();
@@ -155,13 +155,13 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 Value result = evalIdentifier(gamedata, function, state.here()->text);
                 if (result.type == Value::Opcode) {
                     if (result.opcode->permissions & FORBID_ALWAYS) {
-                        gamedata.errors.push_back(Error{state.here()->origin, "Opcode " + result.opcode->name + " may not be used explicitly."});
+                        gamedata.addError(state.here()->origin, ErrorMsg::Error, "Opcode " + result.opcode->name + " may not be used explicitly.");
                     }
                     function->code.add_8(result.opcode->code);
                 } else if (result.type == Value::Reserved) {
                     std::stringstream ss;
                     ss << "Unexpected reserved word " << result.text << '.';
-                    gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+                    gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
                 } else if (result.type != Value::Symbol) {
                     bytecode_push_value(function->code, result.type, result.value);
                 } else {
@@ -188,7 +188,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
             default: {
                 std::stringstream ss;
                 ss << "Unexpected token " << state.here()->type << " in asm function body.";
-                gamedata.errors.push_back(Error{state.here()->origin, ss.str()});
+                gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
                 }
         }
         state.next();
@@ -202,7 +202,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
         } else {
             std::stringstream ss;
             ss << "Unknown symbol " << patch.name << " in function " << function->name << '.';
-            gamedata.errors.push_back(Error{patch.origin, ss.str()});
+            gamedata.addError(patch.origin, ErrorMsg::Error, ss.str());
         }
     }
 }
@@ -234,7 +234,7 @@ ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState 
         default: {
             std::stringstream ss;
             ss << "Unexpected type " << here->type << '.';
-            gamedata.errors.push_back(Error{here->origin, ss.str()});
+            gamedata.addError(here->origin, ErrorMsg::Error, ss.str());
             here = state.next();
             return newValue; }
     }
@@ -246,7 +246,7 @@ List* parse_list(GameData &gamedata, FunctionDef *function, ParseState &state) {
     try {
         state.require(Token::OpenParan);
     } catch (BuildError &e) {
-        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
         return nullptr;
     }
     state.next();
@@ -299,7 +299,7 @@ void build_function(GameData &gamedata, FunctionDef *function) {
         } else {
             std::stringstream ss;
             ss << "Undefined symbol " << patch.name << '.';
-            gamedata.errors.push_back(Error{patch.origin, ss.str()});
+            gamedata.addError(patch.origin, ErrorMsg::Error, ss.str());
         }
     }
 }
@@ -340,7 +340,7 @@ int parse_functions(GameData &gamedata) {
             if (nameInUse(gamedata, function, name, i)) {
                 std::stringstream ss;
                 ss << "Local name \"" << name << "\" already in use.";
-                gamedata.errors.push_back(Error{function->origin, ss.str()});
+                gamedata.addError(function->origin, ErrorMsg::Error, ss.str());
             }
         }
 

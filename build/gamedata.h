@@ -13,7 +13,11 @@
 
 const int firstAnonymousId = 10000000;
 
-struct Error {
+struct ErrorMsg {
+    enum Type {
+        Fatal, Error, Warning
+    };
+    Type type;
     Origin origin;
     std::string message;
 };
@@ -165,8 +169,11 @@ public:
     FunctionDef* functionByName(const std::string &name);
     int checkObjectIdents();
     unsigned getSourceFileIndex(const std::string &filename);
+    void addError(const Origin &origin, ErrorMsg::Type type, const std::string &text);
+    bool hasErrors() const;
 
-    std::vector<Error> errors;
+    int errorCount;
+    std::vector<ErrorMsg> errors;
     SymbolTable symbols;
     SymbolTable defaults;
     std::vector<GameObject*> objects;
@@ -185,6 +192,7 @@ public:
 };
 
 std::ostream& operator<<(std::ostream &out, const Value &property);
+std::ostream& operator<<(std::ostream &out, const ErrorMsg::Type &type);
 
 void dump_gamedata(GameData &gamedata, std::ostream &out);
 void dump_asm(GameData &gamedata, std::ostream &out);

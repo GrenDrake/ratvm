@@ -83,20 +83,20 @@ int main(int argc, char *argv[]) {
             std::vector<Token> newTokens = lex_file(gamedata, file);
             tokens.insert(tokens.end(), newTokens.begin(), newTokens.end());
         }
-        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
         parse_tokens(gamedata, tokens);
-        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
         translate_symbols(gamedata);
-        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
         gamedata.organize();
         if (!skipIdentCheck) {
             nextIdent = gamedata.checkObjectIdents();
         }
-        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
         parse_functions(gamedata);
-        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
         generate(gamedata, outputFile);
-        if (!gamedata.errors.empty()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
     } catch (BuildError &e) {
         std::cerr << "Error: " << e.getMessage() << '\n';
         return 1;
@@ -135,12 +135,31 @@ int main(int argc, char *argv[]) {
         dump_token_list(tokens, tokenFile);
     }
 
+    if (!gamedata.errors.empty()) {
+        dump_errors(gamedata);
+    }
     return 0;
 }
 
 void dump_errors(GameData &gamedata) {
-    for (const Error &error : gamedata.errors) {
-        std::cerr << error.origin << ' ' << error.message << '\n';
+    int warnCount = gamedata.errors.size() - gamedata.errorCount;
+
+    for (const ErrorMsg &error : gamedata.errors) {
+        std::cerr << error.origin << ": ";
+        std::cerr << error.type << ": ";
+        std::cerr << error.message << '\n';
     }
-    std::cerr << '[' << gamedata.errors.size() << " errors occured.]\n";
+    std::cerr << '[';
+    if (gamedata.errorCount > 0) {
+        std::cerr << gamedata.errorCount << " error";
+        if (gamedata.errorCount > 1) std::cerr << 's';
+    }
+    if (gamedata.errorCount > 0 && warnCount > 0) {
+        std::cerr << " and ";
+    }
+    if (warnCount > 0) {
+        std::cerr << warnCount << " warning";
+        if (warnCount > 1) std::cerr << 's';
+    }
+    std::cerr << " occured.]\n";
 }

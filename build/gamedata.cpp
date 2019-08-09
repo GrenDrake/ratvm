@@ -34,7 +34,7 @@ void FunctionDef::addValue(const Origin &origin, const Value &value) {
 }
 
 GameData::GameData()
-: nextAnonymousId(firstAnonymousId) {
+: errorCount(0), nextAnonymousId(firstAnonymousId) {
     objects.push_back(nullptr);
     lists.push_back(nullptr);
     maps.push_back(nullptr);
@@ -126,14 +126,14 @@ int GameData::checkObjectIdents() {
 
         if (ident) {
             if (ident->value.type != Value::Integer || ident->value.value <= 0) {
-                errors.push_back(Error{object->origin, "Object ident property must positive integer."});
+                addError(object->origin, ErrorMsg::Error, "Object ident property must positive integer.");
             } else {
                 auto existingObject = usedIdents.find(ident->value.value);
                 if (existingObject != usedIdents.end()) {
                     std::stringstream ss;
                     ss << "Object ident " << ident->value.value << " already in use by object \"";
                     ss << existingObject->second->name << "\" @ " << existingObject->second->origin << '.';
-                    errors.push_back(Error{object->origin, ss.str()});
+                    addError(object->origin, ErrorMsg::Error, ss.str());
                 } else {
                     usedIdents.insert(std::make_pair(ident->value.value, object));
                     if (ident->value.value >= nextIdent) {
@@ -144,24 +144,42 @@ int GameData::checkObjectIdents() {
         }
 
         if (!ident && save) {
-            errors.push_back(Error{object->origin, "Object has save property but no ident property."});
+            addError(object->origin, ErrorMsg::Error, "Object has save property but no ident property.");
         }
         if (!ident && load) {
-            errors.push_back(Error{object->origin, "Object has load property but no ident property."});
+            addError(object->origin, ErrorMsg::Error, "Object has load property but no ident property.");
         }
         if (!load && save) {
-            errors.push_back(Error{object->origin, "Object has save property but no load property."});
+            addError(object->origin, ErrorMsg::Error, "Object has save property but no load property.");
         }
         if (!save && load) {
-            errors.push_back(Error{object->origin, "Object has load property but no save property."});
+            addError(object->origin, ErrorMsg::Error, "Object has load property but no save property.");
         }
         if (load && load->value.type != Value::Function) {
-            errors.push_back(Error{object->origin, "Object load property must be function."});
+            addError(object->origin, ErrorMsg::Error, "Object load property must be function.");
         }
         if (save && save->value.type != Value::Function) {
-            errors.push_back(Error{object->origin, "Object save property must be function."});
+            addError(object->origin, ErrorMsg::Error, "Object save property must be function.");
         }
     }
 
     return nextIdent;
+}
+
+void GameData::addError(const Origin &origin, ErrorMsg::Type type, const std::string &text) {
+    errors.push_back(ErrorMsg{type, origin, text});
+    if (type != ErrorMsg::Warning) ++errorCount;
+}
+
+bool GameData::hasErrors() const {
+    return errorCount > 0;
+}
+
+std::ostream& operator<<(std::ostream &out, const ErrorMsg::Type &type) {
+    switch(type) {
+        case ErrorMsg::Fatal:   out << "fatal";     break;
+        case ErrorMsg::Warning: out << "warning";   break;
+        case ErrorMsg::Error:   out << "error";     break;
+    }
+    return out;
 }

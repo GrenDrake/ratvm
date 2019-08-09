@@ -60,7 +60,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     if (mainFunction) {         // 8: main function index
         write_32(out, mainFunction->globalId);
     } else {
-        gamedata.errors.push_back(Error{Origin(outputFile,0,0), "Function \"main\" not defined."});
+        gamedata.addError(Origin(outputFile,0,0), ErrorMsg::Error, "Function \"main\" not defined.");
         write_32(out, 0);
     }
     // write gamefile flags

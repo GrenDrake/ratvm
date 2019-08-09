@@ -65,7 +65,7 @@ void translate_symbols(GameData &gamedata) {
             if (value.type == Value::Integer) {
                 result |= value.value;
             } else {
-                gamedata.errors.push_back(Error{flagset.origin, "Flag values must be integers."});
+                gamedata.addError(flagset.origin, ErrorMsg::Error, "Flag values must be integers.");
             }
         }
         flagset.finalValue = result;
@@ -80,12 +80,12 @@ void translate_symbols(GameData &gamedata) {
                     ss << "Default value for " << symbol.name;
                     ss << " is undefined value " << symbol.value.text;
                     ss << ".";
-                    gamedata.errors.push_back(Error{symbol.origin, ss.str()});
+                    gamedata.addError(symbol.origin, ErrorMsg::Error, ss.str());
                 } else {
                     try {
                         gamedata.symbols.add(SymbolDef{symbol.origin, symbol.name, realValue->value});
                     } catch (BuildError &e) {
-                        gamedata.errors.push_back(Error{e.getOrigin(), e.getMessage()});
+                        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
                     }
                 }
             } else {
@@ -98,7 +98,7 @@ void translate_symbols(GameData &gamedata) {
         if (symbol.value.type == Value::FlagSet) {
             translate_value(gamedata, symbol.value);
             if (symbol.value.type != Value::Integer) {
-                gamedata.errors.push_back(Error{symbol.origin, "Invalid value in flag set."});
+                gamedata.addError(symbol.origin, ErrorMsg::Error, "Invalid value in flag set.");
             }
         }
     }
