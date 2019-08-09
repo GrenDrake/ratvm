@@ -156,21 +156,6 @@ function testSyntax(: value) {
     (if (neq (testSyntaxReturn) 5) (error "testSyntaxReturn returned wrong value."))
     (if (neq (testSyntaxReturnDefault) 0) (error "testSyntaxReturnDefault returned wrong value."))
 
-    ("Testing and/or constructs.[br]")
-    (if (and 1 0) (error "(and 1 0) evalulated to true (should be false)"))
-    (if (and 0 1) (error "(and 0 1) evalulated to true (should be false)"))
-    (if (and 0 0) (error "(and 0 0) evalulated to true (should be false)"))
-    (if (not (and 1 1)) (error "(and 1 1) evalulated to false (should be true)"))
-    (if (and 0 0 0) (error "(and 0 0 0) evalulated to true (should be false)"))
-    (if (and 1 1 0) (error "(and 1 1 0) evalulated to true (should be false)"))
-    (if (not (and 1 1 1)) (error "(and 1 1 1) evalulated to false (should be true)"))
-    (if (not (or 1 0)) (error "(or 1 0) evalulated to false (should be true)"))
-    (if (not (or 0 1)) (error "(or 0 1) evalulated to false (should be true)"))
-    (if (or 0 0) (error "(or 0 0) evalulated to true (should be false)"))
-    (if (not (or 1 1)) (error "(or 1 1) evalulated to false (should be true)"))
-    (if (or 0 0 0) (error "(or 0 0 0) evalulated to true (should be false)"))
-    (if (not (or 1 1 0)) (error "(or 1 1 0) evalulated to false (should be true)"))
-    (if (not (or 1 1 1)) (error "(or 1 1 1) evalulated to false (should be true)"))
 }
 
 

@@ -887,6 +887,27 @@ function testStringBuilder(: theString) {
         (error "newstr did not create string correctly."))
 }
 
+function testAndOr() {
+    ("\n# Testing and/or expressions\n")
+    ("Testing [i]and[/i]...[br]")
+    (if (and 1 0) (error "(and 1 0) evalulated to true (should be false)"))
+    (if (and 0 1) (error "(and 0 1) evalulated to true (should be false)"))
+    (if (and 0 0) (error "(and 0 0) evalulated to true (should be false)"))
+    (if (not (and 1 1)) (error "(and 1 1) evalulated to false (should be true)"))
+    (if (and 0 0 0) (error "(and 0 0 0) evalulated to true (should be false)"))
+    (if (and 1 1 0) (error "(and 1 1 0) evalulated to true (should be false)"))
+    (if (not (and 1 1 1)) (error "(and 1 1 1) evalulated to false (should be true)"))
+
+    ("Testing [i]or[/i]...[br]")
+    (if (not (or 1 0)) (error "(or 1 0) evalulated to false (should be true)"))
+    (if (not (or 0 1)) (error "(or 0 1) evalulated to false (should be true)"))
+    (if (or 0 0) (error "(or 0 0) evalulated to true (should be false)"))
+    (if (not (or 1 1)) (error "(or 1 1) evalulated to false (should be true)"))
+    (if (or 0 0 0) (error "(or 0 0 0) evalulated to true (should be false)"))
+    (if (not (or 1 1 0)) (error "(or 1 1 0) evalulated to false (should be true)"))
+    (if (not (or 1 1 1)) (error "(or 1 1 1) evalulated to false (should be true)"))
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
@@ -907,6 +928,7 @@ asm_function main() {
     0 testObjectProps call
     0 testDynamic call
     0 testStringManipulation call
+    0 testAndOr call
 
     "\nALL TESTS PASSED" say
 }
