@@ -140,14 +140,6 @@ function testSyntax(: value) {
             (if (neq (mod value 5) 0) (continue))
             (print " " value))
         1)
-    (print "[br]")
-    (print "Testing label statement: ")
-    (jmp label_for_testing)
-    (error "Failed to jump")
-    (label label_for_testing)
-    (print "Good[br]")
-
-
 }
 
 

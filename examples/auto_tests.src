@@ -352,8 +352,18 @@ asm_function testJumps(: testValue) {
     "Failed jnz w/ value in local." error
 
     done:
+    0 testJumpsSyntax call
 }
+function testJumpsSyntax() {
+    ("Testing jumps/labels in syntax functions...[br]")
+    (jmp label_for_testing)
+    (error "Failed to jump")
+    (label label_for_testing)
 
+    (jz second_label 0)
+    (error "Failed to jump")
+    (label second_label)
+}
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test math commands
