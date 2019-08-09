@@ -16,7 +16,7 @@ RUNNER=./grun
 TEST_BYTESTREAM_OBJS=tests/bytestream.o build/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
 
-TESTSRC=examples/tests.src
+TESTSRC=examples/auto_tests.src
 
 all: $(BUILD) $(RUNNER) tests game.bin
 

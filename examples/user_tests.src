@@ -1,0 +1,476 @@
+// ////////////////////////////////////////////////////////////////////////////
+// First string : this must be the first string used for one of the tests
+//                to function correctly.
+// ////////////////////////////////////////////////////////////////////////////
+declare firstString "this is the first string"
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Data used for tests
+// ////////////////////////////////////////////////////////////////////////////
+declare testInt 7384
+declare testStr "A Name"
+declare testList [ 1 2 3 ]
+declare testMap { 1: "The" 2: "End" 3: "Is" 4: "Far" }
+declare testProperty $testFunc
+declare testFlags flags( 6 7 8 testInt )
+
+object first_obj
+    $testMethod function() { }
+;
+
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Code for testing load/save
+// ////////////////////////////////////////////////////////////////////////////
+
+asm_function printMagicNumbers() {
+    "\nThis morning's magic numbers are: " say
+    $number1 magic_1 get say ", " say
+    $number2 magic_1 get say ", and " say
+    $number3 magic_1 get say
+    ". This evening's magic numbers are: " say
+    $number1 magic_2 get say ", " say
+    $number2 magic_2 get say ", and " say
+    $number3 magic_2 get say ".\n" say
+}
+
+object magic_1
+    $ident 1
+    $save asm_function(data) {
+        $number1 self get 99 data ins
+        $number2 self get 99 data ins
+        $number3 self get 99 data ins
+    }
+    $load asm_function(data) {
+        0 data get $number1 self set
+        1 data get $number2 self set
+        2 data get $number3 self set
+    }
+    $number1 0
+    $number2 0
+    $number3 0
+;
+
+object magic_2
+    $ident 2
+    $save asm_function(data) {
+        $number1 self get 99 data ins
+        $number2 self get 99 data ins
+        $number3 self get 99 data ins
+    }
+    $load asm_function(data) {
+        0 data get $number1 self set
+        1 data get $number2 self set
+        2 data get $number3 self set
+    }
+    $number1 0
+    $number2 0
+    $number3 0
+;
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Testing non-asm syntax constructs
+// ////////////////////////////////////////////////////////////////////////////
+function testSyntaxReturn() {
+    (return 5)
+}
+function testSyntaxReturnDefault() {
+}
+function testSyntax(: value) {
+    (print_uf "this " "tests " "print_uf.[br]")
+
+    (print "Testing IF true: ")
+    (set value 5)
+    (if value (print "Good[br]") (error "IF true failed"))
+    (print "Testing IF false: ")
+    (if 0 (error "IF false failed") (print "Good[br]"))
+    (print "Testing IF false with no else[br]")
+    (if 0 (error "IF false failed"))
+
+    (print "Testing proc statement:")
+    (if 1
+        (proc
+            (print " first")
+            (print " second")
+            (print " third"))
+        (error "Reached unreachable else"))
+    (print "[br]")
+
+    (print "Testing while:")
+    (set value 20)
+    (while (gt value 0)
+        (proc
+            (print " " value)
+            (dec value 2)))
+    (print "[br]")
+
+    (print "Testing while with false initial.[br]")
+    (set value 1)
+    (while 0 (error "While loop with false condition executed."))
+
+    (print "Testing continue / break:")
+    (set value 0)
+    (while 1
+        (proc
+            (if (gt value 50) (break))
+            (inc value)
+            (if (neq (mod value 5) 0) (continue))
+            (print " " value)))
+    (print "[br]")
+
+    (print "Testing do/while:")
+    (set value 1)
+    (do_while
+        (proc
+            (print " " value)
+            (inc value 3))
+        (lte value 20))
+    (print "[br]")
+
+    (print "Testing do/while with false condition: ")
+    (do_while
+        (print "in loop")
+        0)
+    (print "[br]")
+
+    (print "Testing continue / break in do/while:")
+    (set value 55)
+    (do_while
+        (proc
+            (if (lte value 0) (break))
+            (dec value)
+            (if (neq (mod value 5) 0) (continue))
+            (print " " value))
+        1)
+    (print "[br]")
+    (print "Testing label statement: ")
+    (jmp label_for_testing)
+    (error "Failed to jump")
+    (label label_for_testing)
+    (print "Good[br]")
+
+    (print "Testing return values of standard functions.[br]")
+    (if (neq (testSyntaxReturn) 5) (error "testSyntaxReturn returned wrong value."))
+    (if (neq (testSyntaxReturnDefault) 0) (error "testSyntaxReturnDefault returned wrong value."))
+
+    ("Testing list shortcut expression.[br]")
+    (set value (list 1 2 3))
+    (if (neq (size value) 3) (error "Created list has wrong size."))
+    (if (neq (get value 0) 1) (error "Created list has wrong first value"))
+    (if (neq (get value 1) 2) (error "Created list has wrong second value"))
+    (if (neq (get value 2) 3) (error "Created list has wrong third value"))
+
+    ("Testing and/or constructs.[br]")
+    (if (and 1 0) (error "(and 1 0) evalulated to true (should be false)"))
+    (if (and 0 1) (error "(and 0 1) evalulated to true (should be false)"))
+    (if (and 0 0) (error "(and 0 0) evalulated to true (should be false)"))
+    (if (not (and 1 1)) (error "(and 1 1) evalulated to false (should be true)"))
+    (if (and 0 0 0) (error "(and 0 0 0) evalulated to true (should be false)"))
+    (if (and 1 1 0) (error "(and 1 1 0) evalulated to true (should be false)"))
+    (if (not (and 1 1 1)) (error "(and 1 1 1) evalulated to false (should be true)"))
+    (if (not (or 1 0)) (error "(or 1 0) evalulated to false (should be true)"))
+    (if (not (or 0 1)) (error "(or 0 1) evalulated to false (should be true)"))
+    (if (or 0 0) (error "(or 0 0) evalulated to true (should be false)"))
+    (if (not (or 1 1)) (error "(or 1 1) evalulated to false (should be true)"))
+    (if (or 0 0 0) (error "(or 0 0 0) evalulated to true (should be false)"))
+    (if (not (or 1 1 0)) (error "(or 1 1 0) evalulated to false (should be true)"))
+    (if (not (or 1 1 1)) (error "(or 1 1 1) evalulated to false (should be true)"))
+
+    ("Testing makestr...[br]")
+    (set value (new String))
+    (makestr value "This is " 55 " good.")
+    (if (strcmp value "This is 55 good.")
+        (error "makestr did not create string correctly."))
+
+    ("Testing newstr...[br]")
+    (set value (newstr "I ate " 3 " turnips."))
+    (if (strcmp value "I ate 3 turnips.")
+        (error "newstr did not create string correctly."))
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Basic looping demo
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testLoopDemo(: counter theValue) {
+// show a count up loop and calculate 2^10
+    0 *counter set
+    1 *theValue set
+    loopstart:
+    counter 1 add *counter set
+    2 theValue mult *theValue set
+    counter say
+    " " say
+    counter 10 gt loopstart jnz
+    "Loop finished!\n" say
+    "Final result: " say
+    theValue say
+    "\n" say
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test input commands
+// ////////////////////////////////////////////////////////////////////////////
+function testInputs(: choice xtra) {
+    (set choice 1)
+    (while 1 (proc
+        ("This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu.")
+        (option "Test key input"        testGetkey)
+        (option "Test line input"       testLineInput)
+        (option "No extra value"        receiveExtra)
+        (option "Extra value 6"         receiveExtra   6)
+        (option "Extra value 73"        receiveExtra   73)
+        (option "Value 0 (key: G)"      receiveExtra   0    'g')
+        (option "Return to main menu"   none)
+        (set choice (get_option xtra))
+        (if choice
+            (dispatcher choice xtra)
+            (return 0))))
+}
+asm_function receiveExtra(extra) {
+    "Option extra value: " say extra say
+    "Back to inputs menu" testInputs none none add_option
+     none get_option
+}
+function testGetkey(: inKey) {
+    ("This will demonstrate and test the get_key input type. Press 'Z' to return to the previous menu.")
+    (while 1 (proc
+        (set inKey (get_key "Try pressing a key."))
+        ("Resulting character code: " inKey ".\n")
+        (if (eq inKey 'z') (return 0)))
+}
+object lineInputHolder
+    $lastLine "(nothing yet)"
+;
+function testLineInput(: theLine) {
+    ("Testing line input option.\nThe last line you entered was: ")
+    (print (get lineInputHolder $lastLine) "\n")
+    (set theLine (get_line "Enter some text:"))
+    ("You entered: \"" theLine "\".\n")
+    (setp lineInputHolder $lastLine theLine)
+    (option "Back to inputs menu" testInputs)
+    (get_option none)
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Output command tests
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testOutput() {
+    "This text (and nearly all text in these tests) is output using the \"say\" command.\nSay integer value: " say
+    6215 say
+    "[br]-1 using say_unsigned (should be 4294967295): " say
+    -1 say_unsigned
+    "[br] using say_char (should be 'A'): " say
+    65 say_char
+    "[br]Say UTF-8 Text: テキストの例\n" say
+
+    "Horizontal rule below this:\n---\nTest below horizontal rule.\n" say
+
+    "# Testing text formatting:\n" say
+    "bold text: [b]Lorem ipsum dolor sit amet.[/b][br]" say
+    "italic text: [i]Lorem ipsum dolor sit amet.[/i][br]" say
+    "bold italic: [b][i]Lorem ipsum dolor sit amet.[/i][/b][br]" say
+    "italic bold: [i][b]Lorem ipsum dolor sit amet.[/b][/i]\n" say
+
+    "Testing multiline string. Linebreak occurs here -->
+
+    <--\n" say
+}
+
+// ////////////////////////////////////////////////////////////////////////////
+// Update info areas
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testInfoarea() {
+    "The header, footer, and title regions should now be updated. (Unless you already ran this test since starting the program.)" say
+
+    "Good day!"     infobarLeft     set_setting
+    "5:00 am"       infobarRight    set_setting
+    "Fred is Cool"  infobarFooter   set_setting
+    "Updated Title" infobarTitle    set_setting
+}
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test RNG
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testRandom(: counter) {
+    "This will generate 200 random numbers between 50 and 60 below.\n" say
+
+    200 *counter set
+    loop_start:
+    counter 0 gte loop_done jnz
+    50 60 random say " " say
+    1 counter sub *counter set
+    counter loop_start jz
+    20 counter mod 0 eq no_nl jz
+    "[br]" say
+    loop_start jmp
+    no_nl:
+    10 counter mod 0 eq loop_start jz
+    " : " say
+    loop_start jmp
+    loop_done: "\n" say
+}
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test Fetching Debug / Origin Info
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testOrigins() {
+    //fromRestore all_done jnz
+    "main: "            say main            origin say "\n" say
+    "testInt: "         say testInt         origin say "\n" say
+    "testStr: "         say testStr         origin say "\n" say
+    "testList: "        say testList        origin say "\n" say
+    "testMap: "         say testMap         origin say "\n" say
+    "testProperty: "    say testProperty    origin say "\n" say
+    "testFlags: "       say testFlags       origin say "\n" say
+    "first_obj: "       say first_obj       origin say "\n" say
+    // "dynamic: "         say List new        origin say "\n" say
+
+    // "firstobj.testmethod: " say
+    // $testMethod first_obj get origin say
+    // "\n" say
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test Page Commands
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testPages() {
+    "Demo Page" testPage1 'd' add_page
+    "Another Page" otherPage 'a' add_page
+    "Page" otherPage 'p' add_page
+    "A Long Page Name" otherPage 'l' add_page
+    0 testPagesReal call
+}
+asm_function testPagesReal() {
+    "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
+    "Remove \"Another Page\"" testPagesRemovePage none none add_option
+    "Cleanup and return to main list" testPagesCleanup none none add_option
+    none get_option
+}
+asm_function testPagesRemovePage() {
+    "Another Page" del_page
+    0 testPagesReal call
+}
+asm_function testPagesCleanup() {
+    "Demo Page" del_page
+    "Another Page" del_page
+    "Page" del_page
+    "A Long Page Name" del_page
+    0 showOptions call
+}
+
+object testpageData
+    $count 1
+    $index 0
+;
+asm_function testPage1(key) {
+    key typeof Integer eq showpage jz
+    key 32 eq showkey jz
+    end_page
+    return
+
+    leftkey:
+    $index testpageData get 1 sub $index testpageData setp
+    showpage jmp
+    rightkey:
+    $index testpageData get 1 add $index testpageData setp
+    showpage jmp
+    upkey:
+    $index testpageData get 10 mult $index testpageData setp
+    showpage jmp
+    downkey:
+    $index testpageData get 10 div $index testpageData setp
+    showpage jmp
+
+    showkey:
+    "You pressed: " say key say " (which is not space).\n" say
+    key -1 eq leftkey jnz
+    key -2 eq rightkey jnz
+    key -3 eq downkey jnz
+    key -4 eq upkey jnz
+    showpage:
+    "You have viewed this page " say
+    $count testpageData get say
+    " times. The index counter is " say
+    $index testpageData get say
+    ". Use arrow keys to change."
+    "Press space to return." testPage1 get_key
+    $count testpageData get 1 add $count testpageData setp
+}
+asm_function otherPage() {
+    "You selected a page other than the demo page! (Only the demo page has actual content.)" say
+    "Continue" none none none add_option
+    endOtherPage none get_option
+}
+asm_function endOtherPage() {
+    end_page
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test selection
+// ////////////////////////////////////////////////////////////////////////////
+function showOptions(: choice) {
+    (while 1 (proc
+        (set_setting saveAllowed true)
+        ("Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading.")
+        (printMagicNumbers)
+
+        (option "Loop demo"                 testLoopDemo)
+
+        (option "Test syntax constructs"    testSyntax)
+
+        (option "Test output"               testOutput)
+        (option "Test info areas"           testInfoarea)
+        (option "Test random"               testRandom)
+        (option "Test origins"              testOrigins)
+
+        (option "Test pages"                testPages)
+        (option "Test input methods"        testInputs)
+        (set choice (get_option none))
+        (dispatcher choice)
+        ))
+}
+
+
+asm_function dispatcher(optionFunc extraValue) {
+    false saveAllowed set_setting
+    extraValue 1 optionFunc call
+
+    optionFunc showOptions eq alldone jnz
+    optionFunc testPages eq alldone jnz
+    optionFunc testPagesReal eq alldone jnz
+    optionFunc testPagesRemovePage eq alldone jnz
+    optionFunc receiveExtra eq alldone jnz
+    optionFunc testGetkey eq alldone jnz
+    optionFunc testLineInput eq alldone jnz
+    optionFunc testInputs eq alldone jnz
+    "Return to main page" showOptions none none add_option
+    none get_option
+
+    alldone:
+    0 return
+}
+
+asm_function main() {
+    "GTRPGE Test Suite" infobarTitle set_setting
+    "GTRPGE Test Suite" infobarLeft set_setting
+
+    // set the "magic numbers" used for demonstrate the load/save code
+    10000 40000 random $number1 magic_1 setp
+    10000 40000 random $number2 magic_1 setp
+    10000 40000 random $number3 magic_1 setp
+    10000 40000 random $number1 magic_2 setp
+    10000 40000 random $number2 magic_2 setp
+    10000 40000 random $number3 magic_2 setp
+
+    0 showOptions call
+}
+
+declare te ""
