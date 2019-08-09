@@ -179,12 +179,6 @@ function testSyntax(: value) {
     (if (not (or 1 1 0)) (error "(or 1 1 0) evalulated to false (should be true)"))
     (if (not (or 1 1 1)) (error "(or 1 1 1) evalulated to false (should be true)"))
 
-    ("Testing makestr...[br]")
-    (set value (new String))
-    (makestr value "This is " 55 " good.")
-    (if (str_compare value "This is 55 good.")
-        (error "makestr did not create string correctly."))
-
     ("Testing newstr...[br]")
     (set value (newstr "I ate " 3 " turnips."))
     (if (str_compare value "I ate 3 turnips.")
