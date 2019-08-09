@@ -127,6 +127,16 @@ asm_function testCall() {
     testMethodCall:
     "Calling testCallObject.testMethod...[br]" say
     3 2 1 3 $testMethod testCallObject get call
+
+    "Testing return values of non-asm functions.[br]" say
+    0 testSyntaxReturn call 5 eq testReturnDefaultLabel jnz
+    "testSyntaxReturn returned wrong value." error
+
+    testReturnDefaultLabel:
+    0 testSyntaxReturnDefault call 0 eq alldone jnz
+    "testSyntaxReturnDefault returned wrong value." error
+
+    alldone:
 }
 
 object testCallObject
@@ -180,6 +190,12 @@ asm_function testCallHelperMultiply( arg1 arg2 ) {
     arg1 arg2 mult return
 }
 
+function testSyntaxReturn() {
+    (return 5)
+}
+function testSyntaxReturnDefault() {
+    // uses default return value
+}
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test compare command

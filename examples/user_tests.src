@@ -74,11 +74,6 @@ object magic_2
 // ////////////////////////////////////////////////////////////////////////////
 // Testing non-asm syntax constructs
 // ////////////////////////////////////////////////////////////////////////////
-function testSyntaxReturn() {
-    (return 5)
-}
-function testSyntaxReturnDefault() {
-}
 function testSyntax(: value) {
     (print_uf "this " "tests " "print_uf.[br]")
 
@@ -152,9 +147,6 @@ function testSyntax(: value) {
     (label label_for_testing)
     (print "Good[br]")
 
-    (print "Testing return values of standard functions.[br]")
-    (if (neq (testSyntaxReturn) 5) (error "testSyntaxReturn returned wrong value."))
-    (if (neq (testSyntaxReturnDefault) 0) (error "testSyntaxReturnDefault returned wrong value."))
 
 }
 
