@@ -869,6 +869,14 @@ asm_function testStringManipulation(: testString) {
     "String append UF malfunctioned." error
 
     doneStrings:
+    0 testStringBuilder call
+}
+
+function testStringBuilder(: theString) {
+    ("Testing string builder...[br]")
+    (set theString (string "I ate " 3 " turnips."))
+    (if (str_compare theString "I ate 3 turnips.")
+        (error "newstr did not create string correctly."))
 }
 
 // ////////////////////////////////////////////////////////////////////////////
