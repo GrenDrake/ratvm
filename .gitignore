@@ -1,9 +1,12 @@
+# output files
 *.o
+*.bin
 gbuild
 grun
 filescan
 test_bytestream
-game.bin
+
+# debugging output from compilter
 tokens.txt
 strings.txt
 ir.txt
@@ -11,5 +14,7 @@ functions.txt
 data.txt
 bytecode.txt
 asm.txt
+
+# system files
 .vscode
 .DS_Store

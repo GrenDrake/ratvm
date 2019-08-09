@@ -16,9 +16,12 @@ RUNNER=./grun
 TEST_BYTESTREAM_OBJS=tests/bytestream.o build/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
 
-TESTSRC=examples/auto_tests.src
+AUTOTESTS_SRC=examples/auto_tests.src
+AUTOTESTS=./examples/auto_tests.bin
+USERTESTS_SRC=examples/user_tests.src
+USERTESTS=../gtrpge-javascript/games/user_tests.bin
 
-all: $(BUILD) $(RUNNER) tests game.bin
+all: $(BUILD) $(RUNNER) tests $(AUTOTESTS) $(USERTESTS)
 
 tests: $(TEST_BYTESTREAM)
 
@@ -32,9 +35,11 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
 
-game.bin: $(BUILD) $(TESTSRC)
-	$(BUILD) -data -functions -bytecode -asm -ir $(TESTSRC)
-	cp game.bin ../gtrpge-javascript/
+$(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
+	$(BUILD) -data -functions -bytecode -asm -ir $(AUTOTESTS_SRC) -o $(AUTOTESTS)
+	cp $(AUTOTESTS) ../gtrpge-javascript/games/
+$(USERTESTS): $(BUILD) $(USERTESTS_SRC)
+	$(BUILD) -data -functions -bytecode -asm -ir $(USERTESTS_SRC) -o $(USERTESTS)
 
 
 clean:
