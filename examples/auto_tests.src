@@ -828,19 +828,19 @@ asm_function testStringManipulation(: testString) {
     "\n# Test String Manipulation\n" say
 
     "Check static string \"Fred\" has length four...[br]" say
-    "Fred" strlen 4 eq strlenNewString jnz
+    "Fred" str_length 4 eq strlenNewString jnz
     "Bad length on static string \"Fred\"." error
 
     strlenNewString:
     String new *testString set
     "Check new string has zero length...[br]" say
-    testString strlen strcpyStrlen jz
+    testString str_length strcpyStrlen jz
     "Bad initial length on new string." error
 
     strcpyStrlen:
     "Copying \"Fred\" to dynamic string...[br]" say
-    "Fred" testString strcat
-    testString strlen 4 eq stringCompares jnz
+    "Fred" testString str_append
+    testString str_length 4 eq stringCompares jnz
     "Bad length on copied string \"Fred\"." error
 
     stringCompares:
@@ -850,13 +850,13 @@ asm_function testStringManipulation(: testString) {
 
     stringCompareStrcmp:
     "Comparing static and dynamic strings with [b]strcmp[/b]...[br]" say
-    "Fred" testString strcmp stringAppend jz
+    "Fred" testString str_compare stringAppend jz
     "Dynamic and static strings did not compare equal." error
 
     stringAppend:
     "Appending to test string...[br]" say
-    " Lives!" testString strcat
-    "Fred Lives!" testString strcmp doneStrings jz
+    " Lives!" testString str_append
+    "Fred Lives!" testString str_compare doneStrings jz
     "String append malfunctioned." error
 
     doneStrings:
