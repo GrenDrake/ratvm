@@ -52,7 +52,7 @@ void ParseState::require(Token::Type type) const {
         const Token *token = here();
         if (token) {
             std::stringstream ss;
-            ss << " Expected " << type << ", but found ";
+            ss << "Expected " << type << ", but found ";
             ss << token->type << ".";
             throw BuildError(token->origin, ss.str());
         } else {
