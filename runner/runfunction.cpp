@@ -10,30 +10,24 @@
 
 const int MAX_RUNTIME = 1000000000;
 
-Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgList) {
+Value GameData::resume(bool pushValue, const Value &inValue) {
     int iterations = 0;
 
-    const FunctionDef &funcDef = functions[functionId];
-    callStack.create(functionId);
-    callStack.getStack().setArgs(rawArgList, funcDef.arg_count, funcDef.local_count);
-    std::vector<Value> &argList = callStack.getStack().argList;
-
-    unsigned baseAddress = functions[functionId].position;
-    unsigned operationCount = 0;
-    unsigned IP = baseAddress;
+    if (pushValue) callStack.push(inValue);
+    unsigned IP = callStack.callTop().IP;
 
     while (1) {
         if (iterations > MAX_RUNTIME) {
             std::stringstream ss;
             ss << "Function exceeded max runtime at IP:";
-            ss << IP << " (local offset: " << IP - baseAddress << ").";
+            ss << IP << " (local offset: ";
+            ss << IP - callStack.callTop().funcDef.position << ").";
             throw GameError(ss.str());
         }
         ++iterations;
 
         int opcode = bytecode.read_8(IP);
         ++IP;
-        ++operationCount;
 
         switch(opcode) {
             case OpcodeDef::Return: {
@@ -42,7 +36,13 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                     retValue = callStack.pop();
                 }
                 callStack.drop();
-                return retValue; }
+                if (callStack.isEmpty()) {
+                    return retValue;
+                } else {
+                    callStack.push(retValue);
+                    IP = callStack.callTop().IP;
+                }
+                break; }
 
             case OpcodeDef::Push0: {
                 int type = bytecode.read_8(IP);
@@ -84,10 +84,11 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                 Value localId = callStack.popRaw();
                 Value value = callStack.pop();
                 localId.requireType(Value::LocalVar);
-                if (localId.value < 0 || localId.value >= static_cast<int>(argList.size())) {
+                if (localId.value < 0 || localId.value >=
+                        static_cast<int>(callStack.getStack().argCount())) {
                     throw GameError("Illegal local number.");
                 }
-                argList[localId.value] = value;
+                callStack.getStack().setArg(localId.value, value);
                 break; }
 
             case OpcodeDef::SayUCFirst: {
@@ -146,8 +147,14 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                 for (int i = 0; i < argCount.value; ++i) {
                     funcArgs.push_back(callStack.pop());
                 }
-                Value result = runFunctionCore(functionId.value, funcArgs);
-                callStack.push(result);
+
+                callStack.callTop().IP = IP;
+                const FunctionDef &newFunc = functions[functionId.value];
+                callStack.create(newFunc, functionId.value);
+                callStack.getStack().setArgs(funcArgs,
+                        callStack.callTop().funcDef.arg_count,
+                        callStack.callTop().funcDef.local_count);
+                IP = newFunc.position;
                 break; }
 
             case OpcodeDef::GetItem: {
@@ -281,14 +288,14 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
             case OpcodeDef::Jump: {
                 Value target = callStack.pop();
                 target.requireType(Value::JumpTarget);
-                IP = baseAddress + target.value;
+                IP = callStack.callTop().funcDef.position + target.value;
                 break; }
             case OpcodeDef::JumpZero: {
                 Value target = callStack.pop();
                 Value condition = callStack.pop();
                 target.requireType(Value::JumpTarget);
                 if (!condition.isTrue()) {
-                    IP = baseAddress + target.value;
+                    IP = callStack.callTop().funcDef.position + target.value;
                 }
                 break; }
             case OpcodeDef::JumpNotZero: {
@@ -296,7 +303,7 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                 Value condition = callStack.pop();
                 target.requireType(Value::JumpTarget);
                 if (condition.isTrue()) {
-                    IP = baseAddress + target.value;
+                    IP = callStack.callTop().funcDef.position + target.value;
                 }
                 break; }
             case OpcodeDef::LessThan: {
@@ -465,11 +472,13 @@ Value GameData::runFunctionCore(unsigned functionId, std::vector<Value> rawArgLi
                 break; }
 
             case OpcodeDef::GetOption: {
-                Value functionId = callStack.pop();
-                functionId.requireType(Value::Function);
+                Value extraArg = callStack.pop();
+                extraArg.requireType(Value::None, Value::Function);
                 optionType = OptionType::Choice;
-                optionFunction = functionId.value;
-                break; }
+                callStack.callTop().IP = IP;
+                if (extraArg.type == Value::None)   extraValue = -1;
+                else                                extraValue = extraArg.value;
+                return Value{}; }
             case OpcodeDef::AddOption: {
                 Value hotkey = callStack.pop();
                 Value extra = callStack.pop();

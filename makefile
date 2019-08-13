@@ -42,8 +42,11 @@ $(USERTESTS): $(BUILD) $(USERTESTS_SRC)
 	$(BUILD) -data -functions -bytecode -asm -ir $(USERTESTS_SRC) -o $(USERTESTS)
 
 
-clean:
+clean: clean_runner
 	$(RM) build/*.o runner/*.o tests/*.o
-	$(RM) $(BUILD) $(RUNNER) $(TEST_BYTESTREAM)
+	$(RM) $(BUILD) $(TEST_BYTESTREAM)
 
-.PHONY: all clean tests
+clean_runner:
+	$(RM) runner/*.o $(RUNNER)
+
+.PHONY: all clean clean_runner tests

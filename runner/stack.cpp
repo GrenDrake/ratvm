@@ -1,3 +1,6 @@
+#include <sstream>
+#include <string>
+
 #include "gameerror.h"
 #include "stack.h"
 
@@ -9,6 +12,13 @@ void gtStack::setArgs(const std::vector<Value> &rawArgs, int argCount, int local
         argList.resize(argCount);
     }
     for (int i = 0; i < localCount; ++i) argList.push_back(Value());
+}
+
+void gtStack::setArg(int index, const Value &newValue) {
+    if (index < 0 || index >= argList.size()) {
+        throw GameError("Tried to set illegal local number " + std::to_string(index) + ".");
+    }
+    argList[index] = newValue;
 }
 
 Value gtStack::peek(int index) const {
@@ -53,8 +63,8 @@ const Value& gtStack::operator[](int index) const {
 }
 
 
-void gtCallStack::create(unsigned functionId) {
-    mFrames.push_back(Frame{functionId});
+void gtCallStack::create(const FunctionDef &funcDef, unsigned functionId) {
+    mFrames.push_back(Frame{funcDef, functionId});
 }
 
 void gtCallStack::drop() {
@@ -83,4 +93,3 @@ const gtCallStack::Frame& gtCallStack::operator[](int index) {
     }
     return mFrames[index];
 }
-

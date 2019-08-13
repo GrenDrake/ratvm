@@ -120,13 +120,14 @@ struct GameData {
     }
 
     std::string getSource(const Value &value);
-    Value runFunction(unsigned functionId, std::vector<Value> argList);
+    Value resume(bool pushValue, const Value &inValue);
+    void setExtra(const Value &newValue);
     void say(const std::string &what);
     void say(const Value &what);
 
     OptionType optionType;
     std::vector<GameOption> options;
-    int optionFunction;
+    int extraValue;
     std::string textBuffer;
 
     bool gameLoaded;
@@ -146,7 +147,6 @@ struct GameData {
     std::array<std::string, INFO_COUNT> infoText;
     gtCallStack callStack;
 private:
-    Value runFunctionCore(unsigned functionId, std::vector<Value> argList);
 
     unsigned mCallCount;
 };

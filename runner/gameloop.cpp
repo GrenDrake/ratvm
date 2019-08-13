@@ -5,6 +5,7 @@
 #include <string>
 #include "gamedata.h"
 
+std::string formatText(const std::string &text);
 
 int tryAsNumber(const std::string &s) {
     char *endPtr;
@@ -14,19 +15,52 @@ int tryAsNumber(const std::string &s) {
 }
 
 void gameloop(GameData &gamedata, bool doQuick) {
-    gamedata.runFunction(gamedata.mainFunction, std::vector<Value>{});
-    if (doQuick) return;
+    const FunctionDef &funcDef = gamedata.getFunction(gamedata.mainFunction);
+    gamedata.callStack.create(funcDef, gamedata.mainFunction);
+    gamedata.callStack.getStack().setArgs(std::vector<Value>{Value{Value::None, 0}}, funcDef.arg_count, funcDef.local_count);
+    gamedata.callStack.callTop().IP = funcDef.position;
 
-    Value nextValue, nextExtra;
-    bool hasNext;
+    Value nextValue;
+    bool hasNext, hasValue = false;
     while (1) {
+        gamedata.textBuffer = "";
+        gamedata.options.clear();
+        gamedata.resume(hasValue, nextValue);
+        hasValue = false;
+
         std::cout << "\n*** " << gamedata.infoText[INFO_TITLE] << " ***\n";
         std::cout << gamedata.infoText[INFO_LEFT];
         std::cout << " : ";
         std::cout << gamedata.infoText[INFO_RIGHT];
-        std::cout << " : ";
-        std::cout << gamedata.infoText[INFO_BOTTOM];
         std::cout << '\n';
+        std::cout << formatText(gamedata.textBuffer) << '\n';
+        if (!gamedata.infoText[INFO_BOTTOM].empty()) {
+            std::cout << "[";
+            std::cout << gamedata.infoText[INFO_BOTTOM];
+            std::cout << "]\n";
+        }
+
+
+        switch(gamedata.optionType) {
+            case OptionType::Choice: {
+                std::cout << '\n';
+                int index = 1;
+                for (GameOption &option : gamedata.options) {
+                    if (option.hotkey > 0) {
+                        option.hotkey = std::toupper(option.hotkey);
+                        std::cout << static_cast<char>(option.hotkey) << ") ";
+                        std::cout << gamedata.getString(option.strId).text << '\n';
+                    } else {
+                        std::cout << index << ") ";
+                        std::cout << gamedata.getString(option.strId).text << '\n';
+                        option.hotkey = -index;
+                        ++index;
+                    }
+                }
+                break; }
+            default:
+                ;
+        }
 
         hasNext = false;
         do {
@@ -49,23 +83,31 @@ void gameloop(GameData &gamedata, bool doQuick) {
                         for (const GameOption &option : gamedata.options) {
                             if (option.hotkey == optNum) {
                                 nextValue = option.value;
-                                nextExtra = option.extra;
+                                gamedata.setExtra(option.extra);
                                 hasNext = true;
+                                hasValue = true;
+                                break;
+                            }
+                        }
+                    } else if (inputText.size() == 1) {
+                        char key = std::toupper(inputText[0]);
+                        // hotkey choice
+                        for (const GameOption &option : gamedata.options) {
+                            if (option.hotkey == key) {
+                                nextValue = option.value;
+                                gamedata.setExtra(option.extra);
+                                hasNext = true;
+                                hasValue = true;
                                 break;
                             }
                         }
                     }
-                    if (!hasNext && inputText.size() == 1) {
-                        // hotkey
-                    }
                     break; }
                 default:
+                    std::cerr << "Unknown option type " << static_cast<int>(gamedata.optionType) << '\n';
                     break;
             }
         } while (!hasNext);
-
-        std::vector<Value> argList{nextValue, nextExtra};
-        gamedata.runFunction(gamedata.optionFunction, argList);
     }
 
 }

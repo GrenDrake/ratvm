@@ -3,8 +3,6 @@
 #include <string>
 #include "gamedata.h"
 
-std::string formatText(const std::string &text);
-
 Value ListDef::get(int key) const {
     if (key < 0 || key >= static_cast<int>(items.size())) {
         return Value(Value::Integer, 0);
@@ -127,42 +125,10 @@ std::string GameData::getSource(const Value &value) {
     return text;
 }
 
-Value GameData::runFunction(unsigned functionId, std::vector<Value> argList) {
-    argList.insert(argList.begin(), noneValue);
-    Value returnValue = noneValue;
-
-    optionType = OptionType::None;
-    options.clear();
-    textBuffer.clear();
-
-    returnValue = runFunctionCore(functionId, argList);
-
-    std::cout << formatText(textBuffer);
-    if (textBuffer.back() != '\n') std::cout << '\n';
-
-    switch(optionType) {
-        case OptionType::Choice: {
-            std::cout << '\n';
-            int index = 1;
-            for (GameOption &option : options) {
-                if (option.hotkey > 0) {
-                    std::cout << static_cast<char>(option.hotkey) << ") ";
-                    std::cout << strings[option.strId].text << '\n';
-                } else {
-                    std::cout << index << ") ";
-                    std::cout << strings[option.strId].text << '\n';
-                    option.hotkey = -index;
-                    ++index;
-                }
-            }
-            break; }
-        default:
-            ;
+void GameData::setExtra(const Value &newValue) {
+    if (extraValue >= 0) {
+        callStack.getStack().setArg(extraValue, newValue);
     }
-
-    ++mCallCount;
-    // handle garbage collection
-    return returnValue;
 }
 
 void GameData::say(const std::string &what) {

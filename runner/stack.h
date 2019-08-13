@@ -1,12 +1,19 @@
 #ifndef STACK_H_735463546
 #define STACK_H_735463546
 
+#include <string>
 #include <vector>
 #include "value.h"
+
+struct FunctionDef;
 
 class gtStack {
 public:
     void setArgs(const std::vector<Value> &rawArgs, int argCount, int localCount);
+    void setArg(int index, const Value &newValue);
+    int argCount() const {
+        return argList.size();
+    }
 
     Value peek(int index = 0) const;
     void push(const Value &value) {
@@ -31,8 +38,10 @@ public:
 class gtCallStack {
 public:
     struct Frame {
+        const FunctionDef &funcDef;
         unsigned functionId;
         gtStack stack;
+        int IP;
     };
 
     Value peek(int index = 0) const {
@@ -48,8 +57,20 @@ public:
         return mFrames.back().stack.pop();
     }
 
+    const Frame& callTop() const {
+        return mFrames.back();
+    }
+    Frame& callTop() {
+        return mFrames.back();
+    }
+    void setIP(unsigned IP) {
+        callTop().IP = IP;
+    }
+    unsigned getIP() const {
+        return callTop().IP;
+    }
 
-    void create(unsigned functionId);
+    void create(const FunctionDef &funcDef, unsigned functionId);
     void drop();
     gtStack& getStack();
 
