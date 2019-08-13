@@ -20,8 +20,10 @@ AUTOTESTS_SRC=examples/auto_tests.src
 AUTOTESTS=./examples/auto_tests.bin
 USERTESTS_SRC=examples/user_tests.src
 USERTESTS=../gtrpge-javascript/games/user_tests.bin
+FIBTEST_SRC=examples/fibonacci.src
+FIBTEST=./examples/fibonacci.bin
 
-all: $(BUILD) $(RUNNER) tests $(AUTOTESTS) $(USERTESTS)
+all: $(BUILD) $(RUNNER) tests $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
 
 tests: $(TEST_BYTESTREAM)
 
@@ -40,6 +42,8 @@ $(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
 	cp $(AUTOTESTS) ../gtrpge-javascript/games/
 $(USERTESTS): $(BUILD) $(USERTESTS_SRC)
 	$(BUILD) -data -functions -bytecode -asm -ir $(USERTESTS_SRC) -o $(USERTESTS)
+$(FIBTEST): $(BUILD) $(FIBTEST_SRC)
+	$(BUILD) -data -functions -bytecode -asm -ir $(FIBTEST_SRC) -o $(FIBTEST)
 
 
 clean: clean_runner
