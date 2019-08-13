@@ -42,6 +42,9 @@ void gameloop(GameData &gamedata, bool doQuick) {
 
 
         switch(gamedata.optionType) {
+            case OptionType::EndOfProgram:
+                std::cout << "\nProgram ended. Goodbye!\n";
+                return;
             case OptionType::Choice: {
                 std::cout << '\n';
                 int index = 1;
@@ -75,6 +78,9 @@ void gameloop(GameData &gamedata, bool doQuick) {
             }
 
             switch(gamedata.optionType) {
+                case OptionType::EndOfProgram:
+                    //should never occur
+                    return;
                 case OptionType::Choice: {
                     int optNum = tryAsNumber(inputText);
                     if (optNum >= 0) {

@@ -68,7 +68,7 @@ struct FunctionDef : public DataItem  {
 };
 
 enum class OptionType {
-    None, Choice, Key, Line
+    None, Choice, Key, Line, EndOfProgram
 };
 
 struct GameOption {

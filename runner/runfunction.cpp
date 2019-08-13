@@ -37,6 +37,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 }
                 callStack.drop();
                 if (callStack.isEmpty()) {
+                    optionType = OptionType::EndOfProgram;
                     return retValue;
                 } else {
                     callStack.push(retValue);
