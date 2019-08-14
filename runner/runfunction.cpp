@@ -158,6 +158,22 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 IP = newFunc.position;
                 break; }
 
+            case OpcodeDef::ListPush: {
+                Value listId = callStack.pop();
+                Value value = callStack.pop();
+                listId.requireType(Value::List);
+                ListDef &list = getList(listId.value);
+                list.items.push_back(value);
+                break; }
+            case OpcodeDef::ListPop: {
+                Value listId = callStack.pop();
+                listId.requireType(Value::List);
+                ListDef &list = getList(listId.value);
+                Value value = list.items.back();
+                list.items.pop_back();
+                callStack.push(value);
+                break; }
+
             case OpcodeDef::GetItem: {
                 Value from = callStack.pop();
                 Value index = callStack.pop();
