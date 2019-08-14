@@ -19,11 +19,11 @@ TEST_BYTESTREAM=./test_bytestream
 AUTOTESTS_SRC=examples/auto_tests.src
 AUTOTESTS=./examples/auto_tests.bin
 USERTESTS_SRC=examples/user_tests.src
-USERTESTS=../gtrpge-javascript/games/user_tests.bin
+USERTESTS=./examples/user_tests.bin
 FIBTEST_SRC=examples/fibonacci.src
 FIBTEST=./examples/fibonacci.bin
 
-all: $(BUILD) $(RUNNER) tests $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
+all: $(BUILD) $(RUNNER) tests examples
 
 tests: $(TEST_BYTESTREAM)
 
@@ -37,6 +37,8 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
 
+examples: $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
+	cp ./examples/*.bin ../gtrpge-javascript/games/
 $(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
 	$(BUILD) -data -functions -bytecode -asm -ir $(AUTOTESTS_SRC) -o $(AUTOTESTS)
 	cp $(AUTOTESTS) ../gtrpge-javascript/games/
@@ -53,4 +55,4 @@ clean: clean_runner
 clean_runner:
 	$(RM) runner/*.o $(RUNNER)
 
-.PHONY: all clean clean_runner tests
+.PHONY: all clean clean_runner tests examples
