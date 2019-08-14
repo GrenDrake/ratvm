@@ -442,9 +442,10 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 Value idx2 = callStack.pop();
                 idx1.requireType(Value::Integer);
                 idx2.requireType(Value::Integer);
-                Value tmp = callStack.getStack()[idx1.value];
-                callStack.getStack()[idx1.value] = callStack.getStack()[idx2.value];
-                callStack.getStack()[idx2.value] = tmp;
+                int stackTop = callStack.getStack().size() - 1;
+                Value tmp = callStack.getStack()[stackTop - idx1.value];
+                callStack.getStack()[stackTop - idx1.value] = callStack.getStack()[stackTop - idx2.value];
+                callStack.getStack()[stackTop - idx2.value] = tmp;
                 break; }
 
             case OpcodeDef::SetSetting: {
