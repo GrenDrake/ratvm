@@ -1,3 +1,5 @@
+#include <iostream>
+#include <cctype>
 #include <regex>
 #include <string>
 
@@ -19,6 +21,7 @@ std::string formatText(const std::string &text) {
     result = regex_replace(result, cBold, "**$1**");
     result = regex_replace(result, cItalic, "__$1__");
 
+    result.erase(0, result.find_first_not_of(" \n"));
+    result.erase(result.find_last_not_of(" \n") + 1);
     return result;
-    ;
 }
