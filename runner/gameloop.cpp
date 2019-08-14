@@ -14,7 +14,7 @@ int tryAsNumber(const std::string &s) {
     return -1;
 }
 
-void gameloop(GameData &gamedata, bool doQuick) {
+void gameloop(GameData &gamedata, bool doSilent) {
     const FunctionDef &funcDef = gamedata.getFunction(gamedata.mainFunction);
     gamedata.callStack.create(funcDef, gamedata.mainFunction);
     gamedata.callStack.getStack().setArgs(std::vector<Value>{Value{Value::None, 0}}, funcDef.arg_count, funcDef.local_count);
@@ -28,24 +28,29 @@ void gameloop(GameData &gamedata, bool doQuick) {
         gamedata.resume(hasValue, nextValue);
         hasValue = false;
 
-        std::cout << "\n*** " << gamedata.infoText[INFO_TITLE] << " ***\n";
-        std::cout << gamedata.infoText[INFO_LEFT];
-        std::cout << " : ";
-        std::cout << gamedata.infoText[INFO_RIGHT];
-        std::cout << '\n';
-        std::cout << formatText(gamedata.textBuffer) << '\n';
-        if (!gamedata.infoText[INFO_BOTTOM].empty()) {
-            std::cout << "[";
-            std::cout << gamedata.infoText[INFO_BOTTOM];
-            std::cout << "]\n";
+        if (!doSilent) {
+            std::cout << "\n*** " << gamedata.infoText[INFO_TITLE] << " ***\n";
+            std::cout << gamedata.infoText[INFO_LEFT];
+            std::cout << " : ";
+            std::cout << gamedata.infoText[INFO_RIGHT];
+            std::cout << '\n';
+            std::cout << formatText(gamedata.textBuffer) << '\n';
+            if (!gamedata.infoText[INFO_BOTTOM].empty()) {
+                std::cout << "[";
+                std::cout << gamedata.infoText[INFO_BOTTOM];
+                std::cout << "]\n";
+            }
         }
 
 
         switch(gamedata.optionType) {
             case OptionType::EndOfProgram:
-                std::cout << "\nProgram ended. Goodbye!\n";
+                if (!doSilent) {
+                    std::cout << "\nProgram ended. Goodbye!\n";
+                }
                 return;
             case OptionType::Choice: {
+                if (doSilent) break;
                 std::cout << '\n';
                 int index = 1;
                 for (GameOption &option : gamedata.options) {
@@ -73,7 +78,9 @@ void gameloop(GameData &gamedata, bool doQuick) {
             std::transform(inputText.begin(), inputText.end(), inputText.begin(),
                     [](unsigned char c) -> unsigned char { return std::tolower(c); });
             if (inputText == "quit") {
-                std::cout << "\nGoodbye!\n";
+                if (!doSilent) {
+                    std::cout << "\nGoodbye!\n";
+                }
                 return;
             }
 

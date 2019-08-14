@@ -151,6 +151,6 @@ private:
     unsigned mCallCount;
 };
 
-void gameloop(GameData &gamedata, bool doQuick);
+void gameloop(GameData &gamedata, bool doSilent);
 
 #endif

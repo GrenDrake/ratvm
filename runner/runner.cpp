@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
     std::string gameFile;
     bool doDump = false;
-    bool doQuick = false;
+    bool doSilent = false;
 
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
@@ -21,8 +21,8 @@ int main(int argc, char *argv[]) {
             return 0;
         } else if (strcmp(argv[i], "-dump") == 0) {
             doDump = true;
-        } else if (strcmp(argv[i], "-quick") == 0) {
-            doQuick = true;
+        } else if (strcmp(argv[i], "-silent") == 0) {
+            doSilent = true;
         } else if (argv[i][0] == '-') {
             std::cerr << "Unrecognized option " << argv[i] << ".\n";
             return 1;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     }
     data.infoText[INFO_TITLE] = gameFile;
     try {
-        gameloop(data, doQuick);
+        gameloop(data, doSilent);
     } catch (GameError &e) {
         std::cerr << "\n" << IO::setFG(IO::Red);
         std::cerr << "RUNTIME ERROR:";
