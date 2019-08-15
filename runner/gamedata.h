@@ -12,6 +12,7 @@
 
 const int FILETYPE_ID = 0x47505254;
 const int HEADER_SIZE = 64;
+const int ORIGIN_DYNAMIC = -2;
 
 const int INFO_TITLE  = 0;
 const int INFO_LEFT   = 1;
@@ -124,6 +125,7 @@ struct GameData {
     void setExtra(const Value &newValue);
     void say(const std::string &what);
     void say(const Value &what);
+    Value makeNew(Value::Type type);
 
     OptionType optionType;
     std::vector<GameOption> options;

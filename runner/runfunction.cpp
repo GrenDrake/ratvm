@@ -452,6 +452,17 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                     callStack.push(listDef.items[choice]);
                 }
                 break; }
+            case OpcodeDef::GetKeys: {
+                Value theMap = callStack.pop();
+                theMap.requireType(Value::Map);
+                const MapDef &mapDef = getMap(theMap.value);
+                Value theList = makeNew(Value::List);
+                ListDef &listDef = getList(theList.value);
+                for (const MapDef::Row &row : mapDef.rows) {
+                    listDef.items.push_back(row.key);
+                }
+                callStack.push(theList);
+                break; }
 
             case OpcodeDef::StackSwap: {
                 Value idx1 = callStack.pop();
@@ -517,6 +528,11 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 Value ofWhat = callStack.pop();
                 std::string text = getSource(ofWhat);
                 callStack.push(Value{Value::String, 0});
+                break; }
+            case OpcodeDef::New: {
+                Value type = callStack.pop();
+                type.requireType(Value::Integer);
+                callStack.push(makeNew(static_cast<Value::Type>(type.value)));
                 break; }
 
             default: {

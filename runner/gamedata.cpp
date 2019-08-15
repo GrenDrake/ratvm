@@ -151,3 +151,19 @@ void GameData::say(const Value &what) {
     }
 }
 
+Value GameData::makeNew(Value::Type type) {
+    switch(type) {
+        case Value::List: {
+            ListDef newDef;
+            newDef.ident = lists.size();
+            newDef.srcFile = newDef.srcLine = newDef.srcName = -ORIGIN_DYNAMIC;
+            lists.push_back(newDef);
+            return Value(Value::List, newDef.ident);
+        }
+        default:
+            std::stringstream ss;
+            ss << "Tried to create new value of type " << type;
+            ss << " which cannot be instantiated.";
+            throw GameError(ss.str());
+    }
+}
