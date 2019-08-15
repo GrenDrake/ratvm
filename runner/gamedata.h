@@ -132,6 +132,7 @@ struct GameData {
     void say(const std::string &what);
     void say(const Value &what);
     Value makeNew(Value::Type type);
+    bool isStatic(const Value &what) const;
 
     OptionType optionType;
     std::vector<GameOption> options;

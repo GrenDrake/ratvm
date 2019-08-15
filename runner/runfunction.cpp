@@ -534,6 +534,11 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 type.requireType(Value::Integer);
                 callStack.push(makeNew(static_cast<Value::Type>(type.value)));
                 break; }
+            case OpcodeDef::IsStatic: {
+                Value value = callStack.pop();
+                callStack.push(Value{Value::Integer,
+                                     isStatic(value) ? 1 : 0});
+                break; }
 
             default: {
                 std::stringstream ss;

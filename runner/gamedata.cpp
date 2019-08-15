@@ -168,10 +168,41 @@ Value GameData::makeNew(Value::Type type) {
             lists.push_back(newDef);
             return Value(Value::List, newDef.ident);
         }
+        case Value::Map: {
+            MapDef newDef;
+            newDef.ident = maps.size();
+            newDef.srcFile = newDef.srcLine = newDef.srcName = -ORIGIN_DYNAMIC;
+            maps.push_back(newDef);
+            return Value(Value::Map, newDef.ident);
+        }
+        case Value::Object: {
+            ObjectDef newDef;
+            newDef.ident = objects.size();
+            newDef.srcFile = newDef.srcLine = newDef.srcName = -ORIGIN_DYNAMIC;
+            objects.push_back(newDef);
+            return Value(Value::Object, newDef.ident);
+        }
+        case Value::String: {
+            StringDef newDef;
+            newDef.ident = strings.size();
+            newDef.srcFile = newDef.srcLine = newDef.srcName = -ORIGIN_DYNAMIC;
+            strings.push_back(newDef);
+            return Value(Value::String, newDef.ident);
+        }
         default:
             std::stringstream ss;
             ss << "Tried to create new value of type " << type;
             ss << " which cannot be instantiated.";
             throw GameError(ss.str());
+    }
+}
+
+bool GameData::isStatic(const Value &what) const {
+    switch(what.type) {
+        case Value::Object: return what.value < staticObjects;
+        case Value::List:   return what.value < staticLists;
+        case Value::Map:    return what.value < staticMaps;
+        case Value::String: return what.value < staticStrings;
+        default:            return true;
     }
 }
