@@ -26,6 +26,12 @@ const int SETTING_INFOBAR_RIGHT  = 2;
 const int SETTING_INFOBAR_FOOTER = 3;
 const int SETTING_INFOBAR_TITLE  = 4;
 
+const int PROP_INTERNAL_NAME     = 1;
+const int PROP_IDENT             = 2;
+const int PROP_PARENT            = 3;
+
+struct GameData;
+
 struct DataItem {
     unsigned ident;
     int srcFile, srcLine, srcName;
@@ -58,7 +64,7 @@ struct MapDef : public DataItem  {
 struct ObjectDef : public DataItem  {
     std::map<unsigned, Value> properties;
 
-    Value get(unsigned propId) const;
+    Value get(GameData &gamedata, unsigned propId, bool checkParent = true) const;
     bool has(unsigned propId) const;
     void set(unsigned propId, const Value &value);
 };

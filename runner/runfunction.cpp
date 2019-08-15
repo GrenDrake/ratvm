@@ -181,7 +181,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 switch(from.type) {
                     case Value::Object:
                         index.requireType(Value::Property);
-                        result = objects[from.value].get(index.value);
+                        result = objects[from.value].get(*this, index.value);
                         break;
                     case Value::List: {
                         index.requireType(Value::Integer);

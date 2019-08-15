@@ -68,9 +68,17 @@ void MapDef::del(const Value &key) {
 }
 
 
-Value ObjectDef::get(unsigned propId) const {
+Value ObjectDef::get(GameData &gamedata, unsigned propId, bool checkParent) const {
     auto iter = properties.find(propId);
-    if (iter == properties.end()) return Value{Value::Integer, 0};
+    if (iter == properties.end()) {
+        if (checkParent) {
+            Value parent = get(gamedata, PROP_PARENT, false);
+            if (parent.type == Value::Object) {
+                return gamedata.getObject(parent.value).get(gamedata, propId);
+            }
+        }
+        return Value{Value::Integer, 0};
+    }
     Value result = iter->second;
     result.selfObj = ident;
     return result;
