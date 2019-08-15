@@ -133,6 +133,8 @@ struct GameData {
     void say(const Value &what);
     Value makeNew(Value::Type type);
     bool isStatic(const Value &what) const;
+    void stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst = false);
+    std::string asString(const Value &value);
 
     OptionType optionType;
     std::vector<GameOption> options;

@@ -81,7 +81,7 @@ struct OpcodeDef {
         DelPage             = 72,
         EndPage             = 73,
         New                 = 74,
-        /* Unused opcode: 75 */
+        StringAppendUF      = 75,
         IsStatic            = 76,
     };
 

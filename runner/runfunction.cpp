@@ -519,6 +519,26 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                                   hotkey.type == Value::None ? -1 : hotkey.value});
                 break; }
 
+            case OpcodeDef::StringAppend: {
+                Value theString = callStack.pop();
+                Value toAppend = callStack.pop();
+                theString.requireType(Value::String);
+                stringAppend(theString, toAppend);
+                break; }
+            case OpcodeDef::StringAppendUF: {
+                Value theString = callStack.pop();
+                Value toAppend = callStack.pop();
+                theString.requireType(Value::String);
+                stringAppend(theString, toAppend, true);
+                break; }
+            case OpcodeDef::StringLength: {
+                Value theString = callStack.pop();
+                theString.requireType(Value::String);
+                const StringDef &strDef = getString(theString.value);
+                int length = strDef.text.size();
+                callStack.push(Value{Value::Integer, length});
+                break; }
+
             case OpcodeDef::Error: {
                 Value msg = callStack.pop();
                 msg.requireType(Value::String);

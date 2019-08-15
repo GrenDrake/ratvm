@@ -30,9 +30,9 @@ struct Value {
     int value;
     unsigned selfObj;
 
-    void requireType(Value::Type theType);
-    void requireType(Value::Type typeOne, Value::Type typeTwo);
-    void forbidType(Value::Type theType);
+    void requireType(Value::Type theType) const;
+    void requireType(Value::Type typeOne, Value::Type typeTwo) const;
+    void forbidType(Value::Type theType) const;
     bool isTrue() const;
     int compare(const Value &rhs) const;
 };

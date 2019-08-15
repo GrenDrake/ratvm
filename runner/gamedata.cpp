@@ -206,3 +206,27 @@ bool GameData::isStatic(const Value &what) const {
         default:            return true;
     }
 }
+
+void GameData::stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst) {
+    stringId.requireType(Value::String);
+    std::string newText = asString(toAppend);
+    StringDef &strDef = getString(stringId.value);
+    strDef.text += newText;
+}
+
+std::string GameData::asString(const Value &value) {
+    switch(value.type) {
+        case Value::String: {
+            const StringDef &strDef = getString(value.value);
+            return strDef.text;
+        }
+        case Value::Integer: {
+            return std::to_string(value.value);
+        }
+        default: {
+            std::stringstream ss;
+            ss << value;
+            return ss.str();
+        }
+    }
+}

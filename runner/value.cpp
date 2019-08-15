@@ -74,7 +74,7 @@ std::ostream& operator<<(std::ostream &out, const Value &value) {
     return out;
 }
 
-void Value::requireType(Value::Type theType) {
+void Value::requireType(Value::Type theType) const {
     if (type != theType) {
         std::stringstream ss;
         ss << "Expected value of type " << theType << ", but found value of type";
@@ -82,7 +82,7 @@ void Value::requireType(Value::Type theType) {
     }
 }
 
-void Value::requireType(Value::Type typeOne, Value::Type typeTwo) {
+void Value::requireType(Value::Type typeOne, Value::Type typeTwo) const {
     if (type != typeOne && type != typeTwo) {
         std::stringstream ss;
         ss << "Expected value of type " << typeOne << " or ";
@@ -91,7 +91,7 @@ void Value::requireType(Value::Type typeOne, Value::Type typeTwo) {
     }
 }
 
-void Value::forbidType(Value::Type theType) {
+void Value::forbidType(Value::Type theType) const {
     if (type == theType) {
         std::stringstream ss;
         ss << "Found value of forbidden type " << theType << ".";
