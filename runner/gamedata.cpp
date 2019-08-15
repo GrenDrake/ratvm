@@ -211,6 +211,10 @@ void GameData::stringAppend(const Value &stringId, const Value &toAppend, bool u
     stringId.requireType(Value::String);
     std::string newText = asString(toAppend);
     StringDef &strDef = getString(stringId.value);
+    if (upperFirst && !newText.empty()) {
+        // FIXME: not UTF-8 aware
+        newText[0] = std::toupper(newText[0]);
+    }
     strDef.text += newText;
 }
 
