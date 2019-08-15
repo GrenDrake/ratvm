@@ -22,7 +22,7 @@ void dump_errors(GameData &gamedata);
 
 int main(int argc, char *argv[]) {
     std::vector<std::string> sourceFiles;
-    std::string outputFile = "game.bin";
+    std::string outputFile = "game.qvm";
     bool dump_tokens = false;
     bool dump_data = false;
     bool dump_bytecode = false;

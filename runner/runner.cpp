@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
             std::cerr << "    -quick     Run initial game function then quit.\n";
             return 0;
         } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
-            std::cerr << "Console Runner for GTRPGE, V1.0\n";
+            std::cerr << "Console Runner QuollVM, V1.0\n";
             return 0;
         } else if (strcmp(argv[i], "-dump") == 0) {
             doDump = true;
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
     }
-    if (gameFile.empty()) gameFile = "game.bin";
+    if (gameFile.empty()) gameFile = "game.qvm";
 
 
     GameData data;

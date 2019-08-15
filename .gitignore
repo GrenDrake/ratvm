@@ -1,6 +1,6 @@
 # output files
 *.o
-*.bin
+*.qvm
 gbuild
 grun
 filescan
