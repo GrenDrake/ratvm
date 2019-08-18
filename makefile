@@ -38,7 +38,7 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(TEST_BYTESTREAM)
 
 examples: $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
-	cp ./examples/*.qvm ../gtrpge-javascript/games/
+	cp ./examples/*.qvm ../playquoll/games/
 $(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
 	$(BUILD) $(AUTOTESTS_SRC) -o $(AUTOTESTS)
 	cp $(AUTOTESTS) ../gtrpge-javascript/games/
