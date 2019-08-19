@@ -38,14 +38,14 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(TEST_BYTESTREAM)
 
 examples: $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
-	cp ./examples/*.qvm ../gtrpge-javascript/games/
+	cp ./examples/*.qvm ../playquoll/games/
 $(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
-	$(BUILD) -data -functions -bytecode -asm -ir $(AUTOTESTS_SRC) -o $(AUTOTESTS)
+	$(BUILD) $(AUTOTESTS_SRC) -o $(AUTOTESTS)
 	cp $(AUTOTESTS) ../gtrpge-javascript/games/
 $(USERTESTS): $(BUILD) $(USERTESTS_SRC)
-	$(BUILD) -data -functions -bytecode -asm -ir $(USERTESTS_SRC) -o $(USERTESTS)
+	$(BUILD) $(USERTESTS_SRC) -o $(USERTESTS)
 $(FIBTEST): $(BUILD) $(FIBTEST_SRC)
-	$(BUILD) -data -functions -bytecode -asm -ir $(FIBTEST_SRC) -o $(FIBTEST)
+	$(BUILD) $(FIBTEST_SRC) -o $(FIBTEST)
 
 
 clean: clean_runner
