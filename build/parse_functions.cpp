@@ -154,7 +154,7 @@ void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &s
                 }
                 Value result = evalIdentifier(gamedata, function, state.here()->text);
                 if (result.type == Value::Opcode) {
-                    if (result.opcode->permissions & FORBID_ALWAYS) {
+                    if (result.opcode->permissions & FORBID_ASM) {
                         gamedata.addError(state.here()->origin, ErrorMsg::Error, "Opcode " + result.opcode->name + " may not be used explicitly.");
                     }
                     function->code.add_8(result.opcode->code);

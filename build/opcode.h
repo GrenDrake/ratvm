@@ -3,7 +3,9 @@
 
 #include <string>
 
-const int FORBID_ALWAYS = 0x01;
+const int FORBID_ALWAYS     = 0xFF;
+const int FORBID_ASM        = 0x01;
+const int FORBID_EXPRESSION = 0x02;
 
 struct OpcodeDef {
     enum CodeOpcode {
