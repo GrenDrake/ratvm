@@ -40,22 +40,22 @@ void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
 
 StatementType statementTypes[] = {
     { "",           nullptr       },
-    { "and",        stmt_and    },
-    { "break",      stmt_break    },
-    { "continue",   stmt_continue },
-    { "dec",        stmt_dec      },
-    { "do_while",   stmt_do_while },
-    { "if",         stmt_if       },
-    { "inc",        stmt_inc      },
-    { "label",      stmt_label    },
-    { "list",       stmt_list     },
-    { "string",     stmt_string   },
-    { "option",     stmt_option   },
-    { "or",         stmt_or       },
-    { "print",      stmt_print    },
-    { "print_uf",   stmt_print_uf },
-    { "proc",       stmt_proc     },
-    { "while",      stmt_while    },
+    { "and",        stmt_and,       true    },
+    { "break",      stmt_break,     false   },
+    { "continue",   stmt_continue,  false   },
+    { "dec",        stmt_dec,       false   },
+    { "do_while",   stmt_do_while,  false   },
+    { "if",         stmt_if,        true    },
+    { "inc",        stmt_inc,       false   },
+    { "label",      stmt_label,     false   },
+    { "list",       stmt_list,      true    },
+    { "string",     stmt_string,    true    },
+    { "option",     stmt_option,    false   },
+    { "or",         stmt_or,        true    },
+    { "print",      stmt_print,     false   },
+    { "print_uf",   stmt_print_uf,  false   },
+    { "proc",       stmt_proc,      true    },
+    { "while",      stmt_while,     false   },
 };
 
 const StatementType& getReservedWord(const std::string &word) {
@@ -174,6 +174,9 @@ void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list)
     for (const StatementType &stmt : statementTypes) {
         if (stmt.name == word) {
             stmt.handler(gamedata, function, list);
+            if (!stmt.hasResult) {
+                function->addOpcode(function->origin, OpcodeDef::PushNone);
+            }
             return;
         }
     }
@@ -323,6 +326,7 @@ void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list) {
 
     function->addLabel(origin, start_label);
     process_value(gamedata, function, list->values[1]);
+    function->addOpcode(origin, OpcodeDef::StackPop);
     function->addLabel(origin, condition_label);
     process_value(gamedata, function, list->values[2]);
     function->addValue(origin, Value{Value::Symbol, 0, after_label});
@@ -489,6 +493,9 @@ void stmt_proc(GameData &gamedata, FunctionDef *function, List *list) {
 
     for (unsigned i = 1; i < list->values.size(); ++i) {
         process_value(gamedata, function, list->values[i]);
+        if (i != list->values.size() - 1) {
+            function->addOpcode(function->origin, OpcodeDef::StackPop);
+        }
     }
 }
 
@@ -566,6 +573,7 @@ void process_list(GameData &gamedata, FunctionDef *function, List *list) {
                     ListValue{list->values[0].origin,
                     {Value::Reserved, 0, "print"}});
             stmt_print(gamedata, function, list);
+            function->addOpcode(function->origin, OpcodeDef::PushNone);
             break;
         case Value::Reserved:
             handle_reserved_stmt(gamedata, function, list);

@@ -30,6 +30,7 @@ struct List {
 struct StatementType {
     std::string name;
     void (*handler)(GameData &gamedata, FunctionDef *function, List *list);
+    bool hasResult;
 };
 
 void dump_list(const List *list, std::ostream &out);
