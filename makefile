@@ -41,7 +41,6 @@ examples: $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
 	cp ./examples/*.qvm ../playquoll/games/
 $(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
 	$(BUILD) $(AUTOTESTS_SRC) -o $(AUTOTESTS)
-	cp $(AUTOTESTS) ../gtrpge-javascript/games/
 $(USERTESTS): $(BUILD) $(USERTESTS_SRC)
 	$(BUILD) $(USERTESTS_SRC) -o $(USERTESTS)
 $(FIBTEST): $(BUILD) $(FIBTEST_SRC)
