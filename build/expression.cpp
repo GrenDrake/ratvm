@@ -22,7 +22,6 @@ void stmt_dec(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_inc(GameData &gamedata, FunctionDef *function, List *list);
-void stmt_label(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_list(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_string(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list);
@@ -47,7 +46,6 @@ StatementType statementTypes[] = {
     { "do_while",   stmt_do_while,  false   },
     { "if",         stmt_if,        true    },
     { "inc",        stmt_inc,       false   },
-    { "label",      stmt_label,     false   },
     { "list",       stmt_list,      true    },
     { "string",     stmt_string,    true    },
     { "option",     stmt_option,    false   },
@@ -337,18 +335,6 @@ void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list) {
 
     function->continueLabels.pop_back();
     function->breakLabels.pop_back();
-}
-
-void stmt_label(GameData &gamedata, FunctionDef *function, List *list) {
-    if (checkListSize(list, 2, 2)) {
-        if (list->values[1].value.type != Value::Symbol) {
-            std::stringstream ss;
-            ss << "Label name must be undefined identifier";
-            gamedata.addError(list->values[1].origin, ErrorMsg::Error, ss.str());
-        } else {
-            function->addLabel(list->values[1].origin, list->values[1].value.text);
-        }
-    }
 }
 
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list) {
