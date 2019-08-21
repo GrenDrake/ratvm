@@ -57,7 +57,11 @@ void parse_constant(GameData &gamedata, ParseState &state) {
     gamedata.symbols.add(SymbolDef(origin,
                                     constantName,
                                     value));
-    // state.skip(Token::Semicolon);
+    try {
+        state.skip(Token::Semicolon);
+    } catch (BuildError &e) {
+        gamedata.addError(state.here()->origin, ErrorMsg::Error, e.getMessage());
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,6 +95,11 @@ static void parse_default(GameData &gamedata, ParseState &state) {
         ss << "Default value for " << defaultName;
         ss << " already declared at " << oldDefault->origin << ".";
         gamedata.addError(origin, ErrorMsg::Warning, ss.str());
+    }
+    try {
+        state.skip(Token::Semicolon);
+    } catch (BuildError &e) {
+        gamedata.addError(state.here()->origin, ErrorMsg::Error, e.getMessage());
     }
 }
 

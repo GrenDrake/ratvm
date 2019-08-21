@@ -2,21 +2,21 @@
 // First string : this must be the first string used for one of the tests
 //                to function correctly.
 // ////////////////////////////////////////////////////////////////////////////
-declare firstString "this is the first string"
+declare firstString "this is the first string";
 
 
 // ////////////////////////////////////////////////////////////////////////////
 // Data used for tests
 // ////////////////////////////////////////////////////////////////////////////
-declare testInt 7384
-declare testStr "A Name"
-declare testList [ 1 2 3 ]
+declare testInt 7384;
+declare testStr "A Name";
+declare testList [ 1 2 3 ];
 declare testMap {
     1: "The"
     2: "End"
-}
-declare testProperty $testFunc
-declare testFlags flags( 6 7 8 testInt )
+};
+declare testProperty $testFunc;
+declare testFlags flags( 6 7 8 testInt );
 
 extend testList [ 100 200 ];
 extend testMap {
@@ -42,12 +42,12 @@ object parent_obj
 // ////////////////////////////////////////////////////////////////////////////
 // Test default values commands
 // ////////////////////////////////////////////////////////////////////////////
-default undeclaredValue 5
-default declaredValue 10
-declare declaredValue 20
-declare otherDeclaredValue 40
-default otherDeclaredValue 30
-default aFunction testDefaults
+default undeclaredValue 5;
+default declaredValue 10;
+declare declaredValue 20;
+declare otherDeclaredValue 40;
+default otherDeclaredValue 30;
+default aFunction testDefaults;
 
 function testDefaults() {
     ("\n# Testing default values\n")
