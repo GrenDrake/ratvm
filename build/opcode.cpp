@@ -67,7 +67,7 @@ OpcodeDef opcodes[] = {
     {   "str_length",   OpcodeDef::StringLength,            1, 1 },
     {   "str_compare",  OpcodeDef::StringCompare,           2, 1 },
     {   "error",        OpcodeDef::Error,                   1, 0 },
-    {   "origin",       OpcodeDef::Origin,                  1, 0 },
+    {   "origin",       OpcodeDef::Origin,                  1, 1 },
     {   "add_page",     OpcodeDef::AddPage,                 3, 0 },
     {   "del_page",     OpcodeDef::DelPage,                 1, 0 },
     {   "end_page",     OpcodeDef::EndPage,                 0, 0 },
