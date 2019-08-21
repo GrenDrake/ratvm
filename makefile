@@ -1,3 +1,4 @@
+PLAYQUOLL=../playquoll/
 CXXFLAGS= -std=c++11 -g -Wall
 
 BUILD_OBJS=build/build.o build/general.o build/lexer.o \
@@ -38,7 +39,7 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(TEST_BYTESTREAM)
 
 examples: $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
-	cp ./examples/*.qvm ../playquoll/games/
+	cp ./examples/*.qvm $(PLAYQUOLL)games/
 $(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
 	$(BUILD) $(AUTOTESTS_SRC) -o $(AUTOTESTS)
 $(USERTESTS): $(BUILD) $(USERTESTS_SRC)
