@@ -14,6 +14,7 @@ struct Value {
         Function    = 5,
         Object      = 6,
         Property    = 7,
+        TypeId      = 8,
         JumpTarget  = 9,
         VarRef      = 10,
         LocalVar    = 15,

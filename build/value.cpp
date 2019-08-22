@@ -62,6 +62,9 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::Expression:
             out << "Expression";
             break;
+        case Value::TypeId:
+            out << "TypeId";
+            break;
         default:
             out << "(unhandled type " << static_cast<int>(type) << ")";
     }

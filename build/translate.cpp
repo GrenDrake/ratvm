@@ -14,16 +14,16 @@
 #include "build.h"
 
 void add_default_constants(GameData &gamedata) {
-    gamedata.symbols.add(SymbolDef(Origin(), "None",            Value{Value::Integer, 0}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Integer",         Value{Value::Integer, 1}));
-    gamedata.symbols.add(SymbolDef(Origin(), "String",          Value{Value::Integer, 2}));
-    gamedata.symbols.add(SymbolDef(Origin(), "List",            Value{Value::Integer, 3}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Map",             Value{Value::Integer, 4}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Function",        Value{Value::Integer, 5}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::Integer, 6}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::Integer, 7}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::Integer, 9}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Reference",       Value{Value::Integer, 10}));
+    gamedata.symbols.add(SymbolDef(Origin(), "None",            Value{Value::TypeId, 0}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Integer",         Value{Value::TypeId, 1}));
+    gamedata.symbols.add(SymbolDef(Origin(), "String",          Value{Value::TypeId, 2}));
+    gamedata.symbols.add(SymbolDef(Origin(), "List",            Value{Value::TypeId, 3}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Map",             Value{Value::TypeId, 4}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Function",        Value{Value::TypeId, 5}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::TypeId, 6}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::TypeId, 7}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::TypeId, 9}));
+    gamedata.symbols.add(SymbolDef(Origin(), "Reference",       Value{Value::TypeId, 10}));
     gamedata.symbols.add(SymbolDef(Origin(), "none",            Value{Value::None,    0}));
     gamedata.symbols.add(SymbolDef(Origin(), "saveAllowed",     Value{Value::Integer, 0}));
     gamedata.symbols.add(SymbolDef(Origin(), "infobarLeft",     Value{Value::Integer, 1}));

@@ -390,7 +390,7 @@ void stmt_inc(GameData &gamedata, FunctionDef *function, List *list) {
 }
 
 void stmt_list(GameData &gamedata, FunctionDef *function, List *list) {
-    function->addValue(list->values[0].origin, Value{Value::Integer, static_cast<int>(Value::List)});
+    function->addValue(list->values[0].origin, Value{Value::TypeId, static_cast<int>(Value::List)});
     function->addOpcode(list->values[0].origin, OpcodeDef::New);
 
     for (unsigned i = 1; i < list->values.size(); ++i) {
@@ -404,7 +404,7 @@ void stmt_list(GameData &gamedata, FunctionDef *function, List *list) {
 }
 
 void stmt_string(GameData &gamedata, FunctionDef *function, List *list) {
-    function->addValue(list->values[0].origin, Value{Value::Integer, static_cast<int>(Value::String)});
+    function->addValue(list->values[0].origin, Value{Value::TypeId, static_cast<int>(Value::String)});
     function->addOpcode(list->values[0].origin, OpcodeDef::New);
 
     for (unsigned i = 1; i < list->values.size(); ++i) {
