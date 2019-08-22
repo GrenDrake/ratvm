@@ -717,8 +717,19 @@ function testListSort(: theList) {
     (list_push theList 0)
     (sort theList)
     (if (neq (get theList 0) 0) (error "First sorted list item wrong."))
-    (if (neq (get theList 1) 5) (error "First sorted list item wrong."))
-    (if (neq (get theList 2) 10) (error "First sorted list item wrong."))
+    (if (neq (get theList 1) 5) (error "Second sorted list item wrong."))
+    (if (neq (get theList 2) 10) (error "Third sorted list item wrong."))
+
+    (set theList (new List))
+    (list_push theList "leg")
+    (list_push theList "arm")
+    (list_push theList "tail")
+    (list_push theList "head")
+    (sort theList)
+    (if (neq (get theList 0) "arm") (error "First sorted list item wrong."))
+    (if (neq (get theList 1) "head") (error "Second sorted list item wrong."))
+    (if (neq (get theList 2) "leg") (error "Third sorted list item wrong."))
+    (if (neq (get theList 3) "tail") (error "Fourth sorted list item wrong."))
 }
 function testListBuilder(: theList) {
     ("Testing list builder expression...[br]")

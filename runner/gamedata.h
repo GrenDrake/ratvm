@@ -90,6 +90,13 @@ struct GameData {
     void load(const std::string &filename);
     void dump() const;
 
+    const StringDef& getString(int index) const {
+        if (index < 0 || index >= static_cast<int>(strings.size())) {
+            throw GameError("Tried to access invalid string number "
+                            + std::to_string(index));
+        }
+        return strings[index];
+    }
     StringDef& getString(int index) {
         if (index < 0 || index >= static_cast<int>(strings.size())) {
             throw GameError("Tried to access invalid string number "
@@ -135,6 +142,7 @@ struct GameData {
     bool isStatic(const Value &what) const;
     void stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst = false);
     std::string asString(const Value &value);
+    void sortList(const Value &listId);
 
     OptionType optionType;
     std::vector<GameOption> options;

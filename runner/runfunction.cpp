@@ -174,6 +174,11 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.push(value);
                 break; }
 
+            case OpcodeDef::Sort: {
+                Value listId = callStack.pop();
+                listId.requireType(Value::List);
+                sortList(listId);
+                break; }
             case OpcodeDef::GetItem: {
                 Value from = callStack.pop();
                 Value index = callStack.pop();

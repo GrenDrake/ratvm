@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -222,4 +223,27 @@ std::string GameData::asString(const Value &value) {
             return ss.str();
         }
     }
+}
+
+class ListItemSorter {
+public:
+    ListItemSorter(const GameData &gamedata)
+    : data(gamedata)
+    {}
+
+    bool operator() (const Value &left, const Value &right) {
+        if (left.type != right.type) return left.type < right.type;
+        if (left.type == Value::String) {
+            return data.getString(left.value).text < data.getString(right.value).text;
+        } else {
+            return left.value < right.value;
+        }
+    }
+private:
+    const GameData &data;
+};
+void GameData::sortList(const Value &listId) {
+    ListDef &theList = getList(listId.value);
+    ListItemSorter sorter(*this);
+    std::sort(theList.items.begin(), theList.items.end(), sorter);
 }
