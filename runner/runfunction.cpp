@@ -251,7 +251,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 break; }
             case OpcodeDef::TypeOf: {
                 Value ofWhat = callStack.pop();
-                callStack.push(Value{Value::Integer, static_cast<int>(ofWhat.type)});
+                callStack.push(Value{Value::TypeId, static_cast<int>(ofWhat.type)});
                 break; }
             case OpcodeDef::DelItem: {
                 Value target = callStack.pop();
@@ -286,7 +286,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
             case OpcodeDef::AsType: {
                 Value ofWhat = callStack.pop();
                 Value toType = callStack.pop();
-                toType.requireType(Value::Integer);
+                toType.requireType(Value::TypeId);
                 callStack.push(Value{static_cast<Value::Type>(toType.value), ofWhat.value});
                 break; }
 
@@ -566,7 +566,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 break; }
             case OpcodeDef::New: {
                 Value type = callStack.pop();
-                type.requireType(Value::Integer);
+                type.requireType(Value::TypeId);
                 callStack.push(makeNew(static_cast<Value::Type>(type.value)));
                 break; }
             case OpcodeDef::IsStatic: {

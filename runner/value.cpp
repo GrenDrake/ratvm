@@ -57,6 +57,9 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::LocalVar:
             out << "LocalVar";
             break;
+        case Value::TypeId:
+            out << "TypeId";
+            break;
         default:
             out << "(unhandled type " << static_cast<int>(type) << ")";
     }
