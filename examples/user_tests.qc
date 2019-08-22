@@ -200,9 +200,8 @@ function testLineInput(: theLine) {
 // Output command tests
 // ////////////////////////////////////////////////////////////////////////////
 function testOutput() {
-    ("This text (and nearly all text in these tests) is output using the \"print\" expression.\nPrint integer value: ")
-    (print 6215)
-    ("[br]-1 using say_unsigned (should be 4294967295): ")
+    ("This text (and nearly all text in these tests) is output using the \"print\" expression.\n")
+    ("-1 using say_unsigned (should be 4294967295): ")
     (say_unsigned -1)
     ("[br] using say_char (should be 'A'): ")
     (say_char 65)
@@ -218,6 +217,12 @@ function testOutput() {
     ("Testing multiline string. Linebreak occurs here -->
 
     <--\n")
+
+    ("Testing output of non-string types:[br][b]Integer[/b]: " 55)
+    ("[br][b]List[/b]: " testList)
+    ("[br][b]Map[/b]: " testMap)
+    ("[br][b]Object[/b]: " testObject)
+    ("[br][b]Property[/b]: " testProperty "\n")
 }
 
 // ////////////////////////////////////////////////////////////////////////////
