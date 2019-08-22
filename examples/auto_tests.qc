@@ -700,6 +700,7 @@ asm_function testLists(: counter random_value) {
     counter 1 add *counter set
     200 counter gt randomloop jnz
 
+    0 testListSort call
     0 testListBuilder call
     return
 
@@ -707,6 +708,17 @@ asm_function testLists(: counter random_value) {
     "\n" say testList 1 printArray call
     "List has wrong contents." error
     return
+}
+function testListSort(: theList) {
+    ("Testing list sorting...[br]")
+    (set theList (new List))
+    (list_push theList 5)
+    (list_push theList 10)
+    (list_push theList 0)
+    (sort theList)
+    (if (neq (get theList 0) 0) (error "First sorted list item wrong."))
+    (if (neq (get theList 1) 5) (error "First sorted list item wrong."))
+    (if (neq (get theList 2) 10) (error "First sorted list item wrong."))
 }
 function testListBuilder(: theList) {
     ("Testing list builder expression...[br]")
