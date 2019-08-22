@@ -145,19 +145,6 @@ void GameData::say(const std::string &what) {
 
 void GameData::say(const Value &what) {
     say(asString(what));
-    // switch(what.type) {
-    //     case Value::String:
-    //         textBuffer += strings[what.value].text;
-    //         break;
-    //     case Value::Integer:
-    //         textBuffer += std::to_string(what.value);
-    //         break;
-    //     default: {
-    //         std::stringstream ss;
-    //         ss << '<' << what.type << ": " << what.value << '>';
-    //         textBuffer += ss.str();
-    //     }
-    // }
 }
 
 Value GameData::makeNew(Value::Type type) {
