@@ -107,6 +107,7 @@ std::string GameData::getSource(const Value &value) {
         case Value::LocalVar:
         case Value::VarRef:
         case Value::JumpTarget:
+        case Value::TypeId:
             return "";
         case Value::Map:
             item = &getMap(value.value);
