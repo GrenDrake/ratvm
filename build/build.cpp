@@ -7,7 +7,9 @@
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
 
+#include <chrono>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -18,7 +20,9 @@
 #include "builderror.h"
 #include "token.h"
 
-void dump_errors(GameData &gamedata);
+const char ansiEscape = 0x1B;
+
+void dump_errors(GameData &gamedata, bool useAnsiEscapes);
 
 int main(int argc, char *argv[]) {
     std::vector<std::string> sourceFiles;
@@ -32,6 +36,11 @@ int main(int argc, char *argv[]) {
     bool dump_asmCode = false;
     bool dump_irFlag = false;
     bool skipIdentCheck = false;
+    bool useAnsiEscapes = true;
+    bool showFiles = false;
+    bool showNextIdent = false;
+
+    auto runStart = std::chrono::system_clock::now();
 
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-data") == 0) {
@@ -53,6 +62,16 @@ int main(int argc, char *argv[]) {
             dump_irFlag = true;
         } else if (strcmp(argv[i], "-skip-ident-check") == 0) {
             skipIdentCheck = true;
+
+        } else if (strcmp(argv[i], "-color") == 0) {
+            useAnsiEscapes = true;
+        } else if (strcmp(argv[i], "-no-color") == 0) {
+            useAnsiEscapes = false;
+        } else if (strcmp(argv[i], "-show-files") == 0) {
+            showFiles = true;
+        } else if (strcmp(argv[i], "-show-next-ident") == 0) {
+            showNextIdent = true;
+
         } else if (strcmp(argv[i], "-o") == 0) {
             ++i;
             if (i >= argc) {
@@ -80,29 +99,32 @@ int main(int argc, char *argv[]) {
 
     try {
         for (const std::string &file : sourceFiles) {
+            if (showFiles) {
+                std::cerr << "[including file " << file << ".]\n";
+            }
             std::vector<Token> newTokens = lex_file(gamedata, file);
             tokens.insert(tokens.end(), newTokens.begin(), newTokens.end());
         }
-        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
         parse_tokens(gamedata, tokens);
-        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
         translate_symbols(gamedata);
-        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
         gamedata.organize();
         if (!skipIdentCheck) {
             nextIdent = gamedata.checkObjectIdents();
         }
-        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
         parse_functions(gamedata);
-        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
         generate(gamedata, outputFile);
-        if (gamedata.hasErrors()) { dump_errors(gamedata); return 1; }
+        if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
     } catch (BuildError &e) {
         std::cerr << "Error: " << e.getMessage() << '\n';
         return 1;
     }
 
-    if (nextIdent > 0) {
+    if (showNextIdent && !skipIdentCheck) {
         std::cerr << "[next available ident: " << nextIdent << "]\n";
     }
 
@@ -136,18 +158,38 @@ int main(int argc, char *argv[]) {
     }
 
     if (!gamedata.errors.empty()) {
-        dump_errors(gamedata);
+        dump_errors(gamedata, useAnsiEscapes);
+    } else {
+        auto runEnd = std::chrono::system_clock::now();
+        auto buildTimeRaw = std::chrono::duration_cast<std::chrono::milliseconds>(runEnd - runStart);
+        int buildTimeMS = buildTimeRaw.count();
+        int buildTimeS = buildTimeMS / 1000;
+        buildTimeMS -= buildTimeS * 1000;
+        if (useAnsiEscapes) std::cerr << ansiEscape << "[92m";
+        std::cerr << "[Created gamefile " << outputFile << " in ";
+        std::cerr << buildTimeS << ".";
+        std::cerr << std::setfill('0') << std::setw(3) << buildTimeMS << " ms.]\n";
+        if (useAnsiEscapes) std::cerr << ansiEscape << "[0m";
     }
+
     return 0;
 }
 
-void dump_errors(GameData &gamedata) {
+void dump_errors(GameData &gamedata, bool useAnsiEscapes) {
     int warnCount = gamedata.errors.size() - gamedata.errorCount;
 
     for (const ErrorMsg &error : gamedata.errors) {
         std::cerr << error.origin << ": ";
-        std::cerr << error.type << ": ";
-        std::cerr << error.message << '\n';
+        if (useAnsiEscapes) {
+            switch(error.type) {
+                case ErrorMsg::Error:   std::cerr << ansiEscape << "[91m"; break;
+                case ErrorMsg::Warning: std::cerr << ansiEscape << "[93m"; break;
+                case ErrorMsg::Fatal:   std::cerr << ansiEscape << "[95m"; break;
+            }
+        }
+        std::cerr << error.type;
+        if (useAnsiEscapes) std::cerr << ansiEscape << "[0m";
+        std::cerr << ": " << error.message << '\n';
     }
     std::cerr << '[';
     if (gamedata.errorCount > 0) {

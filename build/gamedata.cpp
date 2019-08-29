@@ -163,7 +163,7 @@ int GameData::checkObjectIdents() {
         }
     }
 
-    return nextIdent;
+    return nextIdent < 0 ? 1 : nextIdent;
 }
 
 void GameData::addError(const Origin &origin, ErrorMsg::Type type, const std::string &text) {

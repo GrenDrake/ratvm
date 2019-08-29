@@ -20,7 +20,6 @@ struct LexerState {
 void handle_string_escapes(GameData &gamedata, const Origin &origin, std::string &text);
 
 std::vector<Token> lex_file(GameData &gamedata, const std::string &filename) {
-    std::cerr << "[including file ~" << filename << "~.]\n";
     std::string text = readFile(filename);
     return lex_string(gamedata, filename, text);
 }

@@ -46,8 +46,6 @@ void write_str(std::ostream &out, const std::string &text) {
 ///////////////////////////////////////////////////////////////////////////////
 // Generate the output gamefile
 void generate(GameData &gamedata, const std::string &outputFile) {
-    std::cerr << "[Creating gamefile ~" << outputFile << "~.]\n";
-
     std::ofstream out(outputFile);
     if (!out) {
         std::cerr << "Failed to create output file.\n";
