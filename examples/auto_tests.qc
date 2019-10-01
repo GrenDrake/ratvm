@@ -578,6 +578,88 @@ asm_function testValues(: localvar) {
     all_done:
 }
 
+// ////////////////////////////////////////////////////////////////////////////
+// Test isvalid
+// ////////////////////////////////////////////////////////////////////////////
+asm_function testIsValid(: localvar) {
+    "\n# Testing is_valid\n" say
+
+    test_isvalid:
+    "Testing basic types...[br]" say
+    none is_valid false eq test_isvalid_badnone jnz
+    5 is_valid false eq test_isvalid_badint jnz
+    $property is_valid false eq test_isvalid_badproperty jnz
+    test_isvalid is_valid false eq test_isvalid_badlabel jnz
+    *localvar is_valid false eq test_isvalid_badvarref jnz
+    Integer is_valid false eq test_isvalid_badtype jnz
+
+    "Testing invalid 0 values...[br]" say
+    Function 0 astype is_valid false eq test_isvalid_funczero jz
+    List 0 astype is_valid false eq test_isvalid_listzero jz
+    Map 0 astype is_valid false eq test_isvalid_mapzero jz
+    Object 0 astype is_valid false eq test_isvalid_objectzero jz
+
+    "Testing valid values...[br]" say
+    "The" is_valid false eq test_isvalid_badstring jnz
+    testList is_valid false eq test_isvalid_badlist jnz
+    testMap is_valid false eq test_isvalid_badmap jnz
+    first_obj is_valid false eq test_isvalid_badobject jnz
+    testValues is_valid false eq test_isvalid_badfunc jnz
+
+    "Testing invalid values...[br]" say
+    String 99999 astype is_valid false eq test_isvalid_badbadstring jz
+    List 99999 astype is_valid false eq test_isvalid_badbadlist jz
+    Map 99999 astype is_valid false eq test_isvalid_badbadmap jz
+    Object 99999 astype is_valid false eq test_isvalid_badbadobject jz
+    Function 99999 astype is_valid false eq test_isvalid_badbadfunc jz
+
+    return
+
+    test_isvalid_badnone:
+        "None registered invalid." error
+    test_isvalid_badint:
+        "Integer 5 registered invalid." error
+    test_isvalid_badproperty:
+        "Property $property registered invalid." error
+    test_isvalid_badlabel:
+        "Label test_isvalid registered invalid." error
+    test_isvalid_badvarref:
+        "VarRef localvar registered invalid." error
+    test_isvalid_badtype:
+        "Integer type registered invalid." error
+
+    test_isvalid_funczero:
+        "Function 0 registered as valid." error
+    test_isvalid_listzero:
+        "List 0 registered as valid." error
+    test_isvalid_mapzero:
+        "Map 0 registered as valid." error
+    test_isvalid_objectzero:
+        "Object 0 registered as valid." error
+
+    test_isvalid_badstring:
+        "String \"The\" registered as invalid." error
+    test_isvalid_badlist:
+        "List testList registered as invalid." error
+    test_isvalid_badmap:
+        "Map testMap registered as invalid." error
+    test_isvalid_badobject:
+        "Object first_obj registered as invalid." error
+    test_isvalid_badfunc:
+        "Function testValues registered as invalid." error
+
+    test_isvalid_badbadstring:
+        "Invalid String registered as invalid." error
+    test_isvalid_badbadlist:
+        "Invalid List registered as invalid." error
+    test_isvalid_badbadmap:
+        "Invalid Map registered as invalid." error
+    test_isvalid_badbadobject:
+        "Invalid Object registered as invalid." error
+    test_isvalid_badbadfunc:
+        "Invalid Function registered as invalid." error
+}
+
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test List Methods
@@ -962,6 +1044,32 @@ function testAndOr() {
     (if (not (or 1 1 1)) (error "(or 1 1 1) evalulated to false (should be true)"))
 }
 
+asm_function testGarbage(localVar fakeRef) {
+    "\n# Testing garbage collection\n" say
+
+    // we convert the new list to an int to ensure there are no references to it
+    // this will permit the garbage collector to collect the list
+    Integer List new astype *fakeRef set
+    List new *localVar set
+    List new // leave value on top of stack
+
+    // force garbage collection
+    "Objects Collected: " say collect say "[br]" say
+
+    "Testing uncollected objects...[br]" say
+    // the new list from earlier is still on the top of the stack
+    is_valid true eq stack_not_valid jz
+    localVar is_valid true eq localvar_not_valid jz
+
+    "Testing collected objects...[br]" say
+    List fakeRef astype is_valid false eq list_still_valid jz
+
+    return
+    list_still_valid:   "Unreferenced list not collected." error
+    stack_not_valid:    "Stack item collected." error
+    localvar_not_valid: "Local variable item collected." error
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
@@ -977,12 +1085,14 @@ asm_function main() {
     0 testDefaults call
 
     0 testValues call
+    0 testIsValid call
     0 testLists call
     0 testMaps call
     0 testObjectProps call
     0 testDynamic call
     0 testStringManipulation call
     0 testAndOr call
+    0 testGarbage call
 
     "\nALL TESTS PASSED" say
 }
