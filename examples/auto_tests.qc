@@ -1070,6 +1070,27 @@ asm_function testGarbage(localVar fakeRef) {
     localvar_not_valid: "Local variable item collected." error
 }
 
+asm_function testNextObject(: obj) {
+    "\n# Testing next_object\n" say
+
+    // make sure the object list contains a gap
+    Object new pop
+    Object new *obj set
+    collect pop
+
+    none next_object *obj set
+    "Found objects: " say
+
+    loop_start:
+    obj none eq all_done jnz
+    Integer obj astype say " " say
+    obj next_object *obj set
+    loop_start jmp
+
+    all_done:
+    "[br]" say
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
@@ -1093,6 +1114,7 @@ asm_function main() {
     0 testStringManipulation call
     0 testAndOr call
     0 testGarbage call
+    0 testNextObject call
 
     "\nALL TESTS PASSED" say
 }
