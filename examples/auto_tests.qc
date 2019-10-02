@@ -679,8 +679,21 @@ asm_function testLists(: counter random_value) {
     "\n# Testing List Operations\n" say
 
     "Testing list insertion...[br]" say
-    testList size 5 eq test_add jnz
+    testList size 5 eq test_index_of jnz
     "Test list has wrong initial size." error
+
+    test_index_of:
+    "Testing index_of...[br]" say
+    testList 1 indexof 0 eq test_indexof_bad1 jz
+    testList 2 indexof 1 eq test_indexof_bad2 jz
+    testList 3 indexof 2 eq test_indexof_bad3 jz
+    testList 4 indexof 0 gt test_indexof_bad4 jz
+
+    test_add jmp
+    test_indexof_bad1: "Wrong result for position of \"1\" in test list." error
+    test_indexof_bad2: "Wrong result for position of \"2\" in test list." error
+    test_indexof_bad3: "Wrong result for position of \"3\" in test list." error
+    test_indexof_bad4: "Wrong result for position of \"4\" in test list." error
 
     test_add:
     91 99 testList ins

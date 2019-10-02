@@ -66,7 +66,7 @@ struct OpcodeDef {
         BitNot              = 51,
         Random              = 52,
         NextObject          = 53,
-        /* unused: 54 */
+        IndexOf             = 54,
         GetRandom           = 55,
         GetKeys             = 56,
         StackSwap           = 57,
