@@ -4,6 +4,11 @@
 // ////////////////////////////////////////////////////////////////////////////
 declare firstString "this is the first string";
 
+declare TITLE   "Automated Test Suite";
+declare AUTHOR  "Gren Drake";
+declare VERSION 1;
+declare GAMEID  "5B56C550-A391-40FF-85BD-D8144396D701";
+
 
 // ////////////////////////////////////////////////////////////////////////////
 // Data used for tests
