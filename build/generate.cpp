@@ -6,6 +6,7 @@
 
 #include <cctype>
 #include <cstdint>
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -42,6 +43,23 @@ void write_str(std::ostream &out, const std::string &text) {
     }
 }
 
+void write_symbol(std::ostream &out, const std::string &symbolName, Value::Type requiredType, GameData &gamedata, const std::string &outputFile) {
+    const SymbolDef *nameSym = gamedata.symbols.get(symbolName);
+    if (nameSym == nullptr) {
+        std::stringstream ss;
+        ss << "Symbol " << symbolName << " not defined.";
+        gamedata.addError(Origin(outputFile,0,0), ErrorMsg::Error, ss.str());
+        write_32(out, 0);
+    } else if (nameSym->value.type != requiredType) {
+        std::stringstream ss;
+        ss << "Symbol " << symbolName << " must be " << requiredType << ".";
+        gamedata.addError(Origin(outputFile,0,0), ErrorMsg::Error, ss.str());
+        write_32(out, 0);
+    } else {
+        write_32(out, nameSym->value.value);
+    }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Generate the output gamefile
@@ -61,15 +79,17 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         gamedata.addError(Origin(outputFile,0,0), ErrorMsg::Error, "Function \"main\" not defined.");
         write_32(out, 0);
     }
-    // write gamefile flags
+    // 12: write gamefile flags
     write_32(out, 0);
 
+    // 16, 20, 24, 28: title, author, version, gameid, and build number
+    write_symbol(out, "TITLE",   Value::String,  gamedata, outputFile); // 16: game title
+    write_symbol(out, "AUTHOR",  Value::String,  gamedata, outputFile); // 20: game author
+    write_symbol(out, "VERSION", Value::Integer, gamedata, outputFile); // 24: game version
+    write_symbol(out, "GAMEID",  Value::String,  gamedata, outputFile); // 28: game id
+    write_32(out, static_cast<uint32_t>(std::time(nullptr)));           // 32: build number
+
     // pad to the header out to 64 bytes
-    write_32(out, 0);   // 16: padding
-    write_32(out, 0);   // 20: padding
-    write_32(out, 0);   // 24: padding
-    write_32(out, 0);   // 28: padding
-    write_32(out, 0);   // 32: padding
     write_32(out, 0);   // 36: padding
     write_32(out, 0);   // 40: padding
     write_32(out, 0);   // 44: padding
