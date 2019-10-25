@@ -105,70 +105,70 @@ GameData::~GameData() {
 
 const StringDef& GameData::getString(int index) const {
     if (index < 0 || index >= static_cast<int>(strings.size()) || strings[index] == nullptr) {
-        throw GameError("Tried to access invalid string number "
+        throw GameBadReference("Tried to access invalid string number "
                         + std::to_string(index));
     }
     return *strings[index];
 }
 StringDef& GameData::getString(int index) {
     if (index < 0 || index >= static_cast<int>(strings.size()) || strings[index] == nullptr) {
-        throw GameError("Tried to access invalid string number "
+        throw GameBadReference("Tried to access invalid string number "
                         + std::to_string(index));
     }
     return *strings[index];
 }
 const ListDef& GameData::getList(int index) const {
     if (index <= 0 || index >= static_cast<int>(lists.size()) || lists[index] == nullptr) {
-        throw GameError("Tried to access invalid list number "
+        throw GameBadReference("Tried to access invalid list number "
                         + std::to_string(index));
     }
     return *lists[index];
 }
 ListDef& GameData::getList(int index) {
     if (index <= 0 || index >= static_cast<int>(lists.size()) || lists[index] == nullptr) {
-        throw GameError("Tried to access invalid list number "
+        throw GameBadReference("Tried to access invalid list number "
                         + std::to_string(index));
     }
     return *lists[index];
 }
 const MapDef& GameData::getMap(int index) const {
     if (index <= 0 || index >= static_cast<int>(maps.size()) || maps[index] == nullptr) {
-        throw GameError("Tried to access invalid map number "
+        throw GameBadReference("Tried to access invalid map number "
                         + std::to_string(index));
     }
     return *maps[index];
 }
 MapDef& GameData::getMap(int index) {
     if (index <= 0 || index >= static_cast<int>(maps.size()) || maps[index] == nullptr) {
-        throw GameError("Tried to access invalid map number "
+        throw GameBadReference("Tried to access invalid map number "
                         + std::to_string(index));
     }
     return *maps[index];
 }
 const ObjectDef& GameData::getObject(int index) const {
     if (index <= 0 || index >= static_cast<int>(objects.size()) || objects[index] == nullptr) {
-        throw GameError("Tried to access invalid object number "
+        throw GameBadReference("Tried to access invalid object number "
                         + std::to_string(index));
     }
     return *objects[index];
 }
 ObjectDef& GameData::getObject(int index) {
     if (index <= 0 || index >= static_cast<int>(objects.size()) || objects[index] == nullptr) {
-        throw GameError("Tried to access invalid object number "
+        throw GameBadReference("Tried to access invalid object number "
                         + std::to_string(index));
     }
     return *objects[index];
 }
 const FunctionDef& GameData::getFunction(int index) const {
     if (index <= 0 || index >= static_cast<int>(functions.size())) {
-        throw GameError("Tried to access invalid function number "
+        throw GameBadReference("Tried to access invalid function number "
                         + std::to_string(index));
     }
     return functions[index];
 }
 FunctionDef& GameData::getFunction(int index) {
     if (index <= 0 || index >= static_cast<int>(functions.size())) {
-        throw GameError("Tried to access invalid function number "
+        throw GameBadReference("Tried to access invalid function number "
                         + std::to_string(index));
     }
     return functions[index];
@@ -314,7 +314,7 @@ void GameData::mark(const Value &value) {
             case Value::VarRef:
                 break;
         }
-    } catch (const GameError &e) {
+    } catch (const GameBadReference &e) {
         // do nothing; no need to mark non-existance objects
     }
 }
@@ -431,7 +431,7 @@ bool GameData::isValid(const Value &what) const {
             case Value::Function:   getFunction(what.value);    break;
             default:                return true;
         }
-    } catch (const GameError &error) {
+    } catch (const GameBadReference &error) {
         return false;
     }
     return true;

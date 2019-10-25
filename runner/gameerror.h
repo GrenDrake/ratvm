@@ -3,10 +3,17 @@
 
 #include <stdexcept>
 
-class GameError : public std::runtime_error{
+class GameError : public std::runtime_error {
 public:
     GameError(const std::string &msg)
     : std::runtime_error(msg)
+    { }
+};
+
+class GameBadReference : public GameError {
+public:
+    GameBadReference(const std::string &msg)
+    : GameError(msg)
     { }
 };
 
