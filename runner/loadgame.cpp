@@ -41,40 +41,40 @@ void GameData::load(const std::string &filename) {
     // READ STRINGS
     staticStrings = read_32(inf);
     for (unsigned i = 0; i < staticStrings; ++i) {
-        StringDef def;
-        def.ident = i;
-        def.text = read_str(inf);
+        StringDef *def = new StringDef;
+        def->ident = i;
+        def->text = read_str(inf);
         strings.push_back(def);
     }
 
     // // READ LISTS
-    lists.push_back(ListDef{});
+    lists.push_back(nullptr);
     staticLists = read_32(inf); // dummy list so index matches IDs
     for (unsigned i = 0; i < staticLists; ++i) {
-        ListDef def;
-        def.ident = i + 1;
-        def.srcName = -1;
-        def.srcFile = read_32(inf);
-        def.srcLine = read_32(inf);
+        ListDef *def = new ListDef;
+        def->ident = i + 1;
+        def->srcName = -1;
+        def->srcFile = read_32(inf);
+        def->srcLine = read_32(inf);
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             Value value;
             value.type = static_cast<Value::Type>(read_8(inf));
             value.value = read_32(inf);
-            def.items.push_back(value);
+            def->items.push_back(value);
         }
         lists.push_back(def);
     }
 
     // READ MAPS
-    maps.push_back(MapDef{});
+    maps.push_back(nullptr);
     staticMaps = read_32(inf); // dummy map so index matches IDs
     for (unsigned i = 0; i < staticMaps; ++i) {
-        MapDef def;
-        def.ident = i + 1;
-        def.srcName = -1;
-        def.srcFile = read_32(inf);
-        def.srcLine = read_32(inf);
+        MapDef *def = new MapDef;
+        def->ident = i + 1;
+        def->srcName = -1;
+        def->srcFile = read_32(inf);
+        def->srcLine = read_32(inf);
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             Value v1, v2;
@@ -82,27 +82,27 @@ void GameData::load(const std::string &filename) {
             v1.value = read_32(inf);
             v2.type = static_cast<Value::Type>(read_8(inf));
             v2.value = read_32(inf);
-            def.rows.push_back(MapDef::Row{v1,v2});
+            def->rows.push_back(MapDef::Row{v1,v2});
         }
         maps.push_back(def);
     }
 
     // READ OBJECTS
-    objects.push_back(ObjectDef{});
+    objects.push_back(nullptr);
     staticObjects = read_32(inf);
     for (unsigned i = 0; i < staticObjects; ++i) {
-        ObjectDef def;
-        def.ident = i + 1;
-        def.srcName = read_32(inf);
-        def.srcFile = read_32(inf);
-        def.srcLine = read_32(inf);
+        ObjectDef *def = new ObjectDef;
+        def->ident = i + 1;
+        def->srcName = read_32(inf);
+        def->srcFile = read_32(inf);
+        def->srcLine = read_32(inf);
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             unsigned propId = read_16(inf);
             Value value;
             value.type = static_cast<Value::Type>(read_8(inf));
             value.value = read_32(inf);
-            def.properties.insert(std::make_pair(propId, value));
+            def->properties.insert(std::make_pair(propId, value));
         }
         objects.push_back(def);
     }

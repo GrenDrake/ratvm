@@ -87,9 +87,9 @@ struct GameOption {
 
 struct GameData {
     GameData() : gameLoaded(false), mCallCount(0) { }
+    ~GameData();
     void load(const std::string &filename);
     void dump() const;
-    int collectGarbage();
 
     const StringDef& getString(int index) const;
     StringDef& getString(int index);
@@ -101,6 +101,13 @@ struct GameData {
     ObjectDef& getObject(int index);
     const FunctionDef& getFunction(int index) const;
     FunctionDef& getFunction(int index);
+
+    int collectGarbage();
+    void mark(ObjectDef &object);
+    void mark(ListDef   &list);
+    void mark(MapDef    &map);
+    void mark(StringDef &str);
+    void mark(const Value &value);
 
     std::string getSource(const Value &value);
     Value resume(bool pushValue, const Value &inValue);
@@ -121,10 +128,10 @@ struct GameData {
 
     bool gameLoaded;
     int mainFunction;
-    std::vector<StringDef> strings;
-    std::vector<ListDef> lists;
-    std::vector<MapDef> maps;
-    std::vector<ObjectDef> objects;
+    std::vector<StringDef*> strings;
+    std::vector<ListDef*> lists;
+    std::vector<MapDef*> maps;
+    std::vector<ObjectDef*> objects;
     std::vector<FunctionDef> functions;
     ByteStream bytecode;
     unsigned staticStrings;

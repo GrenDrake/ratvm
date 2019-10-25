@@ -99,7 +99,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
             case OpcodeDef::SayUCFirst: {
                 Value theText = callStack.pop();
                 if (theText.type == Value::String) {
-                    std::string toSay = strings[theText.value].text;
+                    std::string toSay = getString(theText.value).text;
                     if (!toSay.empty()) {
                         toSay[0] = std::toupper(toSay[0]);
                         say(toSay);
@@ -195,12 +195,11 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 switch(from.type) {
                     case Value::Object:
                         index.requireType(Value::Property);
-                        result = objects[from.value].get(*this, index.value);
+                        result = getObject(from.value).get(*this, index.value);
                         break;
                     case Value::List: {
                         index.requireType(Value::Integer);
-                        const ListDef &listDef = getList(from.value);
-                        result = listDef.get(index.value);
+                        result = getList(from.value).get(index.value);
                         break; }
                     case Value::Map: {
                         const MapDef &mapDef = getMap(from.value);
@@ -219,7 +218,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 switch(from.type) {
                     case Value::Object:
                         index.requireType(Value::Property);
-                        result = objects[from.value].has(index.value);
+                        result = getObject(from.value).has(index.value);
                         break;
                     case Value::List: {
                         index.requireType(Value::Integer);
@@ -249,7 +248,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 switch(from.type) {
                     case Value::Object:
                         index.requireType(Value::Property);
-                        objects[from.value].set(index.value, toValue);
+                        getObject(from.value).set(index.value, toValue);
                         break;
                     case Value::List:
                         index.requireType(Value::Integer);
@@ -612,7 +611,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
             case OpcodeDef::Error: {
                 Value msg = callStack.pop();
                 msg.requireType(Value::String);
-                throw GameError(strings[msg.value].text);
+                throw GameError(getString(msg.value).text);
                 break; }
             case OpcodeDef::Origin: {
                 Value ofWhat = callStack.pop();
