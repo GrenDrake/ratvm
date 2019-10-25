@@ -189,10 +189,10 @@ Value GameData::makeNew(Value::Type type) {
 
 bool GameData::isStatic(const Value &what) const {
     switch(what.type) {
-        case Value::Object: return what.value < staticObjects;
-        case Value::List:   return what.value < staticLists;
-        case Value::Map:    return what.value < staticMaps;
-        case Value::String: return what.value < staticStrings;
+        case Value::Object: return static_cast<unsigned>(what.value) < staticObjects;
+        case Value::List:   return static_cast<unsigned>(what.value) < staticLists;
+        case Value::Map:    return static_cast<unsigned>(what.value) < staticMaps;
+        case Value::String: return static_cast<unsigned>(what.value) < staticStrings;
         default:            return true;
     }
 }

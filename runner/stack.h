@@ -10,7 +10,7 @@ struct FunctionDef;
 class gtStack {
 public:
     void setArgs(const std::vector<Value> &rawArgs, int argCount, int localCount);
-    void setArg(int index, const Value &newValue);
+    void setArg(unsigned index, const Value &newValue);
     int argCount() const {
         return argList.size();
     }
