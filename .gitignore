@@ -5,6 +5,7 @@ gbuild
 grun
 filescan
 test_bytestream
+test_general
 
 # debugging output from compilter
 tokens.txt

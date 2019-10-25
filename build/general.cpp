@@ -7,16 +7,21 @@
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
 #include <algorithm>
+#include <cctype>
 #include <cstring>
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #include "gamedata.h"
 #include "symboltable.h"
 #include "builderror.h"
 #include "origin.h"
 #include "token.h"
+
+static int parseAsHexInt(const std::string &text);
+static int parseAsBinaryInt(const std::string &text);
 
 /* ************************************************************************** *
  * Definitions for BuildError class                                           *
@@ -231,6 +236,13 @@ std::string readFile(const std::string &file) {
 }
 
 int parseAsInt(const std::string &text) {
+    if (text.size() >= 2 && text[0] == '0') {
+        switch(std::tolower(text[1])) {
+            case 'x':   return parseAsHexInt(text);
+            case 'b':   return parseAsBinaryInt(text);
+        }
+    }
+
     int value = 0;
     bool negative = false;
     size_t start = 0;
@@ -240,13 +252,65 @@ int parseAsInt(const std::string &text) {
     }
     for (size_t pos = start; pos < text.size(); ++pos) {
         char c = text[pos];
-        if (c >= '0' && c <= '9') {
+        if (c == '_' || c == ',') {
+            continue;
+        } else if (c >= '0' && c <= '9') {
             value *= 10;
             value += c - '0';
         } else {
-            throw BuildError("invalid integer");
+            throw IntParseError("invalid decimal integer '" + text + "'");
         }
     }
     if (negative) value = -value;
+    return value;
+}
+
+int parseAsHexInt(const std::string &text) {
+    if (text.size() < 3) {
+        throw IntParseError("invalid hex integer " + text);
+    }
+    if (text[0] != '0' || std::tolower(text[1]) != 'x') {
+        throw IntParseError("invalid hex integer " + text + "'");
+    }
+
+    int value = 0;
+    for (size_t pos = 2; pos < text.size(); ++pos) {
+        char c = std::tolower(text[pos]);
+        if (c == '_' || c == ',') {
+            continue;
+        } else if (c >= '0' && c <= '9') {
+            value *= 16;
+            value += c - '0';
+        } else if (c >= 'a' && c <= 'f') {
+            value *= 16;
+            value += c - 'a'+ 10;
+        } else {
+            throw IntParseError("invalid hex integer " + text + "'");
+        }
+    }
+    return value;
+}
+
+int parseAsBinaryInt(const std::string &text) {
+    if (text.size() < 3) {
+        throw IntParseError("invalid binary integer " + text);
+    }
+    if (text[0] != '0' || std::tolower(text[1]) != 'b') {
+        throw IntParseError("invalid binary integer " + text);
+    }
+
+    int value = 0;
+    for (size_t pos = 2; pos < text.size(); ++pos) {
+        char c = text[pos];
+        if (c == '_' || c == ',') {
+            continue;
+        } else {
+            value <<= 1;
+            if (c == '1') value |= 1;
+            else if (c != '0') {
+                throw IntParseError("invalid binary integer " + text);
+            }
+        }
+    }
     return value;
 }

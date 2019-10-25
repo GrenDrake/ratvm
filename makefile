@@ -16,6 +16,8 @@ RUNNER=./grun
 
 TEST_BYTESTREAM_OBJS=tests/bytestream.o build/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
+TEST_GENERAL_OBJS=tests/general.o build/general.o
+TEST_GENERAL=./test_general
 
 AUTOTESTS_SRC=examples/auto_tests.qc
 AUTOTESTS=./examples/auto_tests.qvm
@@ -26,7 +28,7 @@ FIBTEST=./examples/fibonacci.qvm
 
 all: $(BUILD) $(RUNNER) tests examples
 
-tests: $(TEST_BYTESTREAM)
+tests: $(TEST_BYTESTREAM) $(TEST_GENERAL)
 
 $(BUILD): $(BUILD_OBJS)
 	$(CXX) $(BUILD_OBJS) -o $(BUILD)
@@ -37,6 +39,10 @@ $(RUNNER): $(RUNNER_OBJS)
 $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
+
+$(TEST_GENERAL): $(BUILD) $(TEST_GENERAL_OBJS)
+	$(CXX) $(TEST_GENERAL_OBJS) -o $(TEST_GENERAL)
+	$(TEST_GENERAL)
 
 examples: $(BUILD) $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
 	cp ./examples/*.qvm $(PLAYQUOLL)games/

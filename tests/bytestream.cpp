@@ -116,6 +116,7 @@ int main() {
         test_overwrite();
     } catch (TestFailed &e) {
         std::cerr << "Test Failed: " << e.what() << '\n';
+        return 1;
     }
 
     return 0;

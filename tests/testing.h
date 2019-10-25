@@ -1,6 +1,9 @@
 #ifndef TESTING_H
 #define TESTING_H
 
+#include <stdexcept>
+#include <sstream>
+
 class TestFailed : public std::runtime_error {
 public:
     TestFailed(const std::string &message)
