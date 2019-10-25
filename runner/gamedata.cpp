@@ -96,6 +96,83 @@ void ObjectDef::set(unsigned propId, const Value &value) {
 }
 
 
+const StringDef& GameData::getString(int index) const {
+    if (index < 0 || index >= static_cast<int>(strings.size())) {
+        throw GameError("Tried to access invalid string number "
+                        + std::to_string(index));
+    }
+    return strings[index];
+}
+StringDef& GameData::getString(int index) {
+    if (index < 0 || index >= static_cast<int>(strings.size())) {
+        throw GameError("Tried to access invalid string number "
+                        + std::to_string(index));
+    }
+    return strings[index];
+}
+const ListDef& GameData::getList(int index) const {
+    if (index <= 0 || index >= static_cast<int>(lists.size())) {
+        throw GameError("Tried to access invalid list number "
+                        + std::to_string(index));
+    }
+    return lists[index];
+}
+ListDef& GameData::getList(int index) {
+    if (index <= 0 || index >= static_cast<int>(lists.size())) {
+        throw GameError("Tried to access invalid list number "
+                        + std::to_string(index));
+    }
+    return lists[index];
+}
+const MapDef& GameData::getMap(int index) const {
+    if (index <= 0 || index >= static_cast<int>(maps.size())) {
+        throw GameError("Tried to access invalid map number "
+                        + std::to_string(index));
+    }
+    return maps[index];
+}
+MapDef& GameData::getMap(int index) {
+    if (index <= 0 || index >= static_cast<int>(maps.size())) {
+        throw GameError("Tried to access invalid map number "
+                        + std::to_string(index));
+    }
+    return maps[index];
+}
+const ObjectDef& GameData::getObject(int index) const {
+    if (index <= 0 || index >= static_cast<int>(objects.size())) {
+        throw GameError("Tried to access invalid object number "
+                        + std::to_string(index));
+    }
+    return objects[index];
+}
+ObjectDef& GameData::getObject(int index) {
+    if (index <= 0 || index >= static_cast<int>(objects.size())) {
+        throw GameError("Tried to access invalid object number "
+                        + std::to_string(index));
+    }
+    return objects[index];
+}
+const FunctionDef& GameData::getFunction(int index) const {
+    if (index <= 0 || index >= static_cast<int>(functions.size())) {
+        throw GameError("Tried to access invalid function number "
+                        + std::to_string(index));
+    }
+    return functions[index];
+}
+FunctionDef& GameData::getFunction(int index) {
+    if (index <= 0 || index >= static_cast<int>(functions.size())) {
+        throw GameError("Tried to access invalid function number "
+                        + std::to_string(index));
+    }
+    return functions[index];
+}
+
+
+int GameData::collectGarbage() {
+    return 0;
+}
+
+
 std::string GameData::getSource(const Value &value) {
     std::string text;
     const DataItem *item = nullptr;
@@ -195,6 +272,22 @@ bool GameData::isStatic(const Value &what) const {
         case Value::String: return static_cast<unsigned>(what.value) < staticStrings;
         default:            return true;
     }
+}
+
+bool GameData::isValid(const Value &what) const {
+    try {
+        switch(what.type) {
+            case Value::Object:     getObject(what.value);      break;
+            case Value::List:       getList(what.value);        break;
+            case Value::Map:        getMap(what.value);         break;
+            case Value::String:     getString(what.value);      break;
+            case Value::Function:   getFunction(what.value);    break;
+            default:                return true;
+        }
+    } catch (const GameError &error) {
+        return false;
+    }
+    return true;
 }
 
 void GameData::stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst) {

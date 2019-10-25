@@ -89,49 +89,18 @@ struct GameData {
     GameData() : gameLoaded(false), mCallCount(0) { }
     void load(const std::string &filename);
     void dump() const;
+    int collectGarbage();
 
-    const StringDef& getString(int index) const {
-        if (index < 0 || index >= static_cast<int>(strings.size())) {
-            throw GameError("Tried to access invalid string number "
-                            + std::to_string(index));
-        }
-        return strings[index];
-    }
-    StringDef& getString(int index) {
-        if (index < 0 || index >= static_cast<int>(strings.size())) {
-            throw GameError("Tried to access invalid string number "
-                            + std::to_string(index));
-        }
-        return strings[index];
-    }
-    ListDef& getList(int index) {
-        if (index < 0 || index >= static_cast<int>(lists.size())) {
-            throw GameError("Tried to access invalid list number "
-                            + std::to_string(index));
-        }
-        return lists[index];
-    }
-    MapDef& getMap(int index) {
-        if (index < 0 || index >= static_cast<int>(maps.size())) {
-            throw GameError("Tried to access invalid map number "
-                            + std::to_string(index));
-        }
-        return maps[index];
-    }
-    ObjectDef& getObject(int index) {
-        if (index < 0 || index >= static_cast<int>(objects.size())) {
-            throw GameError("Tried to access invalid object number "
-                            + std::to_string(index));
-        }
-        return objects[index];
-    }
-    FunctionDef& getFunction(int index) {
-        if (index < 0 || index >= static_cast<int>(functions.size())) {
-            throw GameError("Tried to access invalid function number "
-                            + std::to_string(index));
-        }
-        return functions[index];
-    }
+    const StringDef& getString(int index) const;
+    StringDef& getString(int index);
+    const ListDef& getList(int index) const;
+    ListDef& getList(int index);
+    const MapDef& getMap(int index) const;
+    MapDef& getMap(int index);
+    const ObjectDef& getObject(int index) const;
+    ObjectDef& getObject(int index);
+    const FunctionDef& getFunction(int index) const;
+    FunctionDef& getFunction(int index);
 
     std::string getSource(const Value &value);
     Value resume(bool pushValue, const Value &inValue);
@@ -140,6 +109,7 @@ struct GameData {
     void say(const Value &what);
     Value makeNew(Value::Type type);
     bool isStatic(const Value &what) const;
+    bool isValid(const Value &what) const;
     void stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst = false);
     std::string asString(const Value &value);
     void sortList(const Value &listId);

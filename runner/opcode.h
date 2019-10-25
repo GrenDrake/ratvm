@@ -13,7 +13,7 @@ struct OpcodeDef {
         Push16              = 5,
         Push32              = 6,
         Store               = 7,
-        /* unused: 8 */
+        CollectGarbage      = 8,
         SayUCFirst          = 9,
         Say                 = 10,
         SayUnsigned         = 11,
@@ -23,7 +23,7 @@ struct OpcodeDef {
         StackPeek           = 15, // peek at the stack item X items from the top
         StackSize           = 16, // get the current size of the stack
         Call                = 17, // call a value as a function
-        /* unused: 18 */
+        IsValid             = 18,
         ListPush            = 19, // add item to end of list
         ListPop             = 20, // remove and return item from end of list
         Sort                = 21,
@@ -61,7 +61,8 @@ struct OpcodeDef {
         BitXor              = 50,
         BitNot              = 51,
         Random              = 52,
-        /* unused: 53, 54 */
+        NextObject          = 53,
+        IndexOf             = 54,
         GetRandom           = 55,
         GetKeys             = 56,
         StackSwap           = 57,

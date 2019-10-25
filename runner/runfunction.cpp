@@ -92,6 +92,10 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.getStack().setArg(localId.value, value);
                 break; }
 
+            case OpcodeDef::CollectGarbage: {
+                callStack.push(Value(Value::Integer, collectGarbage()));
+                break; }
+
             case OpcodeDef::SayUCFirst: {
                 Value theText = callStack.pop();
                 if (theText.type == Value::String) {
@@ -156,6 +160,11 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                         callStack.callTop().funcDef.arg_count,
                         callStack.callTop().funcDef.local_count);
                 IP = newFunc.position;
+                break; }
+
+            case OpcodeDef::IsValid: {
+                Value value = callStack.pop();
+                callStack.push(Value(Value::Integer, isValid(value)));
                 break; }
 
             case OpcodeDef::ListPush: {
@@ -445,6 +454,47 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 max.requireType(Value::Integer);
                 int result = min.value + rand() % (max.value - min.value);
                 callStack.push(Value{Value::Integer, result});
+                break; }
+            case OpcodeDef::NextObject: {
+                Value lastValue = callStack.pop();
+                if (objects.empty()) {
+                    callStack.push(noneValue);
+                } else {
+                    int nextValue = 0;
+                    if (lastValue.type != Value::None) {
+                        lastValue.requireType(Value::Object);
+                        if (lastValue.value > 0) nextValue = lastValue.value;
+                    }
+
+                    while (1) {
+                        ++nextValue;
+                        if (nextValue >= static_cast<int>(objects.size())) {
+                            callStack.push(noneValue);
+                            break;
+                        }
+                        try {
+                            getObject(nextValue);
+                            callStack.push(Value(Value::Object, nextValue));
+                            break;
+                        } catch (const GameError &e) {
+                            // do nothing
+                        }
+                    }
+                }
+                break; }
+            case OpcodeDef::IndexOf: {
+                Value value = callStack.pop();
+                Value listId = callStack.pop();
+                listId.requireType(Value::List);
+                const ListDef &theList = getList(listId.value);
+                int result = -1;
+                for (unsigned i = 0; i < theList.items.size(); ++i) {
+                    if (theList.items[i] == value) {
+                        result = i;
+                        break;
+                    }
+                }
+                callStack.push(Value(Value::Integer, result));
                 break; }
             case OpcodeDef::GetRandom: {
                 Value theList = callStack.pop();
