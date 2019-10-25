@@ -8,23 +8,12 @@
 
 #include "stack.h"
 
-const int MAX_RUNTIME = 1000000000;
-
 Value GameData::resume(bool pushValue, const Value &inValue) {
-    int iterations = 0;
-
     if (pushValue) callStack.push(inValue);
     unsigned IP = callStack.callTop().IP;
 
     while (1) {
-        if (iterations > MAX_RUNTIME) {
-            std::stringstream ss;
-            ss << "Function exceeded max runtime at IP:";
-            ss << IP << " (local offset: ";
-            ss << IP - callStack.callTop().funcDef.position << ").";
-            throw GameError(ss.str());
-        }
-        ++iterations;
+        ++instructionCount;
 
         int opcode = bytecode.read_8(IP);
         ++IP;

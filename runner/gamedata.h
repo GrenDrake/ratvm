@@ -87,7 +87,8 @@ struct GameOption {
 };
 
 struct GameData {
-    GameData() : gameLoaded(false), mCallCount(0) { }
+    GameData() : showDebug(0), instructionCount(0), gameLoaded(false),
+                 mCallCount(0) { }
     ~GameData();
     void load(const std::string &filename);
     void dump() const;
@@ -122,6 +123,8 @@ struct GameData {
     std::string asString(const Value &value);
     void sortList(const Value &listId);
 
+    bool showDebug;
+    long instructionCount;
     OptionType optionType;
     std::vector<GameOption> options;
     int extraValue;
@@ -144,7 +147,6 @@ struct GameData {
     std::array<std::string, INFO_COUNT> infoText;
     gtCallStack callStack;
 private:
-
     unsigned mCallCount;
 };
 

@@ -32,6 +32,7 @@ void gameloop(GameData &gamedata, bool doSilent) {
         } else didGarbage = false;
         gamedata.textBuffer = "";
         gamedata.options.clear();
+        gamedata.instructionCount = 0;
         gamedata.resume(hasValue, nextValue);
         hasValue = false;
 
@@ -41,15 +42,21 @@ void gameloop(GameData &gamedata, bool doSilent) {
             std::cout << " : ";
             std::cout << gamedata.infoText[INFO_RIGHT];
             std::cout << '\n';
-            if (didGarbage) {
-                std::cout << "[gc: " << garbageAmount << " collected]\n";
-            }
             std::cout << formatText(gamedata.textBuffer) << '\n';
             if (!gamedata.infoText[INFO_BOTTOM].empty()) {
                 std::cout << "[";
                 std::cout << gamedata.infoText[INFO_BOTTOM];
                 std::cout << "]\n";
             }
+        }
+        if (gamedata.showDebug) {
+            std::cout << ":: GC - ";
+            if (didGarbage) {
+                std::cout << garbageAmount << " collected";
+            } else {
+                std::cout << "did't run";
+            }
+            std::cout << " :: " << gamedata.instructionCount << " opcodes executed\n";
         }
 
 

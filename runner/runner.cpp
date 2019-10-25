@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
     std::string gameFile;
     bool doDump = false;
     bool doSilent = false;
+    bool showDebug = false;
 
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
@@ -23,6 +24,8 @@ int main(int argc, char *argv[]) {
             doDump = true;
         } else if (strcmp(argv[i], "-silent") == 0) {
             doSilent = true;
+        } else if (strcmp(argv[i], "-debug") == 0) {
+            showDebug = true;
         } else if (argv[i][0] == '-') {
             std::cerr << "Unrecognized option " << argv[i] << ".\n";
             return 1;
@@ -39,6 +42,7 @@ int main(int argc, char *argv[]) {
     GameData data;
     data.load(gameFile);
     if (!data.gameLoaded) return 1;
+    data.showDebug = showDebug;
 
     if (doDump) {
         data.dump();
