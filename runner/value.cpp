@@ -82,6 +82,7 @@ void Value::requireType(Value::Type theType) const {
         std::stringstream ss;
         ss << "Expected value of type " << theType << ", but found value of type";
         ss << type << '.';
+        throw GameError(ss.str());
     }
 }
 
@@ -89,8 +90,9 @@ void Value::requireType(Value::Type typeOne, Value::Type typeTwo) const {
     if (type != typeOne && type != typeTwo) {
         std::stringstream ss;
         ss << "Expected value of type " << typeOne << " or ";
-        ss << typeTwo << ", but found value of type";
+        ss << typeTwo << ", but found value of type ";
         ss << type << '.';
+        throw GameError(ss.str());
     }
 }
 
@@ -98,6 +100,7 @@ void Value::forbidType(Value::Type theType) const {
     if (type == theType) {
         std::stringstream ss;
         ss << "Found value of forbidden type " << theType << ".";
+        throw GameError(ss.str());
     }
 }
 

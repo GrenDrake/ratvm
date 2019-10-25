@@ -73,7 +73,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
             case OpcodeDef::Store: {
                 Value localId = callStack.popRaw();
                 Value value = callStack.pop();
-                localId.requireType(Value::LocalVar);
+                localId.requireType(Value::VarRef);
                 if (localId.value < 0 || localId.value >=
                         static_cast<int>(callStack.getStack().argCount())) {
                     throw GameError("Illegal local number.");
