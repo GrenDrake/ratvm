@@ -13,6 +13,7 @@
 const int FILETYPE_ID = 0x47505254;
 const int HEADER_SIZE = 64;
 const int ORIGIN_DYNAMIC = -2;
+const int GARBAGE_FREQUENCY = 100;
 
 const int INFO_TITLE  = 0;
 const int INFO_LEFT   = 1;

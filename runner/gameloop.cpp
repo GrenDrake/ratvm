@@ -20,9 +20,16 @@ void gameloop(GameData &gamedata, bool doSilent) {
     gamedata.callStack.getStack().setArgs(std::vector<Value>{Value{Value::None, 0}}, funcDef.arg_count, funcDef.local_count);
     gamedata.callStack.callTop().IP = funcDef.position;
 
+    int garbageCounter = 0, garbageAmount = 0;
     Value nextValue;
-    bool hasNext, hasValue = false;
+    bool hasNext, hasValue = false, didGarbage = false;
     while (1) {
+        ++garbageCounter;
+        if (garbageCounter >= GARBAGE_FREQUENCY) {
+            garbageAmount = gamedata.collectGarbage();
+            garbageCounter = 0;
+            didGarbage = true;
+        } else didGarbage = false;
         gamedata.textBuffer = "";
         gamedata.options.clear();
         gamedata.resume(hasValue, nextValue);
@@ -34,6 +41,9 @@ void gameloop(GameData &gamedata, bool doSilent) {
             std::cout << " : ";
             std::cout << gamedata.infoText[INFO_RIGHT];
             std::cout << '\n';
+            if (didGarbage) {
+                std::cout << "[gc: " << garbageAmount << " collected]\n";
+            }
             std::cout << formatText(gamedata.textBuffer) << '\n';
             if (!gamedata.infoText[INFO_BOTTOM].empty()) {
                 std::cout << "[";
