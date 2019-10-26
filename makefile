@@ -1,22 +1,22 @@
 PLAYQUOLL=../playquoll/
 CXXFLAGS= -std=c++11 -g -Wall
 
-BUILD_OBJS=build/build.o build/general.o build/lexer.o \
-		   build/parse_main.o build/translate.o build/gamedata.o \
-		   build/value.o build/parse_functions.o build/parsestate.o \
-		   build/generate.o build/bytestream.o build/dump.o build/opcode.o \
-		   build/expression.o
-BUILD=./gbuild
+BUILD_OBJS=builder/build.o builder/general.o builder/lexer.o \
+		   builder/parse_main.o builder/translate.o builder/gamedata.o \
+		   builder/value.o builder/parse_functions.o builder/parsestate.o \
+		   builder/generate.o builder/bytestream.o builder/dump.o \
+		   builder/opcode.o builder/expression.o
+BUILD=./build
 
 RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
 			runner/formatter.o runner/runfunction.o runner/stack.o \
 			runner/loadgame.o runner/dump.o  \
 			runner/bytestream.o runner/value.o
-RUNNER=./grun
+RUNNER=./run
 
-TEST_BYTESTREAM_OBJS=tests/bytestream.o build/bytestream.o
+TEST_BYTESTREAM_OBJS=tests/bytestream.o builder/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
-TEST_GENERAL_OBJS=tests/general.o build/general.o
+TEST_GENERAL_OBJS=tests/general.o builder/general.o
 TEST_GENERAL=./test_general
 
 AUTOTESTS_SRC=examples/auto_tests.qc
