@@ -1,8 +1,8 @@
 # output files
 *.o
 *.qvm
-gbuild
-grun
+build
+run
 filescan
 test_bytestream
 test_general
