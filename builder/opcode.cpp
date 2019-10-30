@@ -77,6 +77,8 @@ OpcodeDef opcodes[] = {
     {   "end_page",     OpcodeDef::EndPage,                 0, 0 },
     {   "new",          OpcodeDef::New,                     1, 1 },
     {   "is_static",    OpcodeDef::IsStatic,                1, 1 },
+    {   "encode_string",OpcodeDef::EncodeString,            1, 1 },
+    {   "decode_string",OpcodeDef::DecodeString,            1, 1 },
     {   ""                                                       }
 };
 

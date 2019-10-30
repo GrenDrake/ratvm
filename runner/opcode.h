@@ -84,6 +84,8 @@ struct OpcodeDef {
         New                 = 74,
         StringAppendUF      = 75,
         IsStatic            = 76,
+        EncodeString        = 77,
+        DecodeString        = 78,
     };
 
     std::string name;

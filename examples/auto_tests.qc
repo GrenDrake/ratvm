@@ -1109,6 +1109,30 @@ asm_function testNextObject(: obj) {
     "[br]" say
 }
 
+declare testString1 "あいう";
+declare testString2 "Hello World!";
+function testStringEncoding(: encodedList recodedText) {
+    (print "\n# Testing string en/decoding\n")
+
+    (print "Testing " testString1 "...[br]")
+    (set encodedList (encode_string testString1))
+    (if (neq (size encodedList) 3) (error "First encoded string has wrong length."))
+    (if (neq (get encodedList 0) 0xe38182e3) (error "First encoded string first value incorrect."))
+    (if (neq (get encodedList 1) 0x8184e381) (error "First encoded string second value incorrect."))
+    (if (neq (get encodedList 2) 0x86000000) (error "First encoded string third value incorrect."))
+    (set recodedText (decode_string encodedList))
+    (if (str_compare recodedText testString1) (error "Recoded test string one has wrong value."))
+
+    (print "Testing " testString2 "...[br]")
+    (set encodedList (encode_string testString2))
+    (if (neq (size encodedList) 3) (error "Second encoded string has wrong length."))
+    (if (neq (get encodedList 0) 0x48656c6c) (error "Second encoded string first value incorrect."))
+    (if (neq (get encodedList 1) 0x6f20576f) (error "Second encoded string second value incorrect."))
+    (if (neq (get encodedList 2) 0x726c6421) (error "Second encoded string third value incorrect."))
+    (set recodedText (decode_string encodedList))
+    (if (str_compare recodedText testString2) (error "Recoded test string two has wrong value."))
+}
+
 // ////////////////////////////////////////////////////////////////////////////
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
@@ -1133,6 +1157,7 @@ asm_function main() {
     0 testAndOr call
     0 testGarbage call
     0 testNextObject call
+    0 testStringEncoding call
 
     "\nALL TESTS PASSED" say
 }

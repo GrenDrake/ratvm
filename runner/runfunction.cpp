@@ -1,6 +1,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include "gamedata.h"
@@ -616,6 +617,60 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 Value value = callStack.pop();
                 callStack.push(Value{Value::Integer,
                                      isStatic(value) ? 1 : 0});
+                break; }
+
+            case OpcodeDef::EncodeString: {
+                Value stringId = callStack.pop();
+                stringId.requireType(Value::String);
+                std::string str = getString(stringId.value).text;
+                Value listId = makeNew(Value::List);
+                callStack.push(listId);
+                ListDef &list = getList(listId.value);
+
+                unsigned v = 0;
+                int counter = 0;
+                for (char s : str) {
+                    unsigned byte = static_cast<unsigned>(s) & 0xFF;
+                    v <<= 8;
+                    v |= byte;
+                    ++counter;
+                    if (counter >= 4) {
+                        list.items.push_back(Value(Value::Integer, v));
+                        counter = v = 0;
+                    }
+                }
+                if (counter != 0) {
+                    while (counter < 4) {
+                        ++counter;
+                        v <<= 8;
+                    }
+                    list.items.push_back(Value(Value::Integer, v));
+                }
+                break; }
+            case OpcodeDef::DecodeString: {
+                Value listId = callStack.pop();
+                listId.requireType(Value::List);
+                const ListDef &list = getList(listId.value);
+                std::string result;
+                for (const Value &value : list.items) {
+                    value.requireType(Value::Integer);
+                    unsigned v4 = (value.value >> 24) & 0xFF;
+                    if (v4 == 0) break;
+                    result += static_cast<char>(v4);
+                    unsigned v3 = (value.value >> 16) & 0xFF;
+                    if (v3 == 0) break;
+                    result += static_cast<char>(v3);
+                    unsigned v2 = (value.value >> 8) & 0xFF;
+                    if (v2 == 0) break;
+                    result += static_cast<char>(v2);
+                    unsigned v1 = value.value & 0xFF;
+                    if (v1 == 0) break;
+                    result += static_cast<char>(v1);
+                }
+                Value stringId = makeNew(Value::String);
+                getString(stringId.value).text = result;
+
+                callStack.push(stringId);
                 break; }
 
             default: {
