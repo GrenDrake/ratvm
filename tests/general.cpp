@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "../build/builderror.h"
+#include "../builder/builderror.h"
 #include "testing.h"
 
 
