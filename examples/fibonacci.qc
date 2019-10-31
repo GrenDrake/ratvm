@@ -15,7 +15,6 @@ function fibonacci( n ) {
 }
 
 function main() {
-    (set_setting infobarTitle  "Fibonacci Benchmark")
     ("Fibonacci(34): ")
     (print (fibonacci 34)) // = 5702887 (5,702,887)
     ("\n")
