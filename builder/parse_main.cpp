@@ -31,6 +31,7 @@ static int parse_flags(GameData &gamedata, ParseState &state);
 static int parse_function(GameData &gamedata, ParseState &state, const std::string &defaultName);
 static int parse_list(GameData &gamedata, ParseState &state);
 static int parse_map(GameData &gamedata, ParseState &state);
+static void parse_objectProperty(GameData &gamedata, ParseState &state, GameObject *object);
 static int parse_object(GameData &gamedata, ParseState &state, const std::string &defaultName);
 static Value parse_value(GameData &gamedata, ParseState &state, const std::string &defaultName);
 
@@ -108,7 +109,7 @@ static void parse_default(GameData &gamedata, ParseState &state) {
 static void parse_extend(GameData &gamedata, ParseState &state) {
     bool hasError = false;
     Origin origin = state.here()->origin;
-    state.next(); // skip "default"
+    state.next(); // skip "extend"
 
     try {
         state.require(Token::Identifier);
@@ -127,7 +128,7 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
         hasError = true;
     } else {
         oldType = old->value.type;
-        if (oldType != Value::List && oldType != Value::Map) {
+        if (oldType != Value::List && oldType != Value::Map && oldType != Value::Object) {
             std::stringstream ss;
             ss << "Cannot extend values of type " << oldType << ".";
             gamedata.addError(origin, ErrorMsg::Error, ss.str());
@@ -197,7 +198,16 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
             break;
 
         default:
-            if (oldType != Value::None) {
+            if (oldType == Value::Object) {
+                GameObject *object = gamedata.objects[old->value.value];
+                while (!state.matches(Token::Semicolon) && !state.eof()) {
+                    parse_objectProperty(gamedata, state, object);
+                    if (gamedata.errorCount > 0) {
+                        hasError = true;
+                        break;
+                    }
+                }
+            } else if (oldType != Value::None) {
                 ss << "Invalid value to extend " << oldType << " " << oldName << ".";
                 hasError = true;
                 gamedata.addError(origin, ErrorMsg::Error, ss.str());
@@ -376,6 +386,40 @@ int parse_map(GameData &gamedata, ParseState &state) {
     return map->globalId;
 }
 
+void parse_objectProperty(GameData &gamedata, ParseState &state, GameObject *object) {
+    unsigned propId = 0;
+    std::string propName;
+    if (state.eof()) {
+        gamedata.addError(object->origin, ErrorMsg::Error, "Unexpected end-of-file while parsing object");
+        return;
+    }
+    try {
+        state.require(Token::Property);
+        propId = state.here()->value;
+        propName = state.here()->text;
+    } catch (BuildError &e) {
+        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
+        propId = -1;
+        propName = "bad_prop";
+    }
+    const Origin &propOrigin = state.here()->origin;
+    state.next();
+
+    if (state.eof()) {
+        gamedata.addError(object->origin, ErrorMsg::Error, "Unexpected end of file in object definition.");
+        return;
+    }
+    std::string defaultName = object->name + "." + propName;
+    Value value = parse_value(gamedata, state, defaultName);
+    if (propId != static_cast<unsigned>(-1)) {
+        try {
+            object->addProperty(propOrigin, propId, value);
+        } catch (BuildError &e) {
+            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
+        }
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a single object
 int parse_object(GameData &gamedata, ParseState &state, const std::string &defaultName) {
@@ -425,38 +469,9 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
         }
     }
 
-    while (!state.matches(Token::Semicolon)) {
-        unsigned propId = 0;
-        std::string propName;
-        if (state.eof()) {
-            gamedata.addError(origin, ErrorMsg::Error, "Unexpected end-of-file while parsing object");
-            return 0;
-        }
-        try {
-            state.require(Token::Property);
-            propId = state.here()->value;
-            propName = state.here()->text;
-        } catch (BuildError &e) {
-            gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
-            propId = -1;
-            propName = "bad_prop";
-        }
-        const Origin &propOrigin = state.here()->origin;
-        state.next();
-
-        if (state.eof()) {
-            gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file in object definition.");
-            return 0;
-        }
-        std::string defaultName = objectName + "." + propName;
-        Value value = parse_value(gamedata, state, defaultName);
-        if (propId != static_cast<unsigned>(-1)) {
-            try {
-                object->addProperty(propOrigin, propId, value);
-            } catch (BuildError &e) {
-                gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
-            }
-        }
+    while (!state.matches(Token::Semicolon) && !state.eof()) {
+        parse_objectProperty(gamedata, state, object);
+        if (gamedata.errorCount > 0) return 0;
     }
 
     state.next();

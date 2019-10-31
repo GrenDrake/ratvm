@@ -34,11 +34,14 @@ object first_obj
     $aString "Hello World!"
     $aProperty $apple
     $anObject object ;
+;
+object second_obj : parent_obj;
+
+extend first_obj
     $aMap { $fruit: $apple }
     $aList [ 4 ]
     $testMethod function() { }
 ;
-object second_obj : parent_obj;
 
 object parent_obj
     $inheritedProperty 2048
