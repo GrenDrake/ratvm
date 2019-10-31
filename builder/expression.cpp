@@ -16,6 +16,7 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void handle_reserved_stmt(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_and(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_asm(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_break(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_continue(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_dec(GameData &gamedata, FunctionDef *function, List *list);
@@ -40,6 +41,7 @@ void process_value(GameData &gamedata, FunctionDef *function, ListValue &value);
 StatementType statementTypes[] = {
     { "",           nullptr       },
     { "and",        stmt_and,       true    },
+    { "asm",        stmt_asm,       false   },
     { "break",      stmt_break,     false   },
     { "continue",   stmt_continue,  false   },
     { "dec",        stmt_dec,       false   },
@@ -214,6 +216,71 @@ void stmt_and(GameData &gamedata, FunctionDef *function, List *list) {
     function->addLabel(origin, false_label);
     function->addValue(origin, Value{Value::Integer, 0});
     function->addLabel(origin, after_label);
+}
+
+void stmt_asm(GameData &gamedata, FunctionDef *function, List *list) {
+    for (unsigned i = 1; i < list->values.size(); ++i) {
+        const ListValue &lv = list->values[i];
+
+        switch(lv.value.type) {
+            case Value::Indirection:
+                ++i;
+                if (i >= list->values.size()) {
+                    gamedata.addError(lv.origin, ErrorMsg::Error, "Indirection found at end of list.");
+                } else {
+                    ListValue &rlv = list->values[i];
+                    if (rlv.value.type != Value::LocalVar) {
+                        gamedata.addError(lv.origin, ErrorMsg::Error, "Indirection may only be used with local variables.");
+                    } else {
+                        rlv.value.type = Value::VarRef;
+                        function->addValue(rlv.origin, rlv.value);
+                    }
+                }
+                break;
+            case Value::Integer:
+            case Value::String:
+            case Value::List:
+            case Value::Map:
+            case Value::Function:
+            case Value::Object:
+            case Value::Property:
+            case Value::TypeId:
+            case Value::LocalVar:
+                function->addValue(lv.origin, lv.value);
+                break;
+            case Value::Opcode:
+                if (lv.value.opcode->permissions & FORBID_ASM) {
+                    std::stringstream ss;
+                    ss << "Opcode " << lv.value.opcode->name;
+                    ss << " may not be used explicitly.";
+                    gamedata.addError(lv.origin, ErrorMsg::Error, ss.str());
+                }
+                function->addOpcode(lv.origin, lv.value.opcode->code);
+                break;
+            case Value::Symbol:
+                if (i + 1 < list->values.size() && list->values[i + 1].value.type == Value::Colon) {
+                    // define a local label
+                    function->addLabel(lv.origin, lv.value.text);
+                    ++i; // skip next symbol (the colon defining the label)
+                } else {
+                    // check if a local label and, if so, make jump target
+                    function->addValue(lv.origin, Value{Value::Symbol, 0, lv.value.text});
+                }
+                break;
+            case Value::Colon:
+                if (i > 1) {
+                    std::stringstream ss;
+                    ss << "Value of type " << list->values[i-1].value.type << " is not a valid label.";
+                    gamedata.addError(lv.origin, ErrorMsg::Error, ss.str());
+                    break;
+                }
+            default: {
+                std::stringstream ss;
+                ss << "Unexpected value " << lv.value << " in asm code body.";
+                gamedata.addError(lv.origin, ErrorMsg::Error, ss.str());
+                }
+        }
+    }
 }
 
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list) {
@@ -523,6 +590,7 @@ void stmt_while(GameData &gamedata, FunctionDef *function, List *list) {
 void process_value(GameData &gamedata, FunctionDef *function, ListValue &value) {
     switch(value.value.type) {
         case Value::Reserved:
+        case Value::Indirection:
         case Value::Opcode: {
             std::stringstream ss;
             ss << "Invalid expression value of type " << value.value.type << '.';

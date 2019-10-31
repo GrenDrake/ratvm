@@ -21,6 +21,8 @@ TEST_GENERAL=./test_general
 
 AUTOTESTS_SRC=examples/auto_tests.qc
 AUTOTESTS=./examples/auto_tests.qvm
+STACKTEST_SRC=./examples/syntax_stack.qc
+STACKTEST=./examples/syntax_stack.qvm
 USERTESTS_SRC=examples/user_tests.qc
 USERTESTS=./examples/user_tests.qvm
 FIBTEST_SRC=examples/fibonacci.qc
@@ -44,10 +46,12 @@ $(TEST_GENERAL): $(BUILD) $(TEST_GENERAL_OBJS)
 	$(CXX) $(TEST_GENERAL_OBJS) -o $(TEST_GENERAL)
 	$(TEST_GENERAL)
 
-examples: $(BUILD) $(AUTOTESTS) $(USERTESTS) $(FIBTEST)
+examples: $(BUILD) $(AUTOTESTS) $(STACKTEST) $(USERTESTS) $(FIBTEST)
 	cp ./examples/*.qvm $(PLAYQUOLL)games/
 $(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
 	$(BUILD) $(AUTOTESTS_SRC) -o $(AUTOTESTS)
+$(STACKTEST): $(BUILD) $(STACKTEST_SRC)
+	$(BUILD) $(STACKTEST_SRC) -o $(STACKTEST)
 $(USERTESTS): $(BUILD) $(USERTESTS_SRC)
 	$(BUILD) $(USERTESTS_SRC) -o $(USERTESTS)
 $(FIBTEST): $(BUILD) $(FIBTEST_SRC)
@@ -55,7 +59,7 @@ $(FIBTEST): $(BUILD) $(FIBTEST_SRC)
 
 
 clean: clean_runner
-	$(RM) build/*.o runner/*.o tests/*.o
+	$(RM) builder/*.o runner/*.o tests/*.o
 	$(RM) $(BUILD) $(TEST_BYTESTREAM)
 
 clean_runner:

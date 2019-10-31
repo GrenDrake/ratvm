@@ -231,9 +231,15 @@ ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState 
             Value result = evalIdentifier(gamedata, function, here->text);
             newValue = ListValue{here->origin,  result };
             break; }
+        case Token::Indirection:
+            newValue = ListValue{here->origin,  Value{Value::Indirection} };
+            break;
+        case Token::Colon:
+            newValue = ListValue{here->origin,  Value{Value::Colon} };
+            break;
         default: {
             std::stringstream ss;
-            ss << "Unexpected type " << here->type << '.';
+            ss << "Unexpected type " << here->type << " found in list.";
             gamedata.addError(here->origin, ErrorMsg::Error, ss.str());
             here = state.next();
             return newValue; }

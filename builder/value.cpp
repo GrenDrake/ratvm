@@ -65,6 +65,12 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::TypeId:
             out << "TypeId";
             break;
+        case Value::Indirection:
+            out << "Indirection";
+            break;
+        case Value::Colon:
+            out << "Colon";
+            break;
         default:
             out << "(unhandled type " << static_cast<int>(type) << ")";
     }
@@ -76,7 +82,8 @@ std::ostream& operator<<(std::ostream &out, const Value &value) {
     ss << '<' << value.type;
     if (value.type == Value::Symbol || value.type == Value::Reserved || value.type == Value::Opcode) {
         ss << " ~" << value.text << '~';
-    } else if (value.type != Value::None && value.type != Value::Expression) {
+    } else if (value.type != Value::None && value.type != Value::Expression &&
+            value.type != Value::Indirection && value.type != Value::Colon) {
         ss << ' ' << value.value;
     }
     ss << '>';

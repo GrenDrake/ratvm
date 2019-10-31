@@ -18,6 +18,8 @@ struct Value {
         JumpTarget  = 9,
         VarRef      = 10,
         LocalVar    = 15,
+        Colon       = 93,
+        Indirection = 94,
         Reserved    = 95,
         Opcode      = 96,
         Expression  = 97,
