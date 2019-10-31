@@ -480,7 +480,7 @@ void stmt_return(GameData &gamedata, FunctionDef *function, List *list) {
     }
 
     if (list->values.size() > 1) {
-        function->addValue(list->values[0].origin, list->values[1].value);
+        process_value(gamedata, function, list->values[1]);
     } else {
         function->addValue(list->values[0].origin, Value{Value::None});
     }
