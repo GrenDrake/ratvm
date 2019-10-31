@@ -13,7 +13,7 @@
 declare TITLE "Syntax Expression Stack Test";
 declare AUTHOR "Gren Drake";
 declare VERSION 1;
-declare GAMEID "";
+declare GAMEID "23D1A6FF-C456-48E3-8894-879401C2DDB6";
 
 declare aList [ 9 5 6 3 7 8 ];
 object anObject $aProperty 55;
@@ -91,6 +91,8 @@ function main(: local) {
     (origin aMap)
     (new List)
     (is_static aMap)
+    (encode_string "Hello")
+    (decode_string (list))
 
     // control-flow items
     // these aren't tested because they change the program flow rather than effecting the stack

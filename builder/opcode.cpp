@@ -1,7 +1,7 @@
 #include "opcode.h"
 
 OpcodeDef opcodes[] = {
-    {   "return",       OpcodeDef::Return,                  1, 0 },
+    {   "ret",          OpcodeDef::Return,                  1, 0, FORBID_EXPRESSION },
     {   "push_0",       OpcodeDef::Push0,                   0, 1, FORBID_ALWAYS },
     {   "push_1",       OpcodeDef::Push1,                   0, 1, FORBID_ALWAYS },
     {   "push_none",    OpcodeDef::PushNone,                0, 1, FORBID_ALWAYS },

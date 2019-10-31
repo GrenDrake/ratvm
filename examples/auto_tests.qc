@@ -113,7 +113,7 @@ asm_function testStack() {
     0 stack_peek 9 eq testSwapError jz
     2 stack_peek 5 eq testSwapError jz
 
-    return
+    ret
 
     testSwapError:
     "Stack swap failed." error
@@ -204,7 +204,7 @@ asm_function testCall_both( arg1 arg2 : var1 ) {
 }
 
 asm_function testCallHelperMultiply( arg1 arg2 ) {
-    arg1 arg2 mult return
+    arg1 arg2 mult ret
 }
 
 function testSyntaxReturn() {
@@ -509,7 +509,7 @@ asm_function testObjectProps() {
     $testMethod first_obj get typeof Function   eq testMethod_wrongType jz
     $anObject   first_obj get typeof Object     eq anObject_wrongType jz
     $aProperty  first_obj get typeof Property   eq aProperty_wrongType jz
-    0 return
+    0 ret
 
     inherited_has_prop:     "HAS reports object own parent's property" error
     inherited_wrong_value:  "inherited property returns wrong value" error
@@ -621,7 +621,7 @@ asm_function testIsValid(: localvar) {
     Object 99999 astype is_valid false eq test_isvalid_badbadobject jz
     Function 99999 astype is_valid false eq test_isvalid_badbadfunc jz
 
-    return
+    ret
 
     test_isvalid_badnone:
         "None registered invalid." error
@@ -805,12 +805,12 @@ asm_function testLists(: counter random_value) {
 
     0 testListSort call
     0 testListBuilder call
-    return
+    ret
 
     test_list_contents_wrong:
     "\n" say testList 1 printArray call
     "List has wrong contents." error
-    return
+    ret
 }
 function testListSort(: theList) {
     ("Testing list sorting...[br]")
@@ -894,7 +894,7 @@ asm_function testMaps(: keys) {
     "Map keys list is wrong size." error
 
     all_done:
-    return
+    ret
     found_bad_key:
     "Key list has invalid value." error
 }
@@ -975,7 +975,7 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 
     newObj is_static reportedDynamicAsStatic jnz
     newStr is_static reportedDynamicAsStatic jnz
-    return
+    ret
 
     reportedStaticAsDynamic:
     "Reported static value as dynamic." error
@@ -1085,7 +1085,7 @@ asm_function testGarbage(localVar fakeRef) {
     "Testing collected objects...[br]" say
     List fakeRef astype is_valid false eq list_still_valid jz
 
-    return
+    ret
     list_still_valid:   "Unreferenced list not collected." error
     stack_not_valid:    "Stack item collected." error
     localvar_not_valid: "Local variable item collected." error

@@ -320,7 +320,7 @@ asm_function testPage1(key) {
     key typeof Integer eq showpage jz
     key 32 eq showkey jz
     end_page
-    return
+    ret
 
     leftkey:
     $index testpageData get 1 sub $index testpageData setp
@@ -397,7 +397,7 @@ function dispatcher(optionFunc extraValue) {
             (eq optionFunc testGetkey)
             (eq optionFunc testLineInput)
             (eq optionFunc testInputs))
-        (return 0))
+        (return))
     (option "Return to main page" showOptions)
     (get_option none)
 }

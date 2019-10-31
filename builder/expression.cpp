@@ -24,6 +24,7 @@ void stmt_do_while(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_if(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_inc(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_list(GameData &gamedata, FunctionDef *function, List *list);
+void stmt_return(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_string(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_option(GameData &gamedata, FunctionDef *function, List *list);
 void stmt_or(GameData &gamedata, FunctionDef *function, List *list);
@@ -49,6 +50,7 @@ StatementType statementTypes[] = {
     { "if",         stmt_if,        true    },
     { "inc",        stmt_inc,       false   },
     { "list",       stmt_list,      true    },
+    { "return",     stmt_return,    false   },
     { "string",     stmt_string,    true    },
     { "option",     stmt_option,    false   },
     { "or",         stmt_or,        true    },
@@ -468,6 +470,21 @@ void stmt_list(GameData &gamedata, FunctionDef *function, List *list) {
         function->addOpcode(list->values[0].origin, OpcodeDef::StackSwap);
         function->addOpcode(list->values[0].origin, OpcodeDef::ListPush);
     }
+}
+
+void stmt_return(GameData &gamedata, FunctionDef *function, List *list) {
+    if (list->values.size() > 2) {
+        gamedata.addError(list->values[0].origin, ErrorMsg::Error,
+            "May not return multiple values.");
+        return;
+    }
+
+    if (list->values.size() > 1) {
+        function->addValue(list->values[0].origin, list->values[1].value);
+    } else {
+        function->addValue(list->values[0].origin, Value{Value::None});
+    }
+    function->addOpcode(list->values[0].origin, OpcodeDef::Return);
 }
 
 void stmt_string(GameData &gamedata, FunctionDef *function, List *list) {
