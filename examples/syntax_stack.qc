@@ -24,8 +24,8 @@ function main(: local) {
     (set local 0)
 
     // constructed expressions
+    ("This test serves to make sure that all expressions leave the stack in a suitable clean state when they finish executing.\n")
     (asm 4 pop)
-    ("Some text\n")
     (and 0 0) // result false
     (and 1 2) // result true
     (dec local)
@@ -37,14 +37,16 @@ function main(: local) {
     (option "Some text\n")
     (or 0 0) // result false
     (or 1 1) // result true
-    (print "Some text\n")
-    (print_uf "Some text\n")
+    (print "Testing print.[br]")
+    (print_uf "Testing print_uf[br]")
     (proc 1 2 3)
     (while 0 1)
 
     // asm expressions
     (set local (new String))
+    ("Testing say_unsigned: ")
     (say_unsigned -1)
+    ("[br]Testing say_char: ")
     (say_char 65)
     (list_push aList 5)
     (list_pop aList)
@@ -80,7 +82,7 @@ function main(: local) {
     (get_random aList)
     (get_keys aMap)
     // (get_setting 0) // no settings exist to get currently
-    (set_setting infobarLeft "Test")
+    (set_setting infobarLeft "Updated text")
     (str_clear local)
     (str_append local "Some text\n")
     (str_append_uf local "Some text\n")
@@ -107,4 +109,5 @@ function main(: local) {
         stack_size 0 eq stack_is_good jnz
         "Stack not clear at end of function." error
         stack_is_good:)
+    ("\nTest passed successfullly.")
 }
