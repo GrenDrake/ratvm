@@ -411,6 +411,13 @@ Value GameData::makeNew(Value::Type type) {
     }
 }
 
+Value GameData::makeNewString(const std::string &str) {
+    Value newId = makeNew(Value::String);
+    StringDef &def = getString(newId.value);
+    def.text = str;
+    return newId;
+}
+
 bool GameData::isStatic(const Value &what) const {
     switch(what.type) {
         case Value::Object: return static_cast<unsigned>(what.value) < staticObjects;

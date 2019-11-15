@@ -117,6 +117,7 @@ struct GameData {
     void say(const std::string &what);
     void say(const Value &what);
     Value makeNew(Value::Type type);
+    Value makeNewString(const std::string &str);
     bool isStatic(const Value &what) const;
     bool isValid(const Value &what) const;
     void stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst = false);
