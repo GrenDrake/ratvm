@@ -673,6 +673,52 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.push(stringId);
                 break; }
 
+            case OpcodeDef::FileList: {
+                Value gameIdRef = callStack.pop();
+                gameIdRef.requireType(Value::String);
+                const std::string &gameId = getString(gameIdRef.value).text;
+                FileList filelist = getFileList(gameId);
+                Value listId = makeNew(Value::List);
+                ListDef &list = getList(listId.value);
+                callStack.push(listId);
+                for (auto record : filelist) {
+                    Value rowId = makeNew(Value::List);
+                    ListDef &row = getList(rowId.value);
+                    row.items.push_back(makeNewString(record.name));
+                    row.items.push_back(makeNewString(record.date));
+                    list.items.push_back(rowId);
+                }
+                break; }
+            case OpcodeDef::FileRead: {
+                Value fileNameId = callStack.pop();
+                Value gameIdId = callStack.pop();
+                fileNameId.requireType(Value::String);
+                gameIdId.requireType(Value::String);
+                const std::string &filename = getString(fileNameId.value).text;
+                const std::string &gameid   = getString(gameIdId.value).text;
+                Value listId = getFile(filename, gameid);
+                callStack.push(listId);
+                break; }
+            case OpcodeDef::FileWrite: {
+                Value fileNameId = callStack.pop();
+                Value dataListId = callStack.pop();
+                fileNameId.requireType(Value::String);
+                dataListId.requireType(Value::List);
+                const std::string &filename = getString(fileNameId.value).text;
+                const std::string &gameid   = getString(refGameid).text;
+                const ListDef &listDef = getList(dataListId.value);
+                bool result = saveFile(filename, gameid, &listDef);
+                callStack.push(Value{Value::Integer, result ? 1 : 0});
+                break; }
+            case OpcodeDef::FileDelete: {
+                Value fileNameId = callStack.pop();
+                fileNameId.requireType(Value::String);
+                const std::string &filename = getString(fileNameId.value).text;
+                const std::string &gameid   = getString(refGameid).text;
+                bool result = deleteFile(filename, gameid);
+                callStack.push(Value{Value::Integer, result ? 1 : 0});
+                break; }
+
             default: {
                 std::stringstream ss;
                 ss << "Unrecognized opcode " << opcode << '.';

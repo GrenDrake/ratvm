@@ -10,7 +10,7 @@ BUILD=./build
 
 RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
 			runner/formatter.o runner/runfunction.o runner/stack.o \
-			runner/loadgame.o runner/dump.o  \
+			runner/loadgame.o runner/dump.o runner/fileio.o \
 			runner/bytestream.o runner/value.o
 RUNNER=./run
 
@@ -36,7 +36,7 @@ $(BUILD): $(BUILD_OBJS)
 	$(CXX) $(BUILD_OBJS) -o $(BUILD)
 
 $(RUNNER): $(RUNNER_OBJS)
-	$(CXX) $(RUNNER_OBJS) -o $(RUNNER)
+	$(CXX) $(RUNNER_OBJS) -lsqlite3 -o $(RUNNER)
 
 $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)

@@ -86,6 +86,13 @@ struct GameOption {
     int hotkey;
 };
 
+struct FileRecord {
+    std::string name;
+    std::string date;
+};
+typedef std::vector<FileRecord> FileList;
+
+
 struct GameData {
     GameData() : showDebug(0), instructionCount(0), gameLoaded(false),
                  mCallCount(0) { }
@@ -123,6 +130,12 @@ struct GameData {
     void stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst = false);
     std::string asString(const Value &value);
     void sortList(const Value &listId);
+
+    FileList getFileList(const std::string &gameId);
+    Value getFile(const std::string &fileName, const std::string &gameId);
+    bool saveFile(const std::string &filename, const std::string &gameId, const ListDef *list);
+    bool deleteFile(const std::string &filename, const std::string &gameId);
+
 
     bool showDebug;
     long instructionCount;

@@ -86,6 +86,10 @@ struct OpcodeDef {
         IsStatic            = 76,
         EncodeString        = 77,
         DecodeString        = 78,
+        FileList            = 79,
+        FileRead            = 80,
+        FileWrite           = 81,
+        FileDelete          = 82,
     };
 
     std::string name;
