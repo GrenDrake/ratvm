@@ -1152,7 +1152,7 @@ function delete_all_files(: theFilelist filedata aList counter length) {
 }
 
 function testFileIO(: theFilelist filedata aList counter length) {
-    ("#\n Testing file io...")
+    ("\n# Testing file io...")
 
     (delete_all_files)
     (set theFilelist (file_list GAMEID))
