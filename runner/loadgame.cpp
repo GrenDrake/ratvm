@@ -34,6 +34,13 @@ void GameData::load(const std::string &filename) {
         return;
     }
     mainFunction = read_32(inf);
+    read_32(inf); // skip game flags (currently unused)
+    refGamename = read_32(inf);
+    refAuthor = read_32(inf);
+    refVersion = read_32(inf);
+    refGameid = read_32(inf);
+    refBuild = read_32(inf);
+
 
     // skip header
     inf.seekg(HEADER_SIZE);

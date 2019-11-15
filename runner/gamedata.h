@@ -145,6 +145,8 @@ struct GameData {
     unsigned staticObjects;
     Value noneValue;
 
+    int refGamename, refVersion, refAuthor, refGameid, refBuild;
+
     std::array<std::string, INFO_COUNT> infoText;
     gtCallStack callStack;
 private:
