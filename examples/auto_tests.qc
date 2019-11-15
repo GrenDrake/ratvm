@@ -989,6 +989,14 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test String Manipulation
 // ////////////////////////////////////////////////////////////////////////////
+
+// these the two strings each repersent the unicode character "GREEK UPSILON
+// WITH ACUTE AND HOOK SYMBOL", but the first string repersents it as a single
+// code point while the second repersents it as two code points. Normalization
+// should ensure that these end up the same in the final VM image.
+declare strYcomposed "ϓ";   // code point:  03D3       UTF8: 0xcf 0x93
+declare strYdecomposed "ϓ"; // code points: 03D2 0301  UTF8: 0xcf 0x92 0xcc 0x81
+
 asm_function testStringManipulation(: testString) {
     "\n# Test String Manipulation\n" say
 
@@ -1015,8 +1023,17 @@ asm_function testStringManipulation(: testString) {
 
     stringCompareStrcmp:
     "Comparing static and dynamic strings with [b]strcmp[/b]...[br]" say
-    "Fred" testString str_compare stringAppend jz
+    "Fred" testString str_compare stringCompareNormalized jz
     "Dynamic and static strings did not compare equal." error
+
+    stringCompareNormalized:
+    "Testing normalization of static strings...[br]" say
+    // makes sure the composed and decomposed forms of the same string are being
+    // repersented by the same string object
+    Integer strYcomposed astype
+    Integer strYdecomposed astype
+    eq stringAppend jnz
+    "Text incorrectly normallized." error
 
     stringAppend:
     "Appending to test string...[br]" say
