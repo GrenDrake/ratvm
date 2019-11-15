@@ -163,7 +163,7 @@ public:
 
     unsigned getPropertyId(const std::string &name);
     const std::string* getPropertyName(unsigned id) const;
-    unsigned getStringId(const std::string &name);
+    unsigned getStringId(std::string name);
     const std::string& getString(unsigned id) const;
     void organize();
     FunctionDef* functionByName(const std::string &name);
@@ -201,6 +201,8 @@ void dump_fullBytecode(GameData &gamedata, std::ostream &out);
 void dump_ir(GameData &gamedata, std::ostream &out);
 void dump_stringtable(GameData &gamedata, std::ostream &out);
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out);
+
+void normalize(std::string &s);
 
 #endif
 

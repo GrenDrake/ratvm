@@ -72,7 +72,8 @@ const std::string* GameData::getPropertyName(unsigned id) const {
     return &propertyNames[id];
 }
 
-unsigned GameData::getStringId(const std::string &name) {
+unsigned GameData::getStringId(std::string name) {
+    normalize(name);
     auto existing = std::find(stringTable.begin(), stringTable.end(), name);
     if (existing != stringTable.end()) {
         return existing - stringTable.begin();
