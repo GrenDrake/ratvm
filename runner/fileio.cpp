@@ -8,7 +8,6 @@
 
 
 static sqlite3* openDatabase();
-static void closeDatabase(sqlite3 *db);
 
 sqlite3* openDatabase() {
     sqlite3 *db;
@@ -72,10 +71,6 @@ sqlite3* openDatabase() {
     return db;
 }
 
-void closeDatabase(sqlite3 *db) {
-    sqlite3_close(db);
-}
-
 
 
 FileList GameData::getFileList(const std::string &gameId) {
@@ -135,7 +130,7 @@ FileList GameData::getFileList(const std::string &gameId) {
     }
 
     sqlite3_finalize(stmt);
-    closeDatabase(db);
+    sqlite3_close(db);
     return list;
 }
 
@@ -162,7 +157,7 @@ Value GameData::getFile(const std::string &fileName, const std::string &gameId) 
     if (rc == SQLITE_DONE) {
         // no such file
         sqlite3_finalize(stmt);
-        closeDatabase(db);
+        sqlite3_close(db);
         return noneValue;
     } else if (rc != SQLITE_ROW) {
         std::stringstream ss;
@@ -194,7 +189,7 @@ Value GameData::getFile(const std::string &fileName, const std::string &gameId) 
     }
 
     sqlite3_finalize(stmt);
-    closeDatabase(db);
+    sqlite3_close(db);
     return listId;
 }
 
@@ -252,7 +247,7 @@ bool GameData::saveFile(const std::string &filename, const std::string &gameId, 
     }
 
     sqlite3_finalize(stmt);
-    closeDatabase(db);
+    sqlite3_close(db);
     return true;
 }
 
@@ -287,6 +282,6 @@ bool GameData::deleteFile(const std::string &filename, const std::string &gameId
     int changes = sqlite3_total_changes(db);
 
     sqlite3_finalize(stmt);
-    closeDatabase(db);
+    sqlite3_close(db);
     return changes > 0 ? true : false;
 }
