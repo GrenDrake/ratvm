@@ -1,5 +1,5 @@
 #include <ctime>
-#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -16,9 +16,10 @@ sqlite3* openDatabase() {
 
     rc = sqlite3_open("files.db", &db);
     if (rc) {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        std::stringstream ss;
+        ss << "Can't open database: " << sqlite3_errmsg(db);
         sqlite3_close(db);
-        return nullptr;
+        throw GameError(ss.str());
     }
 
     const char *crateTableStatement = "CREATE TABLE files ( name, gameid, lastmod, content, PRIMARY KEY (name, gameid))";
@@ -26,36 +27,43 @@ sqlite3* openDatabase() {
     sqlite3_stmt *stmt;
     rc = sqlite3_prepare_v2(db, sqlText, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        std::cerr << "Failed to prepare statement to check table existance.\n";
+        std::stringstream ss;
+        ss << "Failed to prepare statement: ";
+        ss << sqlite3_errmsg(db);
         sqlite3_close(db);
-        return nullptr;
+        throw GameError(ss.str());
     }
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_ROW) {
-        std::cerr << "Failed to step sql statement.\n";
+        std::stringstream ss;
+        ss << "Failed to step SQL statement: ";
+        ss << sqlite3_errmsg(db);
         sqlite3_finalize(stmt);
         sqlite3_close(db);
-        return nullptr;
+        throw GameError(ss.str());
     } else {
         int count = sqlite3_column_int(stmt, 0);
         if (count <= 0) {
-            std::cerr << "Creating files table.\n";
             sqlite3_stmt *createTableStmt;
             rc = sqlite3_prepare_v2(db, crateTableStatement, -1, &createTableStmt, nullptr);
             if (rc != SQLITE_OK) {
-                std::cerr << "Failed to prepare create table statement.\n";
+                std::stringstream ss;
+                ss << "Failed to prepare create table statement: ";
+                ss << sqlite3_errmsg(db);
                 sqlite3_finalize(stmt);
                 sqlite3_close(db);
-                return nullptr;
+                throw GameError(ss.str());
             }
             rc = sqlite3_step(createTableStmt);
             sqlite3_finalize(createTableStmt);
             if (rc != SQLITE_DONE) {
-                std::cerr << "Failed to execute create table statement.\n";
+                std::stringstream ss;
+                ss << "Failed to execute create table statement: ";
+                ss << sqlite3_errmsg(db);
                 sqlite3_finalize(stmt);
                 sqlite3_close(db);
-                return nullptr;
+                throw GameError(ss.str());
             }
         }
     }
@@ -80,10 +88,12 @@ FileList GameData::getFileList(const std::string &gameId) {
 
     int rc = sqlite3_prepare_v2(db, getListSQL, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        std::cerr << "Failed to prepare list files statement (" << rc << ").\n";
+        std::stringstream ss;
+        ss << "Failed to prepare list files statement: ";
+        ss << sqlite3_errmsg(db);
         sqlite3_finalize(stmt);
-        closeDatabase(db);
-        return list;
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
     sqlite3_bind_text(stmt, 1, gameId.c_str(), -1, SQLITE_TRANSIENT);
     rc = sqlite3_step(stmt);
@@ -108,13 +118,20 @@ FileList GameData::getFileList(const std::string &gameId) {
             rc = sqlite3_step(stmt);
         } while (rc == SQLITE_ROW);
         if (rc != SQLITE_DONE) {
-            std::cerr << "Error while loading file list (" << rc << ").\n";
+            std::stringstream ss;
+            ss << "Error while loading file list: ";
+            ss << sqlite3_errmsg(db);
             sqlite3_finalize(stmt);
-            closeDatabase(db);
-            return list;
+            sqlite3_close(db);
+            throw GameError(ss.str());
         }
     } else {
-        std::cerr << "Failed to execute list files statement.\n";
+        std::stringstream ss;
+        ss << "Failed to execute list files statement: ";
+        ss << sqlite3_errmsg(db);
+        sqlite3_finalize(stmt);
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
 
     sqlite3_finalize(stmt);
@@ -131,9 +148,12 @@ Value GameData::getFile(const std::string &fileName, const std::string &gameId) 
 
     int rc = sqlite3_prepare_v2(db, sqlStmt, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        std::cerr << "Failed to prepare save file statement (" << rc << ").\n";
-        closeDatabase(db);
-        return noneValue;
+        std::stringstream ss;
+        ss << "Failed to prepare load file statement: ";
+        ss << sqlite3_errmsg(db);
+        sqlite3_finalize(stmt);
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
 
     sqlite3_bind_text(stmt, 1, fileName.c_str(), -1, SQLITE_TRANSIENT);
@@ -145,10 +165,12 @@ Value GameData::getFile(const std::string &fileName, const std::string &gameId) 
         closeDatabase(db);
         return noneValue;
     } else if (rc != SQLITE_ROW) {
-        std::cerr << "Failed to save file (" << rc << ").\n";
+        std::stringstream ss;
+        ss << "Failed to load file: ";
+        ss << sqlite3_errmsg(db);
         sqlite3_finalize(stmt);
-        closeDatabase(db);
-        return noneValue;
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
 
     const char *rawData = static_cast<const char*>(sqlite3_column_blob(stmt, 0));
@@ -186,9 +208,12 @@ bool GameData::saveFile(const std::string &filename, const std::string &gameId, 
 
     int rc = sqlite3_prepare_v2(db, sqlStmt, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        std::cerr << "Failed to prepare save file statement (" << rc << ").\n";
-        closeDatabase(db);
-        return false;
+        std::stringstream ss;
+        ss << "Failed to prepare save file statement: ";
+        ss << sqlite3_errmsg(db);
+        sqlite3_finalize(stmt);
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
 
     time_t now = time(nullptr);
@@ -201,10 +226,10 @@ bool GameData::saveFile(const std::string &filename, const std::string &gameId, 
     unsigned i = 0;
     for (const Value &v : list->items) {
         if (v.type != Value::Integer) {
-            std::cerr << "List value must be integer (found " << v.type << ").\n";
             free(data);
             sqlite3_finalize(stmt);
-            closeDatabase(db);
+            sqlite3_close(db);
+            throw GameError("List of data to save must contain only integers.");
             return false;
         }
         data[i]   = v.value & 0xFF;
@@ -218,10 +243,12 @@ bool GameData::saveFile(const std::string &filename, const std::string &gameId, 
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        std::cerr << "Failed to save file (" << rc << ").\n";
+        std::stringstream ss;
+        ss << "Failed to save file: ";
+        ss << sqlite3_errmsg(db);
         sqlite3_finalize(stmt);
-        closeDatabase(db);
-        return false;
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
 
     sqlite3_finalize(stmt);
@@ -238,18 +265,23 @@ bool GameData::deleteFile(const std::string &filename, const std::string &gameId
 
     int rc = sqlite3_prepare_v2(db, SQL, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        std::cerr << "Failed to prepare delete file statement (" << rc << ").\n";
+        std::stringstream ss;
+        ss << "Failed to prepare delete file statement: ";
+        ss << sqlite3_errmsg(db);
         sqlite3_finalize(stmt);
-        closeDatabase(db);
-        return false;
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
     sqlite3_bind_text(stmt, 1, gameId.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 2, filename.c_str(), -1, SQLITE_TRANSIENT);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        std::cerr << "Failed to execute list files statement.\n";
+        std::stringstream ss;
+        ss << "Failed to execute delete file statement: ";
+        ss << sqlite3_errmsg(db);
         sqlite3_finalize(stmt);
-        closeDatabase(db);
+        sqlite3_close(db);
+        throw GameError(ss.str());
     }
 
     int changes = sqlite3_total_changes(db);
