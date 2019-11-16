@@ -3,17 +3,41 @@
 #include <string>
 #include <vector>
 
+#ifdef __linux__
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+#endif
+
 #include "gamedata.h"
 #include <sqlite3.h>
 
 
 static sqlite3* openDatabase();
 
+std::string getBasePath() {
+#ifdef __linux__
+    const char *homedir;
+
+    if ((homedir = getenv("HOME")) == NULL) {
+        homedir = getpwuid(getuid())->pw_dir;
+    }
+
+    std::string path = homedir;
+    if (path.back() != '/') path += '/';
+    return path;
+#else
+    return "./";
+#endif
+}
+
 sqlite3* openDatabase() {
     sqlite3 *db;
     int rc;
 
-    rc = sqlite3_open("files.db", &db);
+    std::string dbPath = getBasePath() + "quollvm.db";
+
+    rc = sqlite3_open(dbPath.c_str(), &db);
     if (rc) {
         std::stringstream ss;
         ss << "Can't open database: " << sqlite3_errmsg(db);
