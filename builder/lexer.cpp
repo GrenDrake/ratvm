@@ -241,7 +241,7 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             try {
                 int result = parseAsInt(text);
                 tokens.push_back(Token(origin, Token::Integer, result));
-            } catch (const IntParseError &e) {
+            } catch (const IntParseError&) {
                 // not a number
                 tokens.push_back(Token(origin, Token::Identifier, text));
             }

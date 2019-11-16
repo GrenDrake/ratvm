@@ -465,7 +465,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                             getObject(nextValue);
                             callStack.push(Value(Value::Object, nextValue));
                             break;
-                        } catch (const GameError &e) {
+                        } catch (const GameError&) {
                             // do nothing
                         }
                     }

@@ -314,7 +314,7 @@ void GameData::mark(const Value &value) {
             case Value::VarRef:
                 break;
         }
-    } catch (const GameBadReference &e) {
+    } catch (const GameBadReference&) {
         // do nothing; no need to mark non-existance objects
     }
 }
@@ -348,7 +348,7 @@ std::string GameData::getSource(const Value &value) {
             break;
     }
 
-    if (item->srcFile == -1) return "no debug info";
+    if (!item || item->srcFile == -1) return "no debug info";
     if (item->srcFile == -2) return "dynamic";
 
     if (item->srcName >= 0) text = "\"" + getString(item->srcName).text + "\" ";
@@ -438,7 +438,7 @@ bool GameData::isValid(const Value &what) const {
             case Value::Function:   getFunction(what.value);    break;
             default:                return true;
         }
-    } catch (const GameBadReference &error) {
+    } catch (const GameBadReference&) {
         return false;
     }
     return true;
