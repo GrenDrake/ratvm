@@ -64,7 +64,7 @@ void write_symbol(std::ostream &out, const std::string &symbolName, Value::Type 
 ///////////////////////////////////////////////////////////////////////////////
 // Generate the output gamefile
 void generate(GameData &gamedata, const std::string &outputFile) {
-    std::ofstream out(outputFile);
+    std::ofstream out(outputFile, std::ios_base::binary);
     if (!out) {
         std::cerr << "Failed to create output file.\n";
         return;

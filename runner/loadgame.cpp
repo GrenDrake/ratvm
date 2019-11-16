@@ -17,7 +17,7 @@ Value read_value(std::istream &in);
 
 
 void GameData::load(const std::string &filename) {
-    std::ifstream inf(filename);
+    std::ifstream inf(filename, std::ios_base::binary);
     if (!inf) {
         std::cerr << "Could not open ~" << filename << "~.\n";
         return;
