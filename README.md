@@ -34,7 +34,7 @@ Several options exist for the compiler, most of which produce output intended fo
 
 **-show-next-ident**: Shows the next available unused value for object's `$ident` property.
 
-**-skip-ident-check**: Disable check ensuring no objects share the same value in their `$ident` property. 
+**-skip-ident-check**: Disable check ensuring no objects share the same value in their `$ident` property.
 
 **-o [file path]**: Specifies the file path that the compiler's output is written to.
 
@@ -50,7 +50,7 @@ Several options exist for the compiler, most of which produce output intended fo
 
 **-functions**: Dumps function header data to `functions.txt`.
 
-**-ir**: Dumps intermediate repersentation code for non-assembly functions to `ir.txt`.
+**-ir**: Dumps intermediate representation code for non-assembly functions to `ir.txt`.
 
 **-strings**: Dump all game strings to the file `strings.txt`.
 
@@ -79,4 +79,4 @@ If no game file is specified, the interpreter will attempt to load `game.bin` fr
 
 ## License
 
-The QuollVM compiler and interpreter contianed in this repository are made available under the terms of the [GPL 3.0 license](LICENSE).
+The QuollVM compiler and interpreter contained in this repository are made available under the terms of the [GPL 3.0 license](LICENSE).
