@@ -118,7 +118,7 @@ struct AsmOpcode : public AsmLine {
 };
 struct AsmValue : public AsmLine {
     AsmValue(const Origin &origin, const Value &value)
-    : AsmLine(origin), value(value)
+    : AsmLine(origin), value(value), mSize(0)
     { }
     virtual ~AsmValue() override { }
     virtual void build(FunctionBuilder &builder) const override { builder.build(this); }
@@ -130,7 +130,8 @@ struct AsmValue : public AsmLine {
 
 struct FunctionDef {
     FunctionDef()
-    : argument_count(0), local_count(0), nextLabel(1)
+    : argument_count(0), local_count(0), nameString(0), codePosition(0),
+      codeEndPosition(0), globalId(0), isAsm(false), nextLabel(1)
     { }
     ~FunctionDef();
 

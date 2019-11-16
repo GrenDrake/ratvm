@@ -34,7 +34,9 @@ void FunctionDef::addValue(const Origin &origin, const Value &value) {
 }
 
 GameData::GameData()
-: errorCount(0), nextAnonymousId(firstAnonymousId) {
+: errorCount(0), stringsStart(0), listsStart(0), mapsStart(0), objectsStart(0),
+  functionsStart(0), bytecodeStart(0), fileEnd(0),
+  nextAnonymousId(firstAnonymousId) {
     objects.push_back(nullptr);
     lists.push_back(nullptr);
     maps.push_back(nullptr);

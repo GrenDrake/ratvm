@@ -21,7 +21,7 @@ struct Value {
     };
 
     Value()
-    : type(None), selfObj(0)
+    : type(None), value(0), selfObj(0)
     { }
     Value(Type type, int value)
     : type(type), value(value), selfObj(0)

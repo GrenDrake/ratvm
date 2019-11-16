@@ -27,6 +27,19 @@ struct Value {
         Symbol      = 99
     };
 
+    Value()
+    : type(Integer), value(0), opcode(nullptr)
+    { }
+    Value(Type type)
+    : type(type), value(0), opcode(nullptr)
+    { }
+    Value(Type type, int value)
+    : type(type), value(value), opcode(nullptr)
+    { }
+    Value(Type type, int value, const std::string &text)
+    : type(type), value(value), text(text), opcode(nullptr)
+    { }
+
     Type type;
     int value;
     std::string text;
