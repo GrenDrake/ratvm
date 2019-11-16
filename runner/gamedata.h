@@ -94,8 +94,13 @@ typedef std::vector<FileRecord> FileList;
 
 
 struct GameData {
-    GameData() : showDebug(0), instructionCount(0), gameLoaded(false),
-                 mCallCount(0) { }
+    GameData()
+    : showDebug(0), instructionCount(0), optionType(OptionType::None),
+      extraValue(0), gameLoaded(false), mainFunction(0),
+      staticStrings(0), staticLists(0), staticMaps(0), staticObjects(0),
+      refGamename(0), refVersion(0), refAuthor(0), refGameid(0), refBuild(0),
+      mCallCount(0)
+    { }
     ~GameData();
     void load(const std::string &filename);
     void dump() const;
