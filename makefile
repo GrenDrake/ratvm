@@ -1,5 +1,5 @@
 PLAYQUOLL=../playquoll/
-CXXFLAGS= -std=c++11 -g -Wall `pkg-config --cflags icu-uc icu-`
+CXXFLAGS= -std=c++11 -g -Wall `pkg-config --cflags icu-uc`
 
 BUILD_OBJS=builder/build.o builder/general.o builder/lexer.o \
 		   builder/parse_main.o builder/translate.o builder/gamedata.o \
