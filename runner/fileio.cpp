@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#ifdef __linux__
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
@@ -16,7 +16,7 @@
 static sqlite3* openDatabase();
 
 std::string getBasePath() {
-#ifdef __linux__
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
     const char *homedir;
 
     if ((homedir = getenv("HOME")) == NULL) {
