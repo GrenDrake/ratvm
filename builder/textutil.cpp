@@ -4,7 +4,7 @@
 
 void normalize(std::string &s) {
     UErrorCode err = U_ZERO_ERROR;
-    const Normalizer2 *n = Normalizer2::getInstance(nullptr, "nfc", UNORM2_COMPOSE, err);
+    const icu::Normalizer2 *n = icu::Normalizer2::getInstance(nullptr, "nfc", UNORM2_COMPOSE, err);
     if (U_FAILURE(err)) {
         std::stringstream ss;
         ss << "Failed to get Normalizer2 instance: ";
@@ -13,8 +13,8 @@ void normalize(std::string &s) {
         throw BuildError(ss.str());
     }
 
-    UnicodeString text = UnicodeString::fromUTF8(s);
-    UnicodeString result = n->normalize(text, err);
+    icu::UnicodeString text = icu::UnicodeString::fromUTF8(s);
+    icu::UnicodeString result = n->normalize(text, err);
     if (U_FAILURE(err)) {
         std::stringstream ss;
         ss << "Failed to normalize string text: ";
