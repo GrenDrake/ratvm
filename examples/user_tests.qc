@@ -212,7 +212,7 @@ function testOutput() {
     ("[br] using say_char (should be 'A'): ")
     (say_char 65)
     ("[br]Say UTF-8 Text: テキストの例\n")
-    ("Horizontal rule below this:\n---\nTest below horizontal rule.\n")
+    ("Horizontal rule below this:\n[hr]\nText below horizontal rule.\n")
 
     ("# Testing text formatting:\n")
     ("bold text: [b]Lorem ipsum dolor sit amet.[/b][br]")
