@@ -71,11 +71,11 @@ bool isValidIdentifier(int c) {
 void handle_string_escapes(GameData &gamedata, const Origin &origin, std::string &text) {
     size_t spacesStart = SIZE_MAX;
     for (unsigned i = 0; i < text.size(); ++i) {
-        if (isspace(text[i]) && spacesStart == SIZE_MAX)  spacesStart = i;
-        else if (!isspace(text[i]))                       spacesStart = SIZE_MAX;
+        if (c_isspace(text[i]) && spacesStart == SIZE_MAX)  spacesStart = i;
+        else if (!c_isspace(text[i]))                       spacesStart = SIZE_MAX;
         if (text[i] == '\n') {
             size_t whitespaceEnd = i;
-            while (whitespaceEnd < text.size() && isspace(text[whitespaceEnd])) {
+            while (whitespaceEnd < text.size() && c_isspace(text[whitespaceEnd])) {
                 ++whitespaceEnd;
             }
             if (spacesStart != 0 && whitespaceEnd != text.size()) {
@@ -116,8 +116,8 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
     while (here(state)) {
         int c = here(state);
 
-        if (isspace(c)) {
-            while (isspace(c)) {
+        if (c_isspace(c)) {
+            while (c_isspace(c)) {
                 c = next(state);
             }
             continue;

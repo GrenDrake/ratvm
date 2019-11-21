@@ -2,6 +2,10 @@
 #include <unicode/normalizer2.h>
 #include "builderror.h"
 
+bool c_isspace(int c) {
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
 void normalize(std::string &s) {
     UErrorCode err = U_ZERO_ERROR;
     const icu::Normalizer2 *n = icu::Normalizer2::getInstance(nullptr, "nfc", UNORM2_COMPOSE, err);

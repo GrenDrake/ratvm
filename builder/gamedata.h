@@ -203,6 +203,7 @@ void dump_ir(GameData &gamedata, std::ostream &out);
 void dump_stringtable(GameData &gamedata, std::ostream &out);
 void dump_token_list(const std::vector<Token> &tokens, std::ostream &out);
 
+bool c_isspace(int c);
 void normalize(std::string &s);
 
 #endif
