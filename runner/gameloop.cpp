@@ -4,8 +4,7 @@
 #include <sstream>
 #include <string>
 #include "gamedata.h"
-
-std::string formatText(const std::string &text);
+#include "formatter.h"
 
 int tryAsNumber(const std::string &s) {
     char *endPtr;
@@ -42,7 +41,15 @@ void gameloop(GameData &gamedata, bool doSilent) {
             std::cout << " : ";
             std::cout << gamedata.infoText[INFO_RIGHT];
             std::cout << '\n';
-            std::cout << formatText(gamedata.textBuffer) << '\n';
+            ParseResult formatResult = formatText(gamedata.textBuffer);
+            if (!formatResult.errors.empty()) {
+                std::cout << "--== ==-- --== ==-- --== ==-- --== ==-- --== ==--\nERRORS OCCURED WHILE PARSING TEXT.\n";
+                for (const std::string &s : formatResult.errors) {
+                    std::cout << "    " << s << "\n";
+                }
+                std::cout << "--== ==-- --== ==-- --== ==-- --== ==-- --== ==--\n";
+            }
+            std::cout << formatResult.finalResult << '\n';
             if (!gamedata.infoText[INFO_BOTTOM].empty()) {
                 std::cout << "[";
                 std::cout << gamedata.infoText[INFO_BOTTOM];

@@ -218,7 +218,16 @@ function testOutput() {
     ("bold text: [b]Lorem ipsum dolor sit amet.[/b][br]")
     ("italic text: [i]Lorem ipsum dolor sit amet.[/i][br]")
     ("bold italic: [b][i]Lorem ipsum dolor sit amet.[/i][/b][br]")
-    ("italic bold: [i][b]Lorem ipsum dolor sit amet.[/b][/i]\n")
+    ("italic bold: [i][b]Lorem ipsum dolor sit amet.[/b][/i][br]")
+    ("bold italic with different ranges: [b]Lorem [i]ipsum dolor sit[/i] amet.[/b]\n")
+    ("Testing coloured text:
+        [color red]RED[/color]
+        [color green]GREEN[/color]
+        [color yellow]YELLOW[/color]
+        [color blue]BLUE[/color]
+        [color magenta]MAGENTA[/color]
+        [color cyan]CYAN[/color]
+        [color default]DEFAULT[/color]\n")
 
     ("Testing multiline string. Linebreak occurs here -->
 
