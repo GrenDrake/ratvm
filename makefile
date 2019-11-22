@@ -1,5 +1,7 @@
 PLAYQUOLL=../playquoll/
-CXXFLAGS= -std=c++11 -g -Wall `pkg-config --cflags icu-uc`
+CXXFLAGS= -std=c++11 -g -Wall -I../utf8proc-2.4.0/
+
+UTF8PROC_LIB=-L../utf8proc-2.4.0/ -lutf8proc
 
 BUILD_OBJS=builder/build.o builder/general.o builder/lexer.o \
 		   builder/parse_main.o builder/translate.o builder/gamedata.o \
@@ -33,7 +35,7 @@ all: $(BUILD) $(RUNNER) tests examples
 tests: $(TEST_BYTESTREAM) $(TEST_GENERAL)
 
 $(BUILD): $(BUILD_OBJS)
-	$(CXX) $(BUILD_OBJS) `pkg-config --libs icu-uc` -o $(BUILD)
+	$(CXX) $(BUILD_OBJS) $(UTF8PROC_LIB) -o $(BUILD)
 
 $(RUNNER): $(RUNNER_OBJS)
 	$(CXX) $(RUNNER_OBJS) -lsqlite3 -o $(RUNNER)

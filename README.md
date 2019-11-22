@@ -4,7 +4,7 @@ QuollVM is a virtual machine designed for creating and playing CYOA-style advent
 
 ## Dependencies
 
-The [ICU Project](http://site.icu-project.org/) is used to handle normalization and manipulation of Unicode strings.
+[utf8proc](https://github.com/JuliaStrings/utf8proc/) is used to handle normalization and manipulation of Unicode strings.
 
 [SQLite3](https://sqlite.org/) is used by the runner to contain the virtual file system presented to running games.
 
