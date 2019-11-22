@@ -20,7 +20,7 @@ The compiler is executed in the form of:
 ./build [options] [source files]
 ```
 
-At least one source file must be specified. If the program uses multiple source files, they must all be specified. By default, the compiler will produce a file named `game.bin`, but the `-o` option may be used to specify an alternative name.
+At least one source file must be specified. If the program uses multiple source files, they must all be specified. By default, the compiler will produce a file named `game.qvm`, but the `-o` option may be used to specify an alternative name.
 
 Several options exist for the compiler, most of which produce output intended for use in debugging the compiler itself and will likely be of little use to game authors.
 
