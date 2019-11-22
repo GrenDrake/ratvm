@@ -1,6 +1,7 @@
 # output files
 *.o
 *.qvm
+*.exe
 build
 run
 filescan
