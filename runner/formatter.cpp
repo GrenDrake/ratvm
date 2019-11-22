@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "formatter.h"
+#include "textutil.h"
 
 
 struct TagInfo {
@@ -93,10 +94,6 @@ TagInfo tags[] = {
 };
 TagInfo badTag = { "", false };
 
-
-bool c_isspace(int c) {
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
-}
 
 const TagInfo &getTagInfo(const std::string &tag) {
     for (const TagInfo &t : tags) {

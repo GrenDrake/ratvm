@@ -996,6 +996,8 @@ asm_function testDynamic(: newObj newStr newList newMap) {
 // should ensure that these end up the same in the final VM image.
 declare strYcomposed "ϓ";   // code point:  03D3       UTF8: 0xcf 0x93
 declare strYdecomposed "ϓ"; // code points: 03D2 0301  UTF8: 0xcf 0x92 0xcc 0x81
+declare strYfirst "ϒ"; // code point: 03D2
+declare strYsecond "́"; // code point: 0301
 
 asm_function testStringManipulation(: testString) {
     "\n# Test String Manipulation\n" say
@@ -1040,8 +1042,16 @@ asm_function testStringManipulation(: testString) {
     testString str_clear
     "fred" testString str_append
     " Lives!" testString str_append
-    "fred Lives!" testString str_compare stringAppendUF jz
+    "fred Lives!" testString str_compare stringAppendNormalized jz
     "String append malfunctioned." error
+
+    stringAppendNormalized:
+    "Testing append normalization...[br]" say
+    testString str_clear
+    strYfirst testString str_append
+    strYsecond testString str_append
+    strYcomposed testString str_compare stringAppendUF jz
+    "Appended string not normalized." error
 
     stringAppendUF:
     "Appending to test string with initial upper...[br]" say
@@ -1208,25 +1218,25 @@ function testFileIO(: theFilelist filedata aList counter length) {
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
 function main() {
-    (testJumps)
-    (testCompare)
-    (testCall)
-    (testStack)
-    (testMath)
-    (testDefaults)
+    // (testJumps)
+    // (testCompare)
+    // (testCall)
+    // (testStack)
+    // (testMath)
+    // (testDefaults)
 
-    (testValues)
-    (testIsValid)
-    (testLists)
-    (testMaps)
-    (testObjectProps)
-    (testDynamic)
+    // (testValues)
+    // (testIsValid)
+    // (testLists)
+    // (testMaps)
+    // (testObjectProps)
+    // (testDynamic)
     (testStringManipulation)
-    (testAndOr)
-    (testGarbage)
-    (testNextObject)
-    (testStringEncoding)
-    (testFileIO)
+    // (testAndOr)
+    // (testGarbage)
+    // (testNextObject)
+    // (testStringEncoding)
+    // (testFileIO)
 
     ("\nALL TESTS PASSED")
 }

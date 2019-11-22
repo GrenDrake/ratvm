@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include "gamedata.h"
+#include "textutil.h"
 
 Value ListDef::get(int key) const {
     if (key < 0 || key >= static_cast<int>(items.size())) {
@@ -453,6 +454,7 @@ void GameData::stringAppend(const Value &stringId, const Value &toAppend, bool u
         newText[0] = std::toupper(newText[0]);
     }
     strDef.text += newText;
+    normalize(strDef.text);
 }
 
 std::string GameData::asString(const Value &value) {
