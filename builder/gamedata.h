@@ -186,8 +186,8 @@ public:
     std::vector<FlagSet> flagsets;
     ByteStream bytecode;
 
-    unsigned stringsStart, listsStart, mapsStart, objectsStart;
-    unsigned functionsStart, bytecodeStart, fileEnd;
+    std::streampos stringsStart, listsStart, mapsStart, objectsStart;
+    std::streampos functionsStart, bytecodeStart, fileEnd;
 
     int nextAnonymousId;
 };
