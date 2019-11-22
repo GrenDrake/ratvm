@@ -998,6 +998,8 @@ declare strYcomposed "ϓ";   // code point:  03D3       UTF8: 0xcf 0x93
 declare strYdecomposed "ϓ"; // code points: 03D2 0301  UTF8: 0xcf 0x92 0xcc 0x81
 declare strYfirst "ϒ"; // code point: 03D2
 declare strYsecond "́"; // code point: 0301
+declare strSigmaLower "σ"; // code point 03C2
+declare strSigmaUpper "Σ"; // code point 03A3
 
 asm_function testStringManipulation(: testString) {
     "\n# Test String Manipulation\n" say
@@ -1057,8 +1059,15 @@ asm_function testStringManipulation(: testString) {
     "Appending to test string with initial upper...[br]" say
     testString str_clear
     "abc" testString str_append_uf
-    "Abc" testString str_compare doneStrings jz
+    "Abc" testString str_compare stringAppendUFExtended jz
     "String append UF malfunctioned." error
+
+    stringAppendUFExtended:
+    "Appending to test string with initial upper with larger codepoint...[br]" say
+    testString str_clear
+    strSigmaLower testString str_append_uf
+    strSigmaUpper testString str_compare doneStrings jz
+    "str_append_uf failed to uppercase σ to Σ." error
 
     doneStrings:
     0 testStringBuilder call
@@ -1218,25 +1227,25 @@ function testFileIO(: theFilelist filedata aList counter length) {
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
 function main() {
-    // (testJumps)
-    // (testCompare)
-    // (testCall)
-    // (testStack)
-    // (testMath)
-    // (testDefaults)
+    (testJumps)
+    (testCompare)
+    (testCall)
+    (testStack)
+    (testMath)
+    (testDefaults)
 
-    // (testValues)
-    // (testIsValid)
-    // (testLists)
-    // (testMaps)
-    // (testObjectProps)
-    // (testDynamic)
+    (testValues)
+    (testIsValid)
+    (testLists)
+    (testMaps)
+    (testObjectProps)
+    (testDynamic)
     (testStringManipulation)
-    // (testAndOr)
-    // (testGarbage)
-    // (testNextObject)
-    // (testStringEncoding)
-    // (testFileIO)
+    (testAndOr)
+    (testGarbage)
+    (testNextObject)
+    (testStringEncoding)
+    (testFileIO)
 
     ("\nALL TESTS PASSED")
 }

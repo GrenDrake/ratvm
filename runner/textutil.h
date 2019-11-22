@@ -5,5 +5,6 @@
 
 bool c_isspace(int c);
 void normalize(std::string &s);
+void upperFirst(std::string &s);
 
 #endif

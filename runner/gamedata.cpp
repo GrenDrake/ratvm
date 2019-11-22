@@ -445,14 +445,11 @@ bool GameData::isValid(const Value &what) const {
     return true;
 }
 
-void GameData::stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst) {
+void GameData::stringAppend(const Value &stringId, const Value &toAppend, bool wantUpperFirst) {
     stringId.requireType(Value::String);
     std::string newText = asString(toAppend);
     StringDef &strDef = getString(stringId.value);
-    if (upperFirst && !newText.empty()) {
-        // FIXME: not UTF-8 aware
-        newText[0] = std::toupper(newText[0]);
-    }
+    if (wantUpperFirst) upperFirst(newText);
     strDef.text += newText;
     normalize(strDef.text);
 }

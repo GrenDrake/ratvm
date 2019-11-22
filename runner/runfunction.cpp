@@ -6,7 +6,7 @@
 #include <string>
 #include "gamedata.h"
 #include "opcode.h"
-
+#include "textutil.h"
 #include "stack.h"
 
 Value GameData::resume(bool pushValue, const Value &inValue) {
@@ -90,10 +90,8 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 Value theText = callStack.pop();
                 if (theText.type == Value::String) {
                     std::string toSay = getString(theText.value).text;
-                    if (!toSay.empty()) {
-                        toSay[0] = std::toupper(toSay[0]);
-                        say(toSay);
-                    }
+                    upperFirst(toSay);
+                    say(toSay);
                 } else say(theText);
                 break; }
             case OpcodeDef::Say: {
