@@ -15,7 +15,7 @@ void gtStack::setArgs(const std::vector<Value> &rawArgs, int argCount, int local
 }
 
 void gtStack::setArg(unsigned index, const Value &newValue) {
-    if (index < 0 || index >= argList.size()) {
+    if (index >= argList.size()) {
         throw GameError("Tried to set illegal local number " + std::to_string(index) + ".");
     }
     argList[index] = newValue;

@@ -226,7 +226,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 Value list = callStack.pop();
                 list.requireType(Value::List);
                 const ListDef &def = getList(list.value);
-                callStack.push(Value(Value::Integer, def.items.size()));
+                callStack.push(Value(Value::Integer, static_cast<int>(def.items.size())));
                 break; }
             case OpcodeDef::SetItem: {
                 Value from = callStack.pop();
@@ -278,7 +278,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 ListDef &listDef = getList(theList.value);
                 if (theIndex.value < 0) theIndex.value = 0;
                 if (theIndex.value > static_cast<int>(listDef.items.size())) {
-                    theIndex.value = listDef.items.size();
+                    theIndex.value = static_cast<int>(listDef.items.size());
                 }
                 listDef.items.insert(listDef.items.begin() + theIndex.value,
                                      theValue);
@@ -489,7 +489,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 if (listDef.items.size() == 0) {
                     callStack.push(Value(Value::Integer, 0));
                 } else {
-                    int choice = rand() % listDef.items.size();
+                    std::vector<Value>::size_type choice = rand() % listDef.items.size();
                     callStack.push(listDef.items[choice]);
                 }
                 break; }
@@ -582,7 +582,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 Value theString = callStack.pop();
                 theString.requireType(Value::String);
                 const StringDef &strDef = getString(theString.value);
-                int length = strDef.text.size();
+                int length = static_cast<int>(strDef.text.size());
                 callStack.push(Value{Value::Integer, length});
                 break; }
             case OpcodeDef::StringCompare: {

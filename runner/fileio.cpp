@@ -129,7 +129,7 @@ FileList GameData::getFileList(const std::string &gameId) {
             const time_t t = timestamp;
             record.date = ctime(&t);
             while (record.date.back() == '\n') {
-                unsigned pos = record.date.size() - 1;
+                std::string::size_type pos = record.date.size() - 1;
                 record.date.erase(pos);
             }
             list.push_back(record);

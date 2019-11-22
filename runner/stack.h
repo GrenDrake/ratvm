@@ -12,7 +12,7 @@ public:
     void setArgs(const std::vector<Value> &rawArgs, int argCount, int localCount);
     void setArg(unsigned index, const Value &newValue);
     int argCount() const {
-        return argList.size();
+        return static_cast<int>(argList.size());
     }
 
     Value peek(int index = 0) const;
@@ -25,7 +25,7 @@ public:
         return mValues.empty();
     }
     unsigned size() const {
-        return mValues.size();
+        return static_cast<unsigned>(mValues.size());
     }
 
     Value& operator[](int index);

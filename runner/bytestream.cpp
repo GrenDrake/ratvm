@@ -78,7 +78,7 @@ void ByteStream::overwrite_32(unsigned where, uint32_t value) {
 }
 
 unsigned ByteStream::size() const {
-    return data.size();
+    return static_cast<unsigned>(data.size());
 }
 
 void ByteStream::write(std::ostream &out) const {
@@ -86,7 +86,7 @@ void ByteStream::write(std::ostream &out) const {
 }
 
 void ByteStream::dump(std::ostream &out, int indentSize) const {
-    int oldFill = out.fill();
+    char oldFill = out.fill();
     out.fill('0');
     out << std::hex;
     for (unsigned i = 0; i < data.size(); ++i) {
