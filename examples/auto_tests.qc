@@ -1207,29 +1207,26 @@ function testFileIO(: theFilelist filedata aList counter length) {
 // ////////////////////////////////////////////////////////////////////////////
 // All tests runner
 // ////////////////////////////////////////////////////////////////////////////
-asm_function main() {
-    "GTRPGE Test Suite" infobarTitle set_setting
-    "GTRPGE Test Suite" infobarLeft set_setting
+function main() {
+    (testJumps)
+    (testCompare)
+    (testCall)
+    (testStack)
+    (testMath)
+    (testDefaults)
 
-    0 testJumps call
-    0 testCompare call
-    0 testCall call
-    0 testStack call
-    0 testMath call
-    0 testDefaults call
+    (testValues)
+    (testIsValid)
+    (testLists)
+    (testMaps)
+    (testObjectProps)
+    (testDynamic)
+    (testStringManipulation)
+    (testAndOr)
+    (testGarbage)
+    (testNextObject)
+    (testStringEncoding)
+    (testFileIO)
 
-    0 testValues call
-    0 testIsValid call
-    0 testLists call
-    0 testMaps call
-    0 testObjectProps call
-    0 testDynamic call
-    0 testStringManipulation call
-    0 testAndOr call
-    0 testGarbage call
-    0 testNextObject call
-    0 testStringEncoding call
-    0 testFileIO call
-
-    "\nALL TESTS PASSED" say
+    ("\nALL TESTS PASSED")
 }
