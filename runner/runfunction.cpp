@@ -106,8 +106,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
             case OpcodeDef::SayChar: {
                 Value theText = callStack.pop();
                 theText.requireType(Value::Integer);
-                std::string aString(" ");
-                aString[0] = theText.value;
+                std::string aString = codepointToString(theText.value);
                 say(aString);
                 break; }
 
