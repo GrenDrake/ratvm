@@ -209,8 +209,10 @@ function testOutput() {
     ("This text (and nearly all text in these tests) is output using the \"print\" expression.\n")
     ("-1 using say_unsigned (should be 4294967295): ")
     (say_unsigned -1)
-    ("[br] using say_char (should be 'A'): ")
+    ("[br]Using say_char (should be 'A'): ")
     (say_char 65)
+    ("[br]Using say_char (should be a rat): ")
+    (say_char 0x1F400)
     ("[br]Say UTF-8 Text: テキストの例\n")
     ("Horizontal rule below this:\n[hr]\nText below horizontal rule.\n")
 
