@@ -239,6 +239,7 @@ void stmt_asm(GameData &gamedata, FunctionDef *function, List *list) {
                     }
                 }
                 break;
+            case Value::None:
             case Value::Integer:
             case Value::String:
             case Value::List:
