@@ -372,6 +372,38 @@ asm_function endOtherPage() {
 
 
 // ////////////////////////////////////////////////////////////////////////////
+// Loading and saving magic numbers
+// ////////////////////////////////////////////////////////////////////////////
+function testSave(: aList) {
+    (set aList (new List))
+    (list_push aList (get magic_1 $number1))
+    (list_push aList (get magic_1 $number2))
+    (list_push aList (get magic_1 $number3))
+    (list_push aList (get magic_2 $number1))
+    (list_push aList (get magic_2 $number2))
+    (list_push aList (get magic_2 $number3))
+    (file_write "magic" aList)
+    ("Magic numbers saved.")
+}
+
+function testLoad(: aList) {
+    (set aList (file_read "magic" GAMEID))
+    (if aList 
+        (proc 
+            (if (eq (size aList) 6) 
+                (proc 
+                    (setp magic_1 $number1 (get aList 0))
+                    (setp magic_1 $number2 (get aList 1))
+                    (setp magic_1 $number3 (get aList 2))
+                    (setp magic_1 $number4 (get aList 3))
+                    (setp magic_1 $number5 (get aList 4))
+                    (setp magic_1 $number6 (get aList 5))
+                    ("Restored saved magic numbers."))
+                ("Wrong number of magic numbers saved.")))
+        ("No magic numbers saved."))
+}
+
+// ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
 function showOptions(: choice) {
@@ -390,6 +422,9 @@ function showOptions(: choice) {
 
         (option "Test pages"                testPages)
         (option "Test input methods"        testInputs)
+
+        (option "Restore magic numbers"     testLoad)
+        (option "Save magic numbers"        testSave)
         (set choice (get_option none))
         (dispatcher choice)
         ))
