@@ -264,6 +264,7 @@ std::string formatAsText(TextNode *n, ParseResult &results, std::vector<std::str
 
     switch(n->type) {
         case TextNode::Root:
+            if (n->children.empty()) break;
             while (n->children.back()->type == TextNode::Paragraph) {
                 n->children.erase(n->children.end() - 1);
             }
