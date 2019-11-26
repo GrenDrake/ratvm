@@ -296,82 +296,6 @@ function testOrigins() {
 
 
 // ////////////////////////////////////////////////////////////////////////////
-// Test Page Commands
-// ////////////////////////////////////////////////////////////////////////////
-asm_function testPages() {
-    "Demo Page" testPage1 'd' add_page
-    "Another Page" otherPage 'a' add_page
-    "Page" otherPage 'p' add_page
-    "A Long Page Name" otherPage 'l' add_page
-    0 testPagesReal call
-}
-asm_function testPagesReal() {
-    "Extra pages have been added and can be activated by hotkey or by clicking on their button in the lower left." say
-    "Remove \"Another Page\"" testPagesRemovePage none none add_option
-    "Cleanup and return to main list" testPagesCleanup none none add_option
-    none get_option
-}
-asm_function testPagesRemovePage() {
-    "Another Page" del_page
-    0 testPagesReal call
-}
-asm_function testPagesCleanup() {
-    "Demo Page" del_page
-    "Another Page" del_page
-    "Page" del_page
-    "A Long Page Name" del_page
-    0 showOptions call
-}
-
-object testpageData
-    $count 1
-    $index 0
-;
-asm_function testPage1(key) {
-    key typeof Integer eq showpage jz
-    key 32 eq showkey jz
-    end_page
-    ret
-
-    leftkey:
-    $index testpageData get 1 sub $index testpageData setp
-    showpage jmp
-    rightkey:
-    $index testpageData get 1 add $index testpageData setp
-    showpage jmp
-    upkey:
-    $index testpageData get 10 mult $index testpageData setp
-    showpage jmp
-    downkey:
-    $index testpageData get 10 div $index testpageData setp
-    showpage jmp
-
-    showkey:
-    "You pressed: " say key say " (which is not space).\n" say
-    key -1 eq leftkey jnz
-    key -2 eq rightkey jnz
-    key -3 eq downkey jnz
-    key -4 eq upkey jnz
-    showpage:
-    "You have viewed this page " say
-    $count testpageData get say
-    " times. The index counter is " say
-    $index testpageData get say
-    ". Use arrow keys to change."
-    "Press space to return." testPage1 get_key
-    $count testpageData get 1 add $count testpageData setp
-}
-asm_function otherPage() {
-    "You selected a page other than the demo page! (Only the demo page has actual content.)" say
-    "Continue" none none none add_option
-    endOtherPage none get_option
-}
-asm_function endOtherPage() {
-    end_page
-}
-
-
-// ////////////////////////////////////////////////////////////////////////////
 // Loading and saving magic numbers
 // ////////////////////////////////////////////////////////////////////////////
 function testSave(: aList) {
@@ -420,7 +344,6 @@ function showOptions(: choice) {
         (option "Test random"               testRandom)
         (option "Test origins"              testOrigins)
 
-        (option "Test pages"                testPages)
         (option "Test input methods"        testInputs)
 
         (option "Restore magic numbers"     testLoad)
@@ -436,9 +359,6 @@ function dispatcher(optionFunc extraValue) {
 
     (if (or
             (eq optionFunc showOptions)
-            (eq optionFunc testPages)
-            (eq optionFunc testPagesReal)
-            (eq optionFunc testPagesRemovePage)
             (eq optionFunc receiveExtra)
             (eq optionFunc testGetkey)
             (eq optionFunc testLineInput)
