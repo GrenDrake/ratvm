@@ -200,7 +200,7 @@ Value GameData::getFile(const std::string &fileName, const std::string &gameId) 
     unsigned i = 0;
     while (i < dataSize) {
         unsigned raw = 0;
-        raw |= rawData[i];
+        raw |= rawData[i] & 0xFF;
         raw |= (rawData[i + 1] & 0xFF) << 8;
         raw |= (rawData[i + 2] & 0xFF) << 16;
         raw |= (rawData[i + 3] & 0xFF) << 24;
