@@ -25,7 +25,6 @@
 
 #include "bytestream.h"
 
-static void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state);
 void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &state);
 static int bytecode_push_value(ByteStream &bytecode, Value::Type type, int32_t value);
 void build_function(FunctionDef *function);
@@ -111,100 +110,6 @@ Value evalIdentifier(GameData &gamedata, FunctionDef *function, const std::strin
         return Value{Value::LocalVar, localNumber};
     }
     return Value{Value::Symbol, 0, identifier};
-}
-
-void parse_asm_function(GameData &gamedata, FunctionDef *function, ParseState &state) {
-    std::vector<Backpatch> patches;
-
-    while (!state.at_end()) {
-        int ident;
-        switch(state.here()->type) {
-            case Token::String:
-                ident = gamedata.getStringId(state.here()->text);
-                bytecode_push_value(function->code, Value::String, ident);
-                break;
-            case Token::Indirection: {
-                // variable name reference
-                state.next();
-                state.require(Token::Type::Identifier);
-                int argumentNumber = -1;
-                for (unsigned i = 0; i < function->local_names.size(); ++i) {
-                    if (function->local_names[i] == state.here()->text) {
-                        argumentNumber = i;
-                    }
-                }
-                if (argumentNumber < 0) {
-                    std::stringstream ss;
-                    ss << "Symbol \"" << state.here()->text << "\" is not a local variable name.";
-                    gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
-                }
-                bytecode_push_value(function->code, Value::VarRef, argumentNumber);
-                break; }
-            case Token::Identifier: {
-                // is label
-                if (state.peek() && state.peek()->type == Token::Colon) {
-                    if (nameInUse(gamedata, function, state.here()->text, -1)) {
-                        std::stringstream ss;
-                        ss << "Symbol \"" << state.here()->text << "\" already defined.";
-                        gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
-                    }
-                    function->labels.insert(std::make_pair(state.here()->text, function->code.size()));
-                    state.next();
-                    break;
-                }
-                Value result = evalIdentifier(gamedata, function, state.here()->text);
-                if (result.type == Value::Opcode) {
-                    if (result.opcode->permissions & FORBID_ASM) {
-                        gamedata.addError(state.here()->origin, ErrorMsg::Error, "Opcode " + result.opcode->name + " may not be used explicitly.");
-                    }
-                    function->code.add_8(result.opcode->code);
-                } else if (result.type == Value::Reserved) {
-                    std::stringstream ss;
-                    ss << "Unexpected reserved word " << result.text << '.';
-                    gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
-                } else if (result.type != Value::Symbol) {
-                    bytecode_push_value(function->code, result.type, result.value);
-                } else {
-                    // presume its a label
-                    auto labelIter = function->labels.find(state.here()->text);
-                    if (labelIter != function->labels.end()) {
-                        bytecode_push_value(function->code, Value::JumpTarget, labelIter->second);
-                    } else {
-                        function->code.add_8(OpcodeDef::Push32);
-                        function->code.add_8(Value::JumpTarget);
-                        unsigned labelPos = function->code.size();
-                        patches.push_back(Backpatch{labelPos, state.here()->text,state.here()->origin});
-                        function->code.add_32(0xFFFFFFFF);
-                    }
-                }
-                break;
-            }
-            case Token::Integer:
-                bytecode_push_value(function->code, Value::Integer, state.here()->value);
-                break;
-            case Token::Property:
-                bytecode_push_value(function->code, Value::Property, state.here()->value);
-                break;
-            default: {
-                std::stringstream ss;
-                ss << "Unexpected token " << state.here()->type << " in asm function body.";
-                gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
-                }
-        }
-        state.next();
-    }
-    function->code.add_8(OpcodeDef::Return);
-
-    for (const Backpatch &patch : patches) {
-        auto labelIter = function->labels.find(patch.name);
-        if (labelIter != function->labels.end()) {
-            function->code.overwrite_32(patch.position, labelIter->second);
-        } else {
-            std::stringstream ss;
-            ss << "Unknown symbol " << patch.name << " in function " << function->name << '.';
-            gamedata.addError(patch.origin, ErrorMsg::Error, ss.str());
-        }
-    }
 }
 
 ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState &state) {
@@ -352,11 +257,7 @@ int parse_functions(GameData &gamedata) {
         }
 
         function->codePosition = gamedata.bytecode.size();
-        if (function->isAsm) {
-            parse_asm_function(gamedata, function, state);
-        } else {
-            parse_std_function(gamedata, function, state);
-        }
+        parse_std_function(gamedata, function, state);
         function->code.padTo(4);
         gamedata.bytecode.append(function->code);
         function->codeEndPosition = gamedata.bytecode.size();

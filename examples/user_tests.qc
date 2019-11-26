@@ -35,15 +35,15 @@ function printMagicNumbers() {
 
 object magic_1
     $ident 1
-    $save asm_function(data) {
-        $number1 self get 99 data ins
-        $number2 self get 99 data ins
-        $number3 self get 99 data ins
+    $save function(data) {
+        (list_push data (get self $number1))
+        (list_push data (get self $number2))
+        (list_push data (get self $number3))
     }
-    $load asm_function(data) {
-        0 data get $number1 self set
-        1 data get $number2 self set
-        2 data get $number3 self set
+    $load function(data) {
+        (setp self $number1 (get data 0))
+        (setp self $number2 (get data 1))
+        (setp self $number3 (get data 2))
     }
     $number1 0
     $number2 0
@@ -52,15 +52,15 @@ object magic_1
 
 object magic_2
     $ident 2
-    $save asm_function(data) {
-        $number1 self get 99 data ins
-        $number2 self get 99 data ins
-        $number3 self get 99 data ins
+    $save function(data) {
+        (list_push data (get self $number1))
+        (list_push data (get self $number2))
+        (list_push data (get self $number3))
     }
-    $load asm_function(data) {
-        0 data get $number1 self set
-        1 data get $number2 self set
-        2 data get $number3 self set
+    $load function(data) {
+        (setp self $number1 (get data 0))
+        (setp self $number2 (get data 1))
+        (setp self $number3 (get data 2))
     }
     $number1 0
     $number2 0

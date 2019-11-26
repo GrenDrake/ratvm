@@ -262,12 +262,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     static int nextFunctionId = 1;
     bool isAsm = false;
     const Origin &origin = state.here()->origin;
-    if (state.matches("asm_function")) {
-        isAsm = true;
-        state.skip("asm_function");
-    } else {
-        state.skip("function");
-    }
+    state.skip("function");
 
     std::string funcName;
     if (state.matches(Token::Identifier)) {
@@ -493,7 +488,7 @@ Value parse_value(GameData &gamedata, ParseState &state, const std::string &defa
     } else if (state.matches("flags")) {
         int newId = parse_flags(gamedata, state);
         value = Value{Value::FlagSet, newId};
-    } else if (state.matches("function") || state.matches("asm_function")) {
+    } else if (state.matches("function")) {
         int newId = parse_function(gamedata, state, defaultName);
         value = Value{Value::Function, newId};
     } else if (state.matches(Token::Integer)) {
@@ -562,7 +557,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
                     gamedata.addError(object->origin, ErrorMsg::Warning, "Anonymous object at top level can never be referenced.");
                 }
             }
-        } else if (state.matches("function") || state.matches("asm_function")) {
+        } else if (state.matches("function")) {
             int functionId = parse_function(gamedata, state, "");
             if (functionId > 0) {
                 FunctionDef *function = gamedata.functions[functionId];
