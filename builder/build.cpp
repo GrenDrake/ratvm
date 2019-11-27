@@ -157,9 +157,21 @@ int main(int argc, char *argv[]) {
         dump_token_list(tokens, tokenFile);
     }
 
+    gamedata.symbols.markUsed("TITLE");
+    gamedata.symbols.markUsed("AUTHOR");
+    gamedata.symbols.markUsed("VERSION");
+    gamedata.symbols.markUsed("GAMEID");
+    gamedata.symbols.markUsed("main");
+    for (const SymbolDef &s : gamedata.symbols.symbols) {
+        if (s.uses == 0) {
+            gamedata.addError(s.origin, ErrorMsg::Warning, "Symbol " + s.name + " declared but never used.");
+        }
+    }
+
     if (!gamedata.errors.empty()) {
         dump_errors(gamedata, useAnsiEscapes);
-    } else {
+    } 
+    if (!gamedata.hasErrors()) {
         auto runEnd = std::chrono::system_clock::now();
         auto buildTimeRaw = std::chrono::duration_cast<std::chrono::milliseconds>(runEnd - runStart);
         int buildTimeMS = buildTimeRaw.count();

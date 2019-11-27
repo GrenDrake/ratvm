@@ -12,19 +12,21 @@ struct SymbolDef {
         Object, Integer, String
     };
 
-    SymbolDef(const Origin &origin, const std::string &name, const Value &value)
-    : origin(origin), name(name), value(value)
+    SymbolDef(const Origin &origin, const std::string &name, const Value &value, unsigned initialUses = 0)
+    : origin(origin), name(name), value(value), uses(initialUses)
     { }
 
     Origin origin;
     std::string name;
     Value value;
+    unsigned uses;
 };
 
 class SymbolTable {
 public:
     void add(const SymbolDef &symbol);
-    const SymbolDef* get(const std::string &name);
+    const SymbolDef* get(const std::string &name, bool countsAsUse = false);
+    void markUsed(const std::string &name);
     std::vector<SymbolDef> symbols;
 };
 

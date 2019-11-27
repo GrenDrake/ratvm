@@ -196,13 +196,23 @@ void SymbolTable::add(const SymbolDef &symbol) {
     }
     symbols.push_back(symbol);
 }
-const SymbolDef* SymbolTable::get(const std::string &name) {
-    for (const SymbolDef &symbol : symbols) {
+const SymbolDef* SymbolTable::get(const std::string &name, bool countsAsUse) {
+    for (SymbolDef &symbol : symbols) {
         if (symbol.name == name) {
+            if (countsAsUse) ++symbol.uses;
             return &symbol;
         }
     }
     return nullptr;
+}
+
+void SymbolTable::markUsed(const std::string &name) {
+    for (SymbolDef &symbol : symbols) {
+        if (symbol.name == name) {
+            ++symbol.uses;
+            return;
+        }
+    }
 }
 
 std::ostream& operator<<(std::ostream &out, const SymbolDef::Type &type) {

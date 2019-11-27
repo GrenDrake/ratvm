@@ -14,24 +14,24 @@
 #include "build.h"
 
 void add_default_constants(GameData &gamedata) {
-    gamedata.symbols.add(SymbolDef(Origin(), "None",            Value{Value::TypeId, 0}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Integer",         Value{Value::TypeId, 1}));
-    gamedata.symbols.add(SymbolDef(Origin(), "String",          Value{Value::TypeId, 2}));
-    gamedata.symbols.add(SymbolDef(Origin(), "List",            Value{Value::TypeId, 3}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Map",             Value{Value::TypeId, 4}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Function",        Value{Value::TypeId, 5}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::TypeId, 6}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::TypeId, 7}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::TypeId, 9}));
-    gamedata.symbols.add(SymbolDef(Origin(), "Reference",       Value{Value::TypeId, 10}));
-    gamedata.symbols.add(SymbolDef(Origin(), "none",            Value{Value::None,    0}));
-    gamedata.symbols.add(SymbolDef(Origin(), "saveAllowed",     Value{Value::Integer, 0}));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarLeft",     Value{Value::Integer, 1}));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarRight",    Value{Value::Integer, 2}));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarFooter",   Value{Value::Integer, 3}));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarTitle",    Value{Value::Integer, 4}));
-    gamedata.symbols.add(SymbolDef(Origin(), "true",            Value{Value::Integer, 1}));
-    gamedata.symbols.add(SymbolDef(Origin(), "false",           Value{Value::Integer, 0}));
+    gamedata.symbols.add(SymbolDef(Origin(), "None",            Value{Value::TypeId, 0}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Integer",         Value{Value::TypeId, 1}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "String",          Value{Value::TypeId, 2}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "List",            Value{Value::TypeId, 3}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Map",             Value{Value::TypeId, 4}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Function",        Value{Value::TypeId, 5}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::TypeId, 6}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::TypeId, 7}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::TypeId, 9}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Reference",       Value{Value::TypeId, 10}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "none",            Value{Value::None,    0}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "saveAllowed",     Value{Value::Integer, 0}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarLeft",     Value{Value::Integer, 1}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarRight",    Value{Value::Integer, 2}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarFooter",   Value{Value::Integer, 3}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "infobarTitle",    Value{Value::Integer, 4}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "true",            Value{Value::Integer, 1}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "false",           Value{Value::Integer, 0}, 1));
     gamedata.getPropertyId("(invalid)");
     gamedata.getPropertyId("internal_name");
     gamedata.getPropertyId("ident");
@@ -47,7 +47,7 @@ void translate_value(GameData &gamedata, Value &value) {
         return;
     }
     if (value.type != Value::Symbol) return;
-    const SymbolDef *symbol = gamedata.symbols.get(value.text);
+    const SymbolDef *symbol = gamedata.symbols.get(value.text, true);
     if (!symbol) {
         std::stringstream ss;
         ss << "Undefined symbol ~" << value.text << "~.";

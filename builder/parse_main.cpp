@@ -448,9 +448,11 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
     object->globalId = nextObjectId++;
     gamedata.objects.push_back(object);
     if (!objectName.empty()) {
-        gamedata.symbols.add(SymbolDef(origin,
-                                        objectName,
-                                        Value{Value::Object, object->globalId}));
+        if (validSymbol(objectName)) {
+            gamedata.symbols.add(SymbolDef(origin,
+                                            objectName,
+                                            Value{Value::Object, object->globalId}));
+        }
         int nameStringId = gamedata.getStringId(objectName);
         object->addProperty(state.here()->origin, internalNameId,
                             Value{Value::String, nameStringId});

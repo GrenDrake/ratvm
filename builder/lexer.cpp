@@ -60,14 +60,6 @@ int next(LexerState &state) {
     return here(state);
 }
 
-bool isValidIdentifier(int c) {
-    if (c >= '0' && c <= '9') return true;
-    if (c >= 'a' && c <= 'z') return true;
-    if (c >= 'A' && c <= 'Z') return true;
-    if (c == '_' || c == '-') return true;
-    return false;
-}
-
 void handle_string_escapes(GameData &gamedata, const Origin &origin, std::string &text) {
     size_t spacesStart = SIZE_MAX;
     for (unsigned i = 0; i < text.size(); ++i) {

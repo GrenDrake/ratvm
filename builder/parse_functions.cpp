@@ -98,7 +98,7 @@ Value evalIdentifier(GameData &gamedata, FunctionDef *function, const std::strin
     }
 
     // is global symbol
-    const SymbolDef *symbol = gamedata.symbols.get(identifier);
+    const SymbolDef *symbol = gamedata.symbols.get(identifier, true);
     if (symbol) {
         return symbol->value;
     }

@@ -1134,7 +1134,6 @@ function testStringEncoding(: encodedList recodedText) {
 }
 
 declare FILE_NAME 0;
-declare FILE_DATE 1;
 declare TEST_FILE_NAME "Short Test File";
 
 function delete_all_files(: theFilelist filedata aList counter length) {
