@@ -351,7 +351,7 @@ function testJumps(: testValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test math commands
 // ////////////////////////////////////////////////////////////////////////////
-function testMath(: counter) {
+function testMath() {
     (asm
         "\n# Testing math opcodes\n" say
         "Testing arithmetic...[br]" say
@@ -1136,7 +1136,7 @@ function testStringEncoding(: encodedList recodedText) {
 declare FILE_NAME 0;
 declare TEST_FILE_NAME "Short Test File";
 
-function delete_all_files(: theFilelist filedata aList counter length) {
+function delete_all_files(: theFilelist counter length) {
     (set theFilelist (file_list GAMEID))
     (set counter 0)
     (set length (size theFilelist))
@@ -1147,7 +1147,7 @@ function delete_all_files(: theFilelist filedata aList counter length) {
     (return length)
 }
 
-function testFileIO(: theFilelist filedata aList counter length) {
+function testFileIO(: theFilelist filedata aList) {
     ("\n# Testing file io...")
 
     (delete_all_files)

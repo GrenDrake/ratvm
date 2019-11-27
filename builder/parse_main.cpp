@@ -286,7 +286,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     gamedata.functions.push_back(function);
     // hidden "self" argument
     ++function->argument_count;
-    function->local_names.push_back("self");
+    function->addLocal("self", true);
     // arguments / locals
     bool doingLocals = false;
     while (!state.eof() && !state.matches(Token::CloseParan)) {
@@ -304,7 +304,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
         }
         if (doingLocals)    ++function->local_count;
         else                ++function->argument_count;
-        function->local_names.push_back(state.here()->text);
+        function->addLocal(state.here()->text);
         state.next();
     }
     state.next();

@@ -74,9 +74,9 @@ bool nameInUse(GameData &gamedata, FunctionDef *function, const std::string &nam
             return true;
         }
     }
-    for (unsigned i = 0; i < function->local_names.size(); ++i) {
+    for (std::vector<LocalDef>::size_type i = 0; i < function->locals.size(); ++i) {
         if (i == localId) continue;
-        if (name == function->local_names[i]) {
+        if (name == function->locals[i].name) {
             return true;
         }
     }
@@ -104,9 +104,8 @@ Value evalIdentifier(GameData &gamedata, FunctionDef *function, const std::strin
     }
 
     // is local name
-    auto localIter = std::find(function->local_names.begin(), function->local_names.end(), identifier);
-    if (localIter != function->local_names.end()) {
-        int localNumber = std::distance(function->local_names.begin(), localIter);
+    int localNumber = function->getLocalNumber(identifier);
+    if (localNumber >= 0) {
         return Value{Value::LocalVar, localNumber};
     }
     return Value{Value::Symbol, 0, identifier};
@@ -185,6 +184,10 @@ void FunctionBuilder::build(const AsmValue *value) {
         }
     } else {
         bytecode_push_value(forFunction->code, value->value.type, value->value.value);
+        if (value->value.type == Value::LocalVar || value->value.type == Value::VarRef) {
+            LocalDef *def = forFunction->getLocal(value->value.value);
+            if (def) ++def->reads;
+        }
     }
 }
 void FunctionBuilder::build(const AsmLabel *label) {
@@ -247,11 +250,10 @@ int parse_functions(GameData &gamedata) {
             function->tokens.cbegin()
         };
 
-        for (unsigned i = 0; i < function->local_names.size(); ++i) {
-            const std::string &name = function->local_names[i];
-            if (nameInUse(gamedata, function, name, i)) {
+        for (std::vector<LocalDef>::size_type i = 0; i < function->locals.size(); ++i) {
+            if (nameInUse(gamedata, function, function->locals[i].name, i)) {
                 std::stringstream ss;
-                ss << "Local name \"" << name << "\" already in use.";
+                ss << "Local name \"" << function->locals[i].name << "\" already in use.";
                 gamedata.addError(function->origin, ErrorMsg::Error, ss.str());
             }
         }
@@ -261,6 +263,12 @@ int parse_functions(GameData &gamedata) {
         function->code.padTo(4);
         gamedata.bytecode.append(function->code);
         function->codeEndPosition = gamedata.bytecode.size();
+
+        for (const LocalDef &def : function->locals) {
+            if (def.reads == 0) {
+                gamedata.addError(function->origin, ErrorMsg::Warning, "Local variable " + def.name + " not used.");
+            }
+        }
     }
 
     return 1;

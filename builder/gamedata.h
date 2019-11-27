@@ -128,6 +128,10 @@ struct AsmValue : public AsmLine {
     unsigned mSize;
 };
 
+struct LocalDef {
+    std::string name;
+    unsigned reads;
+};
 struct FunctionDef {
     FunctionDef()
     : argument_count(0), local_count(0), nameString(0), codePosition(0),
@@ -139,11 +143,18 @@ struct FunctionDef {
     void addOpcode(const Origin &origin, int opcode);
     void addValue(const Origin &origin, const Value &value);
 
+    void addLocal(const std::string &name, bool alwaysUsed = false);
+    const LocalDef* getLocal(int position) const;
+    LocalDef* getLocal(int position);
+    const LocalDef* getLocal(const std::string &name) const;
+    LocalDef* getLocal(const std::string &name);
+    int getLocalNumber(const std::string &name) const;
+
     Origin origin;
     int argument_count;
     int local_count;
     int nameString;
-    std::vector<std::string> local_names;
+    std::vector<LocalDef> locals;
     std::map<std::string, unsigned> labels;
     std::string name;
     std::vector<Token> tokens;

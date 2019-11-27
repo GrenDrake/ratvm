@@ -33,6 +33,46 @@ void FunctionDef::addValue(const Origin &origin, const Value &value) {
     asmCode.push_back(new AsmValue(origin, value));
 }
 
+void FunctionDef::addLocal(const std::string &name, bool alwaysUsed) {
+    if (alwaysUsed) {
+        locals.push_back(LocalDef{ name, 1 });
+    } else {
+        locals.push_back(LocalDef{ name, 0 });
+    }
+}
+const LocalDef* FunctionDef::getLocal(int position) const {
+    if (position < 0 || position >= locals.size()) {
+        return nullptr;
+    }
+    return &locals[position];
+}
+LocalDef* FunctionDef::getLocal(int position) {
+    if (position < 0 || position >= locals.size()) {
+        return nullptr;
+    }
+    return &locals[position];
+}
+const LocalDef* FunctionDef::getLocal(const std::string &name) const {
+    for (const LocalDef &def : locals) {
+        if (def.name == name) return &def;
+    }
+    return nullptr;
+}
+LocalDef* FunctionDef::getLocal(const std::string &name) {
+    for (LocalDef &def : locals) {
+        if (def.name == name) return &def;
+    }
+    return nullptr;
+}
+int FunctionDef::getLocalNumber(const std::string &name) const {
+    int n = 0;
+    for (const LocalDef &def : locals) {
+        if (def.name == name) return n;
+        ++n;
+    }
+    return -1;
+}
+
 GameData::GameData()
 : errorCount(0), stringsStart(0), listsStart(0), mapsStart(0), objectsStart(0),
   functionsStart(0), bytecodeStart(0), fileEnd(0),

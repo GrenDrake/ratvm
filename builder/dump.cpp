@@ -202,17 +202,11 @@ void dump_functions(GameData &gamedata, std::ostream &out, bool functionBytecode
         else                        out << function->name;
         out << " (#" << function->globalId << ')';
         out << " @ " << function->origin;
-        out << "\n        ARGUMENTS:";
-        if (function->argument_count == 0) {
+        out << "\n      ARGS/LOCALS:";
+        if (function->argument_count == 0 && function->local_count == 0) {
             out << " (none)";
-        } else for (int i = 0; i < function->argument_count; ++i) {
-            out << ' ' << function->local_names[i];
-        }
-        out << "\n           LOCALS:";
-        if (function->local_count == 0) {
-            out << " (none)";
-        } else for (int i = 0; i < function->local_count; ++i) {
-            out << ' ' << function->local_names[i + function->argument_count];
+        } else for (const LocalDef &def : function->locals) {
+            out << ' ' << def.name;
         }
         out << "\n      TOKEN COUNT: " << function->tokens.size();
         out << "\n    CODE POSITION: " << function->codePosition << " (0x";
@@ -241,8 +235,8 @@ void dump_ir(GameData &gamedata, std::ostream &out) {
     for (const FunctionDef *function : gamedata.functions) {
         if (!function) continue;
         out << "FUNCTION #" << function->globalId << ' ' << function->name << " (";
-        for (const std::string &name : function->local_names) {
-            out << ' ' << name;
+        for (const LocalDef &def : function->locals) {
+            out << ' ' << def.name;
         }
         out << " ) " << function->asmCode.size() << " operations\n";
         if (function->isAsm) out << "    (asm function)\n";
@@ -270,9 +264,13 @@ void dump_ir(GameData &gamedata, std::ostream &out) {
                 out << "VALUE " << value->value;
                 switch (value->value.type) {
                     case Value::VarRef:
-                    case Value::LocalVar:
-                        out << " (" << function->local_names[value->value.value] << ")\n";
-                        break;
+                    case Value::LocalVar: {
+                        out << " (";
+                        const LocalDef *def = function->getLocal(value->value.value);
+                        if (def) out << def->name;
+                        else     out << "INVALID";
+                        out << ")\n";
+                        break; }
                     default:
                         out << '\n';
                         break;
