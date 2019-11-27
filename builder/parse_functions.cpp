@@ -228,7 +228,7 @@ void parse_std_function(GameData &gamedata, FunctionDef *function, ParseState &s
         state.next();
     }
 
-    if (gamedata.errors.empty()) {
+    if (!gamedata.hasErrors()) {
         for (List *l : lists) {
             process_list(gamedata, function, l);
             function->addOpcode(function->origin, OpcodeDef::StackPop);

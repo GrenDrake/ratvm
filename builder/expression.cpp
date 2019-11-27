@@ -136,7 +136,7 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
         } else {
             if (theValue.value.type == Value::Expression) {
                 process_list(gamedata, function, theValue.list);
-                if (!gamedata.errors.empty()) return;
+                if (gamedata.hasErrors()) return;
             } else {
                 function->addValue(theValue.origin, theValue.value);
             }
@@ -156,7 +156,7 @@ void handle_call_stmt(GameData &gamedata, FunctionDef *function, List *list) {
         const ListValue &theValue = list->values[i];
         if (theValue.value.type == Value::Expression) {
             process_list(gamedata, function, theValue.list);
-            if (!gamedata.errors.empty()) return;
+            if (gamedata.hasErrors()) return;
         } else {
             function->addValue(theValue.origin, theValue.value);
         }
@@ -621,7 +621,7 @@ void process_value(GameData &gamedata, FunctionDef *function, ListValue &value) 
             break; }
         case Value::Expression:
             process_list(gamedata, function, value.list);
-            if (!gamedata.errors.empty()) return;
+            if (gamedata.hasErrors()) return;
             break;
         default:
             function->addValue(value.origin, value.value);
