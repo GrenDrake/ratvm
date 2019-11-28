@@ -284,7 +284,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     gamedata.functions.push_back(function);
     // hidden "self" argument
     ++function->argument_count;
-    function->addLocal("self", true);
+    function->addLocal("self", Value::Any, true);
     // arguments / locals
     while (!state.eof() && !state.matches(Token::CloseParan)) {
         try {
@@ -295,8 +295,23 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
             continue;
         }
         ++function->argument_count;
-        function->addLocal(state.here()->text);
+        const std::string &name = state.here()->text;
         state.next();
+        Value::Type type = Value::Any;
+        if (state.matches(Token::Colon)) {
+            state.next();
+            state.require(Token::Identifier);
+            const SymbolDef *s = gamedata.symbols.get(state.here()->text);
+            if (!s || s->value.type != Value::TypeId) {
+                std::stringstream ss;
+                ss << state.here()->text << " is not a valid type.";
+                gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
+            } else {
+                type = static_cast<Value::Type>(s->value.value);
+            }
+            state.next();
+        }
+        function->addLocal(name, type, false);
     }
     state.next();
     state.skip(Token::OpenBrace);
@@ -311,12 +326,12 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
                 continue;
             }
             ++function->local_count;
-            function->addLocal(state.here()->text, false);
+            function->addLocal(state.here()->text, Value::Any, false);
             state.next();
         }
         state.next();
     }
-    
+
     while (!state.matches(Token::CloseBrace)) {
         if (state.eof()) {
             gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file in function.");

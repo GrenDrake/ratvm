@@ -305,6 +305,7 @@ void GameData::mark(const Value &value) {
                 break;
 
             // remaining types not handled by garbage collector so just skip them
+            case Value::Any:
             case Value::None:
             case Value::Integer:
             case Value::Function:
@@ -326,6 +327,7 @@ std::string GameData::getSource(const Value &value) {
     const DataItem *item = nullptr;
 
     switch(value.type) {
+        case Value::Any:
         case Value::None:
         case Value::Integer:
         case Value::Property:

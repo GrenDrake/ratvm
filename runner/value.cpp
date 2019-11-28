@@ -24,6 +24,9 @@ bool operator==(const Value &lhs, const Value &rhs) {
 
 std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
     switch(type) {
+        case Value::Any:
+            out << "Any";
+            break;
         case Value::None:
             out << "None";
             break;

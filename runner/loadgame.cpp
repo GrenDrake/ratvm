@@ -125,6 +125,10 @@ void GameData::load(const std::string &filename) {
         def.srcLine = read_32(inf);
         def.arg_count = read_16(inf);
         def.local_count = read_16(inf);
+        int count = def.arg_count + def.local_count;
+        for (int i = 0; i < count; ++i) {
+            def.argTypes.push_back(static_cast<Value::Type>(read_8(inf)));
+        }
         def.position = read_32(inf);
         functions.push_back(def);
     }

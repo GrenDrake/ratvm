@@ -33,11 +33,11 @@ void FunctionDef::addValue(const Origin &origin, const Value &value) {
     asmCode.push_back(new AsmValue(origin, value));
 }
 
-void FunctionDef::addLocal(const std::string &name, bool alwaysUsed) {
+void FunctionDef::addLocal(const std::string &name, Value::Type type, bool alwaysUsed) {
     if (alwaysUsed) {
-        locals.push_back(LocalDef{ name, 1 });
+        locals.push_back(LocalDef{ name, type, 1 });
     } else {
-        locals.push_back(LocalDef{ name, 0 });
+        locals.push_back(LocalDef{ name, type, 0 });
     }
 }
 const LocalDef* FunctionDef::getLocal(int position) const {

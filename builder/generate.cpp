@@ -162,6 +162,9 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         write_32(out, function->origin.line);
         write_16(out, function->argument_count);
         write_16(out, function->local_count);
+        for (const LocalDef &def : function->locals) {
+            write_8(out, static_cast<int>(def.type));
+        }
         write_32(out, function->codePosition);
     }
 

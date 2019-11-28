@@ -72,6 +72,7 @@ struct ObjectDef : public DataItem  {
 struct FunctionDef : public DataItem  {
     int arg_count;
     int local_count;
+    std::vector<Value::Type> argTypes;
     unsigned position;
 };
 

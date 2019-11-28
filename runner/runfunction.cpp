@@ -146,6 +146,17 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.getStack().setArgs(funcArgs,
                         callStack.callTop().funcDef.arg_count,
                         callStack.callTop().funcDef.local_count);
+                const auto &args = callStack.getStack().argList;
+                for (int i = 0; i < static_cast<int>(args.size()); ++i) {
+                    if (newFunc.argTypes[i] != Value::Any && args[i].type != newFunc.argTypes[i]) {
+                        const std::string &name = getString(newFunc.srcName).text;
+                        std::stringstream ss;
+                        ss << "Function " << name << " expected argument ";
+                        ss << i << " to be " <<  newFunc.argTypes[i];
+                        ss << " but received " << args[i].type;
+                        throw GameError(ss.str());
+                    }
+                }
                 IP = newFunc.position;
                 break; }
 

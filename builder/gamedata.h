@@ -130,6 +130,7 @@ struct AsmValue : public AsmLine {
 
 struct LocalDef {
     std::string name;
+    Value::Type type;
     unsigned reads;
 };
 struct FunctionDef {
@@ -143,7 +144,7 @@ struct FunctionDef {
     void addOpcode(const Origin &origin, int opcode);
     void addValue(const Origin &origin, const Value &value);
 
-    void addLocal(const std::string &name, bool alwaysUsed = false);
+    void addLocal(const std::string &name, Value::Type type, bool alwaysUsed = false);
     const LocalDef* getLocal(int position) const;
     LocalDef* getLocal(int position);
     const LocalDef* getLocal(const std::string &name) const;

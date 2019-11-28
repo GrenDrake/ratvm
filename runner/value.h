@@ -18,6 +18,7 @@ struct Value {
         JumpTarget  = 9,
         VarRef      = 10,
         LocalVar    = 15,
+        Any         = 32,
     };
 
     Value()
