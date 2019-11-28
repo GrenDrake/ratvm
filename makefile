@@ -18,8 +18,8 @@ RUNNER=./run
 
 TEST_BYTESTREAM_OBJS=tests/bytestream.o builder/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
-TEST_GENERAL_OBJS=tests/general.o builder/textutil.o builder/general.o
-TEST_GENERAL=./test_general
+TEST_TEXTUTIL_OBJS=tests/textutil.o builder/textutil.o builder/general.o
+TEST_TEXTUTIL=./test_textutil
 
 AUTOTESTS_SRC=examples/auto_tests.qc
 AUTOTESTS=./examples/auto_tests.qvm
@@ -32,7 +32,7 @@ FIBTEST=./examples/fibonacci.qvm
 
 all: $(BUILD) $(RUNNER) tests examples
 
-tests: $(TEST_BYTESTREAM) $(TEST_GENERAL)
+tests: $(TEST_BYTESTREAM) $(TEST_TEXTUTIL)
 
 $(BUILD): $(BUILD_OBJS)
 	$(CXX) $(BUILD_OBJS) $(UTF8PROC_LIB) -o $(BUILD)
@@ -44,9 +44,9 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)
 	$(TEST_BYTESTREAM)
 
-$(TEST_GENERAL): $(BUILD) $(TEST_GENERAL_OBJS)
-	$(CXX) $(TEST_GENERAL_OBJS) $(UTF8PROC_LIB) -o $(TEST_GENERAL)
-	$(TEST_GENERAL)
+$(TEST_TEXTUTIL): $(BUILD) $(TEST_TEXTUTIL_OBJS)
+	$(CXX) $(TEST_TEXTUTIL_OBJS) $(UTF8PROC_LIB) -o $(TEST_TEXTUTIL)
+	$(TEST_TEXTUTIL)
 
 examples: $(BUILD) $(AUTOTESTS) $(STACKTEST) $(USERTESTS) $(FIBTEST)
 	cp ./examples/*.qvm $(PLAYQUOLL)games/
