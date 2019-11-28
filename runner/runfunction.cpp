@@ -554,7 +554,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
 
             case OpcodeDef::GetOption: {
                 Value extraArg = callStack.pop();
-                extraArg.requireType(Value::None, Value::Function);
+                extraArg.requireType(Value::None, Value::VarRef);
                 optionType = OptionType::Choice;
                 callStack.callTop().IP = IP;
                 if (extraArg.type == Value::None)   extraValue = -1;
