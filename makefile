@@ -18,7 +18,7 @@ RUNNER=./run
 
 TEST_BYTESTREAM_OBJS=tests/bytestream.o builder/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
-TEST_GENERAL_OBJS=tests/general.o builder/general.o
+TEST_GENERAL_OBJS=tests/general.o builder/textutil.o builder/general.o
 TEST_GENERAL=./test_general
 
 AUTOTESTS_SRC=examples/auto_tests.qc
@@ -45,7 +45,7 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(TEST_BYTESTREAM)
 
 $(TEST_GENERAL): $(BUILD) $(TEST_GENERAL_OBJS)
-	$(CXX) $(TEST_GENERAL_OBJS) -o $(TEST_GENERAL)
+	$(CXX) $(TEST_GENERAL_OBJS) $(UTF8PROC_LIB) -o $(TEST_GENERAL)
 	$(TEST_GENERAL)
 
 examples: $(BUILD) $(AUTOTESTS) $(STACKTEST) $(USERTESTS) $(FIBTEST)

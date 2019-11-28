@@ -230,11 +230,13 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
                 next(state);
             }
             std::string text = state.text.substr(start, state.pos - start);
-            try {
-                int result = parseAsInt(text);
+            int result = 0;
+            IntParseError ipe = parseAsInt(text, result);
+            if (ipe == IntParseError::OK) {
                 tokens.push_back(Token(origin, Token::Integer, result));
-            } catch (const IntParseError&) {
-                // not a number
+            } else if (ipe == IntParseError::OUT_OF_RANGE) {
+                gamedata.addError(origin, ErrorMsg::Error, "Integer " + text + " not a valid 32bit value.");
+            } else { // not a number
                 tokens.push_back(Token(origin, Token::Identifier, text));
             }
             continue;

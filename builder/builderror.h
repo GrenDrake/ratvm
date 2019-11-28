@@ -27,11 +27,4 @@ private:
     std::string mRawMessage;
 };
 
-class IntParseError : public std::runtime_error {
-public:
-    IntParseError(const std::string msg)
-    : std::runtime_error(msg)
-    { }
-};
-
 #endif
