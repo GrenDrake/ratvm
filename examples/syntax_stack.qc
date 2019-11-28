@@ -19,7 +19,8 @@ declare aList [ 9 5 6 3 7 8 ];
 object anObject $aProperty 55;
 declare aMap { 4: 5 2: 5 };
 
-function main(: local) {
+function main() {
+    [ local ]
     // set the local variable to an int value so inc/dec will work
     (set local 0)
 

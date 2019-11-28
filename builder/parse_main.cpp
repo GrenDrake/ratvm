@@ -286,13 +286,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     ++function->argument_count;
     function->addLocal("self", true);
     // arguments / locals
-    bool doingLocals = false;
     while (!state.eof() && !state.matches(Token::CloseParan)) {
-        if (state.matches(Token::Colon)) {
-            doingLocals = true;
-            state.next();
-            continue;
-        }
         try {
             state.require(Token::Identifier);
         } catch (BuildError &e) {
@@ -300,13 +294,29 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
             state.next();
             continue;
         }
-        if (doingLocals)    ++function->local_count;
-        else                ++function->argument_count;
+        ++function->argument_count;
         function->addLocal(state.here()->text);
         state.next();
     }
     state.next();
     state.skip(Token::OpenBrace);
+    if (state.matches(Token::OpenSquare)) {
+        state.next();
+        while (!state.matches(Token::CloseSquare)) {
+            try {
+                state.require(Token::Identifier);
+            } catch (BuildError &e) {
+                gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
+                state.next();
+                continue;
+            }
+            ++function->local_count;
+            function->addLocal(state.here()->text, false);
+            state.next();
+        }
+        state.next();
+    }
+    
     while (!state.matches(Token::CloseBrace)) {
         if (state.eof()) {
             gamedata.addError(origin, ErrorMsg::Error, "Unexpected end of file in function.");

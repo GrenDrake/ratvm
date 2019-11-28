@@ -71,7 +71,8 @@ object magic_2
 // ////////////////////////////////////////////////////////////////////////////
 // Testing non-asm syntax constructs
 // ////////////////////////////////////////////////////////////////////////////
-function testSyntax(: value) {
+function testSyntax() {
+    [ value ]
     (print_uf "this " "tests " "print_uf.[br]")
 
     ("Testing IF true: ")
@@ -143,7 +144,8 @@ function testSyntax(: value) {
 // ////////////////////////////////////////////////////////////////////////////
 // Basic looping demo
 // ////////////////////////////////////////////////////////////////////////////
-function testLoopDemo(: counter theValue) {
+function testLoopDemo() {
+    [ counter theValue ]
     (set counter 0)
     (set theValue 1)
     ("Counting:")
@@ -160,7 +162,8 @@ function testLoopDemo(: counter theValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test input commands
 // ////////////////////////////////////////////////////////////////////////////
-function testInputs(: choice xtra) {
+function testInputs() {
+    [ choice xtra ]
     (set choice 1)
     (while 1 (proc
         ("This node serves as a test of the menu selection options. Other input options can be selected in the menu below, or you can return to the top level menu.")
@@ -181,7 +184,8 @@ function receiveExtra(extra) {
     (option "Back to inputs menu" testInputs)
     (get_option none)
 }
-function testGetkey(: inKey) {
+function testGetkey() {
+    [ inKey ]
     ("This will demonstrate and test the get_key input type. Press 'Z' to return to the previous menu.")
     (while 1 (proc
         (set inKey (get_key "Try pressing a key."))
@@ -191,7 +195,8 @@ function testGetkey(: inKey) {
 object lineInputHolder
     $lastLine "(nothing yet)"
 ;
-function testLineInput(: theLine) {
+function testLineInput() {
+    [ theLine ]
     ("Testing line input option.\nThe last line you entered was: ")
     (print (get lineInputHolder $lastLine) "\n")
     (set theLine (get_line "Enter some text:"))
@@ -257,7 +262,8 @@ function testInfoarea() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test RNG
 // ////////////////////////////////////////////////////////////////////////////
-function testRandom(: counter) {
+function testRandom() {
+    [ counter ]
     ("This will generate 200 random numbers between 50 and 60 below.\n")
 
     (set counter 200)
@@ -298,7 +304,8 @@ function testOrigins() {
 // ////////////////////////////////////////////////////////////////////////////
 // Loading and saving magic numbers
 // ////////////////////////////////////////////////////////////////////////////
-function testSave(: aList) {
+function testSave() {
+    [ aList ]
     (set aList (new List))
     (list_push aList (get magic_1 $number1))
     (list_push aList (get magic_1 $number2))
@@ -310,7 +317,8 @@ function testSave(: aList) {
     ("Magic numbers saved.")
 }
 
-function testLoad(: aList) {
+function testLoad() {
+    [ aList ]
     (set aList (file_read "magic" GAMEID))
     (if aList 
         (proc 
@@ -330,7 +338,8 @@ function testLoad(: aList) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
-function showOptions(: choice) {
+function showOptions() {
+    [ choice ]
     (while 1 (proc
         ("Welcome to the feature test demo!\nSelect one of the options displayed below by entering its associated number in order to run the tests. When that is complete, you will be returned to this screen. The magic numbers below will are randomized every time you start the game, but will be maintained across saving and loading.")
         (printMagicNumbers)

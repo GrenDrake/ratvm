@@ -169,7 +169,8 @@ function testCall_onlyOne( arg1 arg2 ) {
     (if (neq arg2 none) (error "Second passed argument not none"))
 }
 
-function testCall_both( arg1 arg2 : var1 ) {
+function testCall_both( arg1 arg2 ) {
+    [ var1 ]
     (if (eq arg1 none) (error "First passed argument had unexpected none"))
     (if (eq arg2 none) (error "First passed argument had unexpected none"))
     (if (neq var1 none) (error "First non-argument local not none"))
@@ -189,7 +190,8 @@ function testSyntaxReturnDefault() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test compare command
 // ////////////////////////////////////////////////////////////////////////////
-function testCompare(: testValue) {
+function testCompare() {
+    [ testValue ]
     (asm
         "\n# Testing compare opcode\n" say
 
@@ -286,7 +288,8 @@ function testCompare(: testValue) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test jump commands
 // ////////////////////////////////////////////////////////////////////////////
-function testJumps(: testValue) {
+function testJumps() {
+    [ testValue ]
     (asm
         "\n# Testing jump opcodes\n" say
 
@@ -508,7 +511,8 @@ function testObjectProps() {
 // ////////////////////////////////////////////////////////////////////////////
 // Test value types
 // ////////////////////////////////////////////////////////////////////////////
-function testValues(: localvar) {
+function testValues() {
+    [ localvar ]
     ("\n# Testing Value Types\n")
 
     ("Checking basic value types...[br]")
@@ -536,7 +540,8 @@ function testValues(: localvar) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test isvalid
 // ////////////////////////////////////////////////////////////////////////////
-function testIsValid(: localvar) {
+function testIsValid() {
+    [ localvar ]
     (asm
         "\n# Testing is_valid\n" say
 
@@ -621,7 +626,8 @@ function testIsValid(: localvar) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test List Methods
 // ////////////////////////////////////////////////////////////////////////////
-function printArray(theArray : counter length) {
+function printArray(theArray) {
+    [ counter length ]
     ("[b]Array contents:[/b]")
     (set length (size theArray))
     (set counter 0)
@@ -632,7 +638,8 @@ function printArray(theArray : counter length) {
     (" (length: " length ")\n")
 }
 
-function testLists(: counter random_value) {
+function testLists() {
+    [ counter random_value ]
     (asm
         "\n# Testing List Operations\n" say
 
@@ -763,7 +770,8 @@ function testLists(: counter random_value) {
         ret
     )
 }
-function testListSort(: theList) {
+function testListSort() {
+    [ theList ]
     ("Testing list sorting...[br]")
     (set theList (new List))
     (list_push theList 5)
@@ -785,7 +793,8 @@ function testListSort(: theList) {
     (if (neq (get theList 2) "leg") (error "Third sorted list item wrong."))
     (if (neq (get theList 3) "tail") (error "Fourth sorted list item wrong."))
 }
-function testListBuilder(: theList) {
+function testListBuilder() {
+    [ theList ]
     ("Testing list builder expression...[br]")
     (set theList (list 1 2 3))
     (if (neq (size theList) 3) (error "Created list has wrong size."))
@@ -797,7 +806,8 @@ function testListBuilder(: theList) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test Map Methods
 // ////////////////////////////////////////////////////////////////////////////
-function testMaps(: keys) {
+function testMaps() {
+    [ keys ]
     (asm
         "\n# Testing Map Operations\n" say
 
@@ -856,7 +866,8 @@ function testMaps(: keys) {
 // ////////////////////////////////////////////////////////////////////////////
 // Test Dynamic Creation
 // ////////////////////////////////////////////////////////////////////////////
-function testDynamic(: newObj newStr newList newMap) {
+function testDynamic() {
+    [ newObj newStr newList newMap ]
     (asm
         "\n#Testing Dynamic Creation\n" say
 
@@ -956,7 +967,8 @@ declare strYsecond "́"; // code point: 0301
 declare strSigmaLower "σ"; // code point 03C2
 declare strSigmaUpper "Σ"; // code point 03A3
 
-function testStringManipulation(: testString) {
+function testStringManipulation() {
+    [ testString ]
     (asm
         "\n# Test String Manipulation\n" say
 
@@ -1030,7 +1042,8 @@ function testStringManipulation(: testString) {
     )
 }
 
-function testStringBuilder(: theString) {
+function testStringBuilder() {
+    [ theString ]
     ("Testing string builder...[br]")
     (set theString (string "I ate " 3 " turnips."))
     (if (str_compare theString "I ate 3 turnips.")
@@ -1086,7 +1099,8 @@ function testGarbage(localVar fakeRef) {
     )
 }
 
-function testNextObject(: obj) {
+function testNextObject() {
+    [ obj ]
     (asm
         "\n# Testing next_object\n" say
 
@@ -1111,7 +1125,8 @@ function testNextObject(: obj) {
 
 declare testString1 "あいう";
 declare testString2 "Hello World!";
-function testStringEncoding(: encodedList recodedText) {
+function testStringEncoding() {
+    [ encodedList recodedText ]
     (print "\n# Testing string en/decoding\n")
 
     (print "Testing " testString1 "...[br]")
@@ -1136,7 +1151,8 @@ function testStringEncoding(: encodedList recodedText) {
 declare FILE_NAME 0;
 declare TEST_FILE_NAME "Short Test File";
 
-function delete_all_files(: theFilelist counter length) {
+function delete_all_files() {
+    [ theFilelist counter length ]
     (set theFilelist (file_list GAMEID))
     (set counter 0)
     (set length (size theFilelist))
@@ -1147,7 +1163,8 @@ function delete_all_files(: theFilelist counter length) {
     (return length)
 }
 
-function testFileIO(: theFilelist filedata aList) {
+function testFileIO() {
+    [ theFilelist filedata aList ]
     ("\n# Testing file io...")
 
     (delete_all_files)
