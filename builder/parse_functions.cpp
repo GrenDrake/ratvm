@@ -7,8 +7,6 @@
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
 #include <algorithm>
-#include <cctype>
-#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>

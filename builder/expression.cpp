@@ -5,7 +5,6 @@
  *
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
-#include <iostream>
 #include <ostream>
 #include <sstream>
 #include "expression.h"

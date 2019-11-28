@@ -7,12 +7,10 @@
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
 #include <algorithm>
-#include <cctype>
 #include <cstring>
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <iostream>
 
 #include "gamedata.h"
 #include "symboltable.h"

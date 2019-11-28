@@ -4,10 +4,8 @@
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
 
-#include <cctype>
 #include <cstdint>
 #include <ctime>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -66,7 +64,7 @@ void write_symbol(std::ostream &out, const std::string &symbolName, Value::Type 
 void generate(GameData &gamedata, const std::string &outputFile) {
     std::ofstream out(outputFile, std::ios_base::binary);
     if (!out) {
-        std::cerr << "Failed to create output file.\n";
+        gamedata.addError(Origin(), ErrorMsg::Fatal, "Failed to create output file.");
         return;
     }
     // write header

@@ -4,7 +4,6 @@
  * Part of GTRPE by Gren Drake
  * **************************************************************************/
 
-#include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
