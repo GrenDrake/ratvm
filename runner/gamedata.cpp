@@ -336,7 +336,7 @@ std::string GameData::getSource(const Value &value) {
         case Value::VarRef:
         case Value::JumpTarget:
         case Value::TypeId:
-            return "";
+            return "primitive";
         case Value::Map:
             item = &getMap(value.value);
             break;
@@ -352,7 +352,7 @@ std::string GameData::getSource(const Value &value) {
     }
 
     if (!item || item->srcFile == -1) return "no debug info";
-    if (item->srcFile == -2) return "dynamic";
+    if (item->srcFile == ORIGIN_DYNAMIC) return "dynamic";
 
     if (item->srcName >= 0) text = "\"" + getString(item->srcName).text + "\" ";
     if (item->srcLine >= 0) text += getString(item->srcFile).text
@@ -381,28 +381,28 @@ Value GameData::makeNew(Value::Type type) {
         case Value::List: {
             ListDef *newDef = new ListDef;
             newDef->ident = lists.size();
-            newDef->srcFile = newDef->srcLine = newDef->srcName = -ORIGIN_DYNAMIC;
+            newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
             lists.push_back(newDef);
             return Value(Value::List, newDef->ident);
         }
         case Value::Map: {
             MapDef *newDef = new MapDef;
             newDef->ident = maps.size();
-            newDef->srcFile = newDef->srcLine = newDef->srcName = -ORIGIN_DYNAMIC;
+            newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
             maps.push_back(newDef);
             return Value(Value::Map, newDef->ident);
         }
         case Value::Object: {
             ObjectDef *newDef = new ObjectDef;
             newDef->ident = objects.size();
-            newDef->srcFile = newDef->srcLine = newDef->srcName = -ORIGIN_DYNAMIC;
+            newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
             objects.push_back(newDef);
             return Value(Value::Object, newDef->ident);
         }
         case Value::String: {
             StringDef *newDef = new StringDef;
             newDef->ident = strings.size();
-            newDef->srcFile = newDef->srcLine = newDef->srcName = -ORIGIN_DYNAMIC;
+            newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
             strings.push_back(newDef);
             return Value(Value::String, newDef->ident);
         }

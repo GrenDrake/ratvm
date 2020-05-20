@@ -614,7 +614,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
             case OpcodeDef::Origin: {
                 Value ofWhat = callStack.pop();
                 std::string text = getSource(ofWhat);
-                callStack.push(Value{Value::String, 0});
+                callStack.push(makeNewString(text));
                 break; }
             case OpcodeDef::New: {
                 Value type = callStack.pop();
