@@ -27,6 +27,13 @@ void upperFirst(std::string &s) {
     s.insert(0, reinterpret_cast<char*>(dest));
 }
 
+int getFirstCodepoint(const std::string &s) {
+    const unsigned char *source = reinterpret_cast<const unsigned char*>(s.c_str());
+    utf8proc_int32_t codepoint = 0;
+    utf8proc_iterate(source, -1, &codepoint);
+    return codepoint;
+}
+
 std::string codepointToString(int cp) {
     unsigned char dest[6] = { 0 };
     utf8proc_ssize_t length2 = utf8proc_encode_char(cp, dest);

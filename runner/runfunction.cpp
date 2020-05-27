@@ -552,6 +552,13 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 }
                 break; }
 
+            case OpcodeDef::GetKey: {
+                Value promptStr = callStack.pop();
+                promptStr.requireType(Value::String);
+                optionType = OptionType::Key;
+                callStack.callTop().IP = IP;
+                options.push_back(GameOption{promptStr.value, noneValue, noneValue, -1});
+                return Value{}; }
             case OpcodeDef::GetOption: {
                 Value extraArg = callStack.pop();
                 extraArg.requireType(Value::None, Value::VarRef);
@@ -559,6 +566,13 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.callTop().IP = IP;
                 if (extraArg.type == Value::None)   extraValue = -1;
                 else                                extraValue = extraArg.value;
+                return Value{}; }
+            case OpcodeDef::GetLine: {
+                Value promptStr = callStack.pop();
+                promptStr.requireType(Value::String);
+                optionType = OptionType::Line;
+                callStack.callTop().IP = IP;
+                options.push_back(GameOption{promptStr.value, noneValue, noneValue, -1});
                 return Value{}; }
             case OpcodeDef::AddOption: {
                 Value hotkey = callStack.pop();

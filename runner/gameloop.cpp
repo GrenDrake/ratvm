@@ -5,6 +5,7 @@
 #include <string>
 #include "gamedata.h"
 #include "formatter.h"
+#include "textutil.h"
 
 int tryAsNumber(const std::string &s) {
     char *endPtr;
@@ -73,6 +74,14 @@ void gameloop(GameData &gamedata, bool doSilent) {
                     std::cout << "\nProgram ended. Goodbye!\n";
                 }
                 return;
+            case OptionType::Key:
+            case OptionType::Line: {
+                if (doSilent) break;
+                if (!gamedata.options.empty()) {
+                    const GameOption &option = gamedata.options.back();
+                    std::cout << '\n' << gamedata.getString(option.strId).text;
+                }
+                break; }
             case OptionType::Choice: {
                 if (doSilent) break;
                 std::cout << '\n';
@@ -112,6 +121,21 @@ void gameloop(GameData &gamedata, bool doSilent) {
                 case OptionType::EndOfProgram:
                     //should never occur
                     return;
+                case OptionType::Key: {
+                    int c = 0;
+                    if (!inputText.empty()) {
+                        c = getFirstCodepoint(inputText);
+                        if (c >= 'A' && c <= 'Z') c += 32;
+                    }
+                    nextValue = Value(Value::Integer, c);
+                    hasNext = true;
+                    hasValue = true;
+                    break; }
+                case OptionType::Line: {
+                    nextValue = gamedata.makeNewString(inputText);
+                    hasNext = true;
+                    hasValue = true;
+                    break; }
                 case OptionType::Choice: {
                     int optNum = tryAsNumber(inputText);
                     if (optNum >= 0) {
@@ -148,5 +172,3 @@ void gameloop(GameData &gamedata, bool doSilent) {
     }
 
 }
-
-
