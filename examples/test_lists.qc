@@ -1,4 +1,4 @@
-declare TITLE   "Automated Test Suite for Values";
+declare TITLE   "Automated Test Suite for Lists";
 declare AUTHOR  "Gren Drake";
 declare VERSION 1;
 declare GAMEID  "";
