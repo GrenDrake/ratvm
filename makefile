@@ -1,6 +1,6 @@
 PLAYQUOLL=../playquoll/
 CFLAGS= -std=c99 -g -Wall
-CXXFLAGS= -std=c++11 -g -Wall -I../utf8proc-2.4.0/
+CXXFLAGS= -std=c++11 -g -Wall -I../utf8proc-2.4.0/ -I./common/
 
 UTF8PROC_LIB=-L../utf8proc-2.4.0/ -lutf8proc
 
@@ -8,18 +8,18 @@ BUILD_OBJS=builder/build.o builder/general.o builder/lexer.o \
 		   builder/parse_main.o builder/translate.o builder/gamedata.o \
 		   builder/value.o builder/parse_functions.o builder/parsestate.o \
 		   builder/generate.o builder/bytestream.o builder/dump.o \
-		   builder/opcode.o builder/expression.o builder/textutil.o
+		   builder/opcode.o builder/expression.o common/textutil.o
 BUILD=./build
 
 RUNNER_OBJS=runner/runner.o runner/gameloop.o runner/gamedata.o \
 			runner/formatter.o runner/runfunction.o runner/stack.o \
 			runner/loadgame.o runner/dump.o runner/fileio.o \
-			runner/bytestream.o runner/value.o runner/textutil.o
+			runner/bytestream.o runner/value.o common/textutil.o
 RUNNER=./run
 
 TEST_BYTESTREAM_OBJS=tests/bytestream.o builder/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
-TEST_TEXTUTIL_OBJS=tests/textutil.o builder/textutil.o builder/general.o
+TEST_TEXTUTIL_OBJS=tests/textutil.o common/textutil.o
 TEST_TEXTUTIL=./test_textutil
 TEST_FIBONACCI_OBJS=tests/fibonacci.o
 TEST_FIBONACCI=./test_fibonacci

@@ -102,29 +102,6 @@ const TagInfo &getTagInfo(const std::string &tag) {
     return badTag;
 }
 
-std::vector<std::string> explodeString(const std::string &s) {
-    std::vector<std::string> parts;
-    const char *whitespace = " \t\n\r";
-    std::string::size_type p = 0, n = 0;
-
-    if (s.empty()) return parts;
-
-    p = s.find_first_not_of(whitespace);
-
-    while (n != std::string::npos) {
-        while (p < s.size() && c_isspace(s[p])) ++p;
-        if (p >= s.size()) break;
-        n = s.find_first_of(whitespace, p);
-        std::string sub = s.substr(p, n - p);
-        if (!sub.empty()) {
-            parts.push_back(sub);
-        }
-        p = n + 1;
-    }
-
-    return parts;
-}
-
 
 
 std::vector<TextToken> parseSourceText(const std::string &text, ParseResult &results) {

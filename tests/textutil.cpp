@@ -3,8 +3,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "../builder/builderror.h"
-#include "../builder/textutil.h"
+#include "../common/textutil.h"
 #include "testing.h"
 
 
@@ -41,7 +40,6 @@ void test_parseInt_basic() {
     assert_equal(rc, IntParseError::OK, "parseInt_basic: 0B10110010 failed to parse");
     assert_equal(result, 178, "parseInt_basic: 0B10110010 wrong");
 }
-// 
 
 
 void test_parseInt_extents() {
@@ -95,15 +93,51 @@ void test_parseInt_commas() {
     assert_equal(result, 178, "parseInt_basic: 0B1011_0010 wrong");
 }
 
+void test_trim() {
+    assert_equal(trim("test  string"), "test  string", "test_trim: failed to string with no leading or trailing whitepscae");
+    assert_equal(trim("  test  string  "), "test  string", "test_trim: failed to string with both leading and trailing whitepscae");
+    assert_equal(trim("  test  string"), "test  string", "test_trim: failed to string with only leading whitepscae");
+    assert_equal(trim("test  string  "), "test  string", "test_trim: failed to string with only trailing whitepscae");
+}
+
+bool compare_str_vectors(const std::vector<std::string> &left, const std::vector<std::string> &right) {
+    if (left.size() != right.size()) return false;
+    for (unsigned i = 0; i < left.size(); ++i) {
+        if (left[i] != right[i]) return false;
+    }
+    return true;
+}
+void test_explode() {
+    bool result = false;
+
+    result = compare_str_vectors(explodeString("   joy   to  the    world  "), std::vector<std::string>{"joy","to","the","world"});
+    assert_true(result, "test_explode: failed to explode maximally spaced string");
+
+    result = compare_str_vectors(explodeString("joy to the world"), std::vector<std::string>{"joy","to","the","world"});
+    assert_true(result, "test_explode: failed to explode minimally spaced string");
+
+    result = compare_str_vectors(explodeString("world"), std::vector<std::string>{"world"});
+    assert_true(result, "test_explode: failed to explode single word string");
+
+    result = compare_str_vectors(explodeString("  world"), std::vector<std::string>{"world"});
+    assert_true(result, "test_explode: failed to explode single word string with leading whitespace");
+
+    result = compare_str_vectors(explodeString("world  "), std::vector<std::string>{"world"});
+    assert_true(result, "test_explode: failed to explode single word string with trailing whitepsace");
+
+    result = compare_str_vectors(explodeString("  world  "), std::vector<std::string>{"world"});
+    assert_true(result, "test_explode: failed to explode single word string with leading and trailing whitepsace");
+}
+
+
 int main() {
 
     try {
         test_parseInt_basic();
         test_parseInt_extents();
         test_parseInt_commas();
-    } catch (BuildError &e) {
-        std::cerr << "Test Failed (BuildError): " << e.getMessage() << '\n';
-        return 1;
+        test_trim();
+        test_explode();
     } catch (TestFailed &e) {
         std::cerr << "Test Failed: " << e.what() << '\n';
         return 1;
