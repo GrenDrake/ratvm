@@ -320,10 +320,10 @@ function testSave() {
 function testLoad() {
     [ aList ]
     (set aList (file_read "magic" GAMEID))
-    (if aList 
-        (proc 
-            (if (eq (size aList) 6) 
-                (proc 
+    (if aList
+        (proc
+            (if (eq (size aList) 6)
+                (proc
                     (setp magic_1 $number1 (get aList 0))
                     (setp magic_1 $number2 (get aList 1))
                     (setp magic_1 $number3 (get aList 2))

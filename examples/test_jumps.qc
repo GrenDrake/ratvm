@@ -1,0 +1,143 @@
+declare TITLE   "Automated Test Suite for Jumps and Function Calls";
+declare AUTHOR  "Gren Drake";
+declare VERSION 1;
+declare GAMEID  "";
+
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test jump commands
+// ////////////////////////////////////////////////////////////////////////////
+function testJumps() {
+    [ testValue ]
+    (asm
+        "\n# Testing jump opcodes\n" say
+
+        "Testing unconditional jump...[br]" say
+        test001 jmp
+        "Failed unconditional jump." error
+
+        test001:
+        "Testing conditional jumps...[br]" say
+        0 test002 jz
+        "Failed jz (0)." error
+
+        test002:
+        1 test002_failed jz
+        test003 jmp
+        test002_failed:
+        "Failed jz (1)." error
+
+        test003:
+        0 test003_failed jnz
+        test004 jmp
+        test003_failed:
+        "Failed jnz (0)." error
+
+        test004:
+        1 test017 jnz
+        "Failed jnz (1)." error
+
+
+        test017:
+        "Test jump target in local variable...[br]" say
+        test018 *testValue set
+        testValue jmp
+        "Failed jmp w/ local." error
+
+        test018:
+        test019 *testValue set
+        0 testValue jz
+        "Failed jz w/ local." error
+
+        test019:
+        test024 *testValue set
+        1 testValue jnz
+        "Failed jnz w/ local." error
+
+        test024:
+        "Testing with value in local variable...[br]" say
+        0 *testValue set
+        testValue test025 jz
+        "Failed jz w/ value in local." error
+
+        test025:
+        1 *testValue set
+        testValue done jnz
+        "Failed jnz w/ value in local." error
+
+        done:
+    )
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test function calls and arguments
+// ////////////////////////////////////////////////////////////////////////////
+function testCall() {
+    ("\n# Testing function calls\n")
+
+    ("Checking value of self on non-method...[br]")
+    (if (neq self none) (error "Incorrect value of self."))
+
+    ("Testing call with unspecified arguments...[br]")
+    (testCall_onlyOne 24)
+
+    ("Testing call with extra arguments...[br]")
+    (testCall_both 24 88 34)
+
+    ("Checking result of calling testCallHelperMultiply(5,6)...[br]")
+    (if (neq (testCallHelperMultiply 5 6) 30)
+        (error "testCallHelperMultiply(5,6) did not have result of 30."))
+
+    ("Calling testCallObject.testMethod...[br]")
+    ((get testCallObject $testMethod) 1 2 3)
+
+    ("Testing return values of non-asm functions.[br]")
+    (if (neq (testSyntaxReturn) 5)
+        (error "testSyntaxReturn returned wrong value."))
+
+    (if (neq (testSyntaxReturnDefault) 0)
+        (error "testSyntaxReturnDefault returned wrong value."))
+}
+
+object testCallObject
+    $testMethod function(arg1 arg2 arg3) {
+        ("[i]testMethod:[/i] Checking value of self...[br]")
+        (if (neq self testCallObject) (error "Incorrect value of self."))
+
+        ("[i]testMethod:[/i] Checking argument values...[br]")
+        (if (neq arg1 1) (error "First argument has wrong value.")
+        (if (neq arg2 2) (error "Second argument has wrong value.")
+        (if (neq arg3 3) (error "Third argument has wrong value.")
+    }
+;
+
+function testCall_onlyOne( arg1 arg2 ) {
+    (if (eq arg1 none) (error "First passed argument had unexpected none"))
+    (if (neq arg2 none) (error "Second passed argument not none"))
+}
+
+function testCall_both( arg1 arg2 ) {
+    [ var1 ]
+    (if (eq arg1 none) (error "First passed argument had unexpected none"))
+    (if (eq arg2 none) (error "First passed argument had unexpected none"))
+    (if (neq var1 none) (error "First non-argument local not none"))
+}
+
+function testCallHelperMultiply( arg1 arg2 ) {
+    (return (mult arg1 arg2))
+}
+
+function testSyntaxReturn() {
+    (return 5)
+}
+function testSyntaxReturnDefault() {
+    // uses default return value
+}
+
+
+function main() {
+    (testJumps)
+    (testCall)
+}

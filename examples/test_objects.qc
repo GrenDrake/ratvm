@@ -1,0 +1,111 @@
+declare TITLE   "Automated Test Suite for Objects";
+declare AUTHOR  "Gren Drake";
+declare VERSION 1;
+declare GAMEID  "";
+
+object first_obj
+    $anInt 2
+    $aString "Hello World!"
+    $aProperty $apple
+    $anObject object ;
+;
+object second_obj : parent_obj;
+
+extend first_obj
+    $aMap { $fruit: $apple }
+    $aList [ 4 ]
+    $testMethod function() { }
+;
+
+object parent_obj
+    $inheritedProperty 2048
+;
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test object property commands
+// ////////////////////////////////////////////////////////////////////////////
+function main() {
+    (asm
+        "\n# Testing Object Manipulation\nTesting get on objects...[br]" say
+        $aString first_obj get "Hello World!" eq object_get jnz
+        "first_obi.aString did not equal \"Hello World!\"" error
+
+        object_get:
+        $anInt first_obj get 2 eq noexistant_property jnz
+        "first_obj.anInt did not equal 2" error
+
+        noexistant_property:
+        $aString second_obj get 0 eq object_has jnz
+        "second_obj.aString (non-existant) did not equal 0" error
+
+        object_has:
+        "Testing has on objects...[br]" say
+        $anInt first_obj has has_astring jnz
+        "first_obj denies having $anInt" error
+
+        has_astring:
+        $aString second_obj has test_setp jz
+        "second_obj claims to have $aString" say
+
+        test_setp:
+        "Testing setp on objects...[br]" say
+        "Fred" $apple second_obj setp
+        $apple second_obj get "Fred" eq test_inherited jnz
+        "failed to update second_obj.$apple" error
+
+        test_inherited:
+        "Testing inherited properties...[br]" say
+        $inheritedProperty second_obj has 0 eq inherited_has_prop jz
+        $inheritedProperty second_obj get 2048 eq inherited_wrong_value jz
+        $inheritedProperty first_obj get 0 eq noparent_doesnt_have jz
+        $doesNotExist second_obj get 0 eq parent_doesnt_have jz
+
+        "Testing property types[br]" say
+        $anInt      first_obj get typeof Integer    eq anInt_wrongType jz
+        $aString    first_obj get typeof String     eq aString_wrongType jz
+        $aMap       first_obj get typeof Map        eq aMap_wrongType jz
+        $testMethod first_obj get typeof Function   eq testMethod_wrongType jz
+        $anObject   first_obj get typeof Object     eq anObject_wrongType jz
+        $aProperty  first_obj get typeof Property   eq aProperty_wrongType jz
+        0 ret
+
+        inherited_has_prop:     "HAS reports object own parent's property" error
+        inherited_wrong_value:  "inherited property returns wrong value" error
+        noparent_doesnt_have:   "unparented object returns wrong value for non-existant property" error
+        parent_doesnt_have:     "parented object returns wrong value for non-existant property" error
+        anInt_wrongType:        "first_obj.$anInt has wrong type." error
+        aString_wrongType:      "first_obj.$aString has wrong type." error
+        aList_wrongType:        "first_obj.$aList has wrong type." error
+        aMap_wrongType:         "first_obj.$aMap has wrong type." error
+        testMethod_wrongType:   "first_obj.$testMethod has wrong type." error
+        anObject_wrongType:     "first_obj.$anObject has wrong type." error
+        aProperty_wrongType:    "first_obj.$aProperty has wrong type." error
+    )
+
+    (testNextObject)
+}
+
+
+function testNextObject() {
+    [ obj ]
+    (asm
+        "\n# Testing next_object\n" say
+
+        // make sure the object list contains a gap
+        Object new pop
+        Object new *obj set
+        collect pop
+
+        none next_object *obj set
+        "Found objects: " say
+
+        loop_start:
+        obj none eq all_done jnz
+        Integer obj astype say " " say
+        obj next_object *obj set
+        loop_start jmp
+
+        all_done:
+        "[br]" say
+    )
+}

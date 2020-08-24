@@ -1,0 +1,98 @@
+declare TITLE   "Automated Test Suite for Math Operations";
+declare AUTHOR  "Gren Drake";
+declare VERSION 1;
+declare GAMEID  "";
+
+// ////////////////////////////////////////////////////////////////////////////
+// Test math commands
+// ////////////////////////////////////////////////////////////////////////////
+
+function main() {
+    (asm
+        "\n# Testing math opcodes\n" say
+        "Testing arithmetic...[br]" say
+
+        5 5 add 10 eq testMinus jnz
+        "Failed 5 + 5 == 10." error
+
+        testMinus:
+        5 10 sub 5 eq testMult jnz
+        "Failed 10 - 5 == 5." error
+
+        testMult:
+        10 5 mult 50 eq testDiv jnz
+        "Failed 10 * 5 == 50." error
+
+        testDiv:
+        5 40 div 8 eq testMod jnz
+        "Failed 40 / 5 == 8." error
+
+        testMod:
+        6 40 mod 4 eq testPow jnz
+        "Failed 40 % 6 == 4." error
+
+        testPow:
+        8 2 pow 256 eq testLeftShift jnz
+        "Failed 2 ^ 8 == 256." error
+
+        testLeftShift:
+        "Testing bit operations...[br]" say
+        4 1 left_shift 16 eq testRightShift jnz
+        "Failed 1 << 4 == 16." error
+
+        testRightShift:
+        4 32 right_shift 2 eq testBitAnd jnz
+        "Failed 32 >> 4 == 2." error
+
+        testBitAnd:
+        90 170 bit_and 10 eq testBitOr jnz
+        "Failed 90 & 170 == 10." error
+
+        testBitOr:
+        90 170 bit_or 250 eq testBitXor jnz
+        "Failed 90 | 170 == 250." error
+
+        testBitXor:
+        90 170 bit_xor 240 eq testBitNot jnz
+        "Failed 90 ^ 170 == 240." error
+
+        testBitNot:
+        148 bit_not -149 eq testTruth jnz
+        "Failed ~148 == -149." error
+
+        testTruth:
+        "Testing logical not...[br]" say
+        0 not testNotOne jnz
+        "Failed !0 == true." error
+
+        testNotOne:
+        1 not testNot37 jz
+        "Failed !1 == false." error
+
+        testNot37:
+        37 not testNotNeg9 jz
+        "Failed !37 == false." error
+
+        testNotNeg9:
+        -9 not testNotFred jz
+        "Failed !-9 == false." error
+
+        testNotFred:
+        "Fred" not testNotEmptyString jz
+        "Failed !\"Fred\" == false." error
+
+        testNotEmptyString:
+        "" not testNotFunction jz
+        "Failed !\"\" == false." error
+
+        testNotFunction:
+        main not testNotNone jz
+        "Failed !testMath() == false." error
+
+        testNotNone:
+        none not done jnz
+        "Failed !none == true." error
+
+        done:
+    )
+}

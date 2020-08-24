@@ -1,25 +1,72 @@
-/* STACK TEST FOR EXPRESSIONS
- *
- * This is a compiler test for QuollVM to ensure that all valid expressions are
- * pushing a value onto the stack, even if that value is "none". Because the
- * "proc" expression will pop the result of every child expression but the last,
- * it is ideal for testing this.
- *
- * Due to the nature of this test, it must be run through an interpreter to be
- * validated, not just compiled. A failure of this test will result in a stack
- * underflow runtime error.
- */
 
-declare TITLE "Syntax Expression Stack Test";
-declare AUTHOR "Gren Drake";
+declare TITLE   "Automated Test Suite for Stack Manipulation";
+declare AUTHOR  "Gren Drake";
 declare VERSION 1;
-declare GAMEID "23D1A6FF-C456-48E3-8894-879401C2DDB6";
+declare GAMEID  "23D1A6FF-C456-48E3-8894-879401C2DDB6";
 
 declare aList [ 9 5 6 3 7 8 ];
 object anObject $aProperty 55;
 declare aMap { 4: 5 2: 5 };
 
+// ////////////////////////////////////////////////////////////////////////////
+// Test stack commands
+// ////////////////////////////////////////////////////////////////////////////
+
 function main() {
+    (asm
+        2 4 6 8
+
+        "\n# Testing stack manipulation\n" say
+
+        "Testing correct initial size...[br]" say
+        stack_size 4 eq testPeek jnz
+        "Stack has bad initial size." error
+
+        testPeek:
+        "Testing stack peeking...[br]" say
+        0 stack_peek 8 eq testPeek2 jnz
+        "Failed peek at top item." error
+        testPeek2:
+        3 stack_peek 2 eq testPop jnz
+        "Failed peek at bottom item." error
+
+        testPop:
+        "Popping item and checking stack size...[br]" say
+        pop
+        stack_size 3 eq testPush jnz
+        "Stack has bad size after pop." error
+
+        testPush:
+        "Pushing new item and checking stack size...[br]" say
+        94
+        stack_size 4 eq testDup jnz
+        "Stack has bad size after push." error
+
+        testDup:
+        "Duplicating top item and checking size and value...[br]" say
+        stack_dup
+        stack_size 5 eq testDup2 jnz
+        "Stack has bad size after stack_dup." error
+        testDup2:
+        eq testSwap jnz
+        "Duplicate item not equal to original." error
+
+        testSwap:
+        "Testing stack swapping...[br]" say
+        9 7 5 // add some dummy values
+        0 2 stack_swap
+        0 stack_peek 9 eq testSwapError jz
+        2 stack_peek 5 eq testSwapError jz
+
+        0 testExpressionsStack call
+        ret
+
+        testSwapError:
+        "Stack swap failed." error
+    )
+}
+
+function testExpressionsStack() {
     [ local ]
     // set the local variable to an int value so inc/dec will work
     (set local 0)

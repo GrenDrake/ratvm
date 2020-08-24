@@ -24,15 +24,6 @@ TEST_TEXTUTIL=./test_textutil
 TEST_FIBONACCI_OBJS=tests/fibonacci.o
 TEST_FIBONACCI=./test_fibonacci
 
-AUTOTESTS_SRC=examples/auto_tests.qc
-AUTOTESTS=./examples/auto_tests.qvm
-STACKTEST_SRC=./examples/syntax_stack.qc
-STACKTEST=./examples/syntax_stack.qvm
-USERTESTS_SRC=examples/user_tests.qc
-USERTESTS=./examples/user_tests.qvm
-FIBTEST_SRC=examples/fibonacci.qc
-FIBTEST=./examples/fibonacci.qvm
-
 all: $(BUILD) $(RUNNER) tests examples
 
 tests: $(TEST_BYTESTREAM) $(TEST_TEXTUTIL) $(TEST_FIBONACCI)
@@ -50,22 +41,13 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 $(TEST_TEXTUTIL): $(BUILD) $(TEST_TEXTUTIL_OBJS)
 	$(CXX) $(TEST_TEXTUTIL_OBJS) $(UTF8PROC_LIB) -o $(TEST_TEXTUTIL)
 	$(TEST_TEXTUTIL)
+
 $(TEST_FIBONACCI): $(BUILD) $(TEST_FIBONACCI_OBJS)
 	$(CC) $(TEST_FIBONACCI_OBJS) -o $(TEST_FIBONACCI)
 
-examples: $(BUILD) $(AUTOTESTS) $(STACKTEST) $(USERTESTS) $(FIBTEST)
+examples: $(BUILD) $(RUNNER)
+	cd examples && make
 	cp ./examples/*.qvm $(PLAYQUOLL)games/
-$(AUTOTESTS): $(BUILD) $(AUTOTESTS_SRC)
-	$(BUILD) $(AUTOTESTS_SRC) -o $(AUTOTESTS)
-	$(RUNNER) $(AUTOTESTS) -silent
-$(STACKTEST): $(BUILD) $(STACKTEST_SRC)
-	$(BUILD) $(STACKTEST_SRC) -o $(STACKTEST)
-	$(RUNNER) $(STACKTEST) -silent
-$(USERTESTS): $(BUILD) $(USERTESTS_SRC)
-	$(BUILD) $(USERTESTS_SRC) -o $(USERTESTS)
-$(FIBTEST): $(BUILD) $(FIBTEST_SRC)
-	$(BUILD) $(FIBTEST_SRC) -o $(FIBTEST)
-
 
 clean: clean_runner
 	$(RM) builder/*.o runner/*.o tests/*.o
