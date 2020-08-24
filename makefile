@@ -1,4 +1,5 @@
 PLAYQUOLL=../playquoll/
+CFLAGS= -std=c99 -g -Wall
 CXXFLAGS= -std=c++11 -g -Wall -I../utf8proc-2.4.0/
 
 UTF8PROC_LIB=-L../utf8proc-2.4.0/ -lutf8proc
@@ -20,6 +21,8 @@ TEST_BYTESTREAM_OBJS=tests/bytestream.o builder/bytestream.o
 TEST_BYTESTREAM=./test_bytestream
 TEST_TEXTUTIL_OBJS=tests/textutil.o builder/textutil.o builder/general.o
 TEST_TEXTUTIL=./test_textutil
+TEST_FIBONACCI_OBJS=tests/fibonacci.o
+TEST_FIBONACCI=./test_fibonacci
 
 AUTOTESTS_SRC=examples/auto_tests.qc
 AUTOTESTS=./examples/auto_tests.qvm
@@ -32,7 +35,7 @@ FIBTEST=./examples/fibonacci.qvm
 
 all: $(BUILD) $(RUNNER) tests examples
 
-tests: $(TEST_BYTESTREAM) $(TEST_TEXTUTIL)
+tests: $(TEST_BYTESTREAM) $(TEST_TEXTUTIL) $(TEST_FIBONACCI)
 
 $(BUILD): $(BUILD_OBJS)
 	$(CXX) $(BUILD_OBJS) $(UTF8PROC_LIB) -o $(BUILD)
@@ -47,6 +50,8 @@ $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 $(TEST_TEXTUTIL): $(BUILD) $(TEST_TEXTUTIL_OBJS)
 	$(CXX) $(TEST_TEXTUTIL_OBJS) $(UTF8PROC_LIB) -o $(TEST_TEXTUTIL)
 	$(TEST_TEXTUTIL)
+$(TEST_FIBONACCI): $(BUILD) $(TEST_FIBONACCI_OBJS)
+	$(CC) $(TEST_FIBONACCI_OBJS) -o $(TEST_FIBONACCI)
 
 examples: $(BUILD) $(AUTOTESTS) $(STACKTEST) $(USERTESTS) $(FIBTEST)
 	cp ./examples/*.qvm $(PLAYQUOLL)games/
@@ -64,7 +69,7 @@ $(FIBTEST): $(BUILD) $(FIBTEST_SRC)
 
 clean: clean_runner
 	$(RM) builder/*.o runner/*.o tests/*.o
-	$(RM) $(BUILD) $(TEST_BYTESTREAM)
+	$(RM) $(BUILD) $(TEST_BYTESTREAM) $(TEST_TEXTUTIL) $(TEST_FIBONACCI)
 
 clean_runner:
 	$(RM) runner/*.o $(RUNNER)
