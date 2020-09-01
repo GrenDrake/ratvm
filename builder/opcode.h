@@ -94,6 +94,7 @@ struct OpcodeDef {
         FileRead            = 80,
         FileWrite           = 81,
         FileDelete          = 82,
+        Tokenize            = 83,
     };
 
     std::string name;

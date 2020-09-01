@@ -741,6 +741,18 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.push(Value{Value::Integer, result ? 1 : 0});
                 break; }
 
+            case OpcodeDef::Tokenize: {
+                Value text = callStack.pop();
+                text.requireType(Value::String);
+                Value newList = makeNew(Value::List);
+                ListDef &listDef = getList(newList.value);
+                auto result = explodeString(getString(text.value).text);
+                for (const std::string &s : result) {
+                    listDef.items.push_back(makeNewString(s));
+                }
+                callStack.push(newList);
+                break; }
+
             default: {
                 std::stringstream ss;
                 ss << "Unrecognized opcode " << opcode << '.';

@@ -423,9 +423,9 @@ Value GameData::makeNewString(const std::string &str) {
 
 bool GameData::isStatic(const Value &what) const {
     switch(what.type) {
-        case Value::Object: return static_cast<unsigned>(what.value) < staticObjects;
-        case Value::List:   return static_cast<unsigned>(what.value) < staticLists;
-        case Value::Map:    return static_cast<unsigned>(what.value) < staticMaps;
+        case Value::Object: return static_cast<unsigned>(what.value) <= staticObjects;
+        case Value::List:   return static_cast<unsigned>(what.value) <= staticLists;
+        case Value::Map:    return static_cast<unsigned>(what.value) <= staticMaps;
         case Value::String: return static_cast<unsigned>(what.value) < staticStrings;
         default:            return true;
     }
