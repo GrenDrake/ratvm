@@ -1,0 +1,75 @@
+BUILD=../build
+RUNNER=../run
+
+TEST_VALUES_SRC=test_values.qc
+TEST_VALUES=./test_values.qvm
+TEST_STACK_SRC=./test_stack.qc
+TEST_STACK=./test_stack.qvm
+TEST_EXPLODE_SRC=./test_explode.qc
+TEST_EXPLODE=./test_explode.qvm
+TEST_MATH_SRC=./test_math.qc
+TEST_MATH=./test_math.qvm
+TEST_MAPS_SRC=./test_maps.qc
+TEST_MAPS=./test_maps.qvm
+TEST_LISTS_SRC=./test_lists.qc
+TEST_LISTS=./test_lists.qvm
+TEST_OBJECTS_SRC=./test_objects.qc
+TEST_OBJECTS=./test_objects.qvm
+TEST_STRINGS_SRC=./test_strings.qc
+TEST_STRINGS=./test_strings.qvm
+TEST_JUMPS_SRC=./test_jumps.qc
+TEST_JUMPS=./test_jumps.qvm
+TEST_COMPARISONS_SRC=./test_comparisons.qc
+TEST_COMPARISONS=./test_comparisons.qvm
+TEST_FILEIO_SRC=./test_fileio.qc
+TEST_FILEIO=./test_fileio.qvm
+TEST_DYNAMIC_SRC=./test_dynamic.qc
+TEST_DYNAMIC=./test_dynamic.qvm
+
+
+all:  $(TEST_COMPARISONS) $(TEST_DYNAMIC) $(TEST_EXPLODE) $(TEST_FILEIO) \
+	  $(TEST_JUMPS) $(TEST_LISTS) $(TEST_MAPS) $(TEST_MATH) $(TEST_OBJECTS) \
+	  $(TEST_STACK) $(TEST_STRINGS) $(TEST_VALUES)
+
+
+$(TEST_COMPARISONS): $(BUILD) $(TEST_COMPARISONS_SRC)
+	$(BUILD) $(TEST_COMPARISONS_SRC) -o $(TEST_COMPARISONS)
+	$(RUNNER) $(TEST_COMPARISONS) -silent
+$(TEST_DYNAMIC): $(BUILD) $(TEST_DYNAMIC_SRC)
+	$(BUILD) $(TEST_DYNAMIC_SRC) -o $(TEST_DYNAMIC)
+	$(RUNNER) $(TEST_DYNAMIC) -silent
+$(TEST_EXPLODE): $(BUILD) $(TEST_EXPLODE_SRC)
+	$(BUILD) $(TEST_EXPLODE_SRC) -o $(TEST_EXPLODE)
+	$(RUNNER) $(TEST_EXPLODE) -silent
+$(TEST_FILEIO): $(BUILD) $(TEST_FILEIO_SRC)
+	$(BUILD) $(TEST_FILEIO_SRC) -o $(TEST_FILEIO)
+	$(RUNNER) $(TEST_FILEIO) -silent
+$(TEST_JUMPS): $(BUILD) $(TEST_JUMPS_SRC)
+	$(BUILD) $(TEST_JUMPS_SRC) -o $(TEST_JUMPS)
+	$(RUNNER) $(TEST_JUMPS) -silent
+$(TEST_LISTS): $(BUILD) $(TEST_LISTS_SRC)
+	$(BUILD) $(TEST_LISTS_SRC) -o $(TEST_LISTS)
+	$(RUNNER) $(TEST_LISTS) -silent
+$(TEST_MAPS): $(BUILD) $(TEST_MAPS_SRC)
+	$(BUILD) $(TEST_MAPS_SRC) -o $(TEST_MAPS)
+	$(RUNNER) $(TEST_MAPS) -silent
+$(TEST_MATH): $(BUILD) $(TEST_MATH_SRC)
+	$(BUILD) $(TEST_MATH_SRC) -o $(TEST_MATH)
+	$(RUNNER) $(TEST_MATH) -silent
+$(TEST_OBJECTS): $(BUILD) $(TEST_OBJECTS_SRC)
+	$(BUILD) $(TEST_OBJECTS_SRC) -o $(TEST_OBJECTS)
+	$(RUNNER) $(TEST_OBJECTS) -silent
+$(TEST_STACK): $(BUILD) $(TEST_STACK_SRC)
+	$(BUILD) $(TEST_STACK_SRC) -o $(TEST_STACK)
+	$(RUNNER) $(TEST_STACK) -silent
+$(TEST_STRINGS): $(BUILD) $(TEST_STRINGS_SRC)
+	$(BUILD) $(TEST_STRINGS_SRC) -o $(TEST_STRINGS)
+	$(RUNNER) $(TEST_STRINGS) -silent
+$(TEST_VALUES): $(BUILD) $(TEST_VALUES_SRC)
+	$(BUILD) $(TEST_VALUES_SRC) -o $(TEST_VALUES)
+	$(RUNNER) $(TEST_VALUES) -silent
+
+clean:
+	$(RM) *.qvm
+
+.PHONY: all clean

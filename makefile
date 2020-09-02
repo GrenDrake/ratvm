@@ -24,7 +24,7 @@ TEST_TEXTUTIL=./test_textutil
 TEST_FIBONACCI_OBJS=tests/fibonacci.o
 TEST_FIBONACCI=./test_fibonacci
 
-all: $(BUILD) $(RUNNER) tests examples
+all: $(BUILD) $(RUNNER) tests examples tests_qc
 
 tests: $(TEST_BYTESTREAM) $(TEST_TEXTUTIL) $(TEST_FIBONACCI)
 
@@ -45,9 +45,12 @@ $(TEST_TEXTUTIL): $(BUILD) $(TEST_TEXTUTIL_OBJS)
 $(TEST_FIBONACCI): $(BUILD) $(TEST_FIBONACCI_OBJS)
 	$(CC) $(TEST_FIBONACCI_OBJS) -o $(TEST_FIBONACCI)
 
-examples: $(BUILD) $(RUNNER)
+examples: $(BUILD)
 	cd examples && make
 	cp ./examples/*.qvm $(PLAYQUOLL)games/
+tests_qc: $(BUILD) $(RUNNER)
+	cd tests_qc && make
+	cp ./tests_qc/*.qvm $(PLAYQUOLL)games/
 
 clean: clean_runner
 	$(RM) builder/*.o runner/*.o tests/*.o
@@ -56,4 +59,4 @@ clean: clean_runner
 clean_runner:
 	$(RM) runner/*.o $(RUNNER)
 
-.PHONY: all clean clean_runner tests examples
+.PHONY: all clean clean_runner tests examples tests_qc
