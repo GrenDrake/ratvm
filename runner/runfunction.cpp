@@ -445,12 +445,22 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.push(Value(Value::Integer, ~v.value));
                 break; }
             case OpcodeDef::Random: {
-                Value max = callStack.pop();
                 Value min = callStack.pop();
+                Value max = callStack.pop();
                 min.requireType(Value::Integer);
                 max.requireType(Value::Integer);
-                int result = min.value + rand() % (max.value - min.value);
-                callStack.push(Value{Value::Integer, result});
+                if (min.value == max.value) {
+                    return min;
+                } else {
+                    int maxv = max.value, minv = min.value;
+                    if (maxv < minv) {
+                        int t = maxv;
+                        maxv = minv;
+                        minv = t;
+                    }
+                    int result = minv + rand() % (maxv - minv);
+                    callStack.push(Value{Value::Integer, result});
+                }
                 break; }
             case OpcodeDef::NextObject: {
                 Value lastValue = callStack.pop();
