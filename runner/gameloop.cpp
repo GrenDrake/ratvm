@@ -136,6 +136,16 @@ void gameloop(GameData &gamedata, bool doSilent) {
                     hasValue = true;
                     break; }
                 case OptionType::Choice: {
+                    if (inputText.empty()) {
+                        if (gamedata.options.size() == 1) {
+                            nextValue = gamedata.options.front().value;
+                            gamedata.setExtra(gamedata.options.front().extra);
+                            hasNext = true;
+                            hasValue = true;
+                        }
+                        break;
+                    }
+
                     int optNum = tryAsNumber(inputText);
                     if (optNum >= 0) {
                         // numbered choice
