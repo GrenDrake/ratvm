@@ -114,7 +114,7 @@ void handle_asm_stmt(GameData &gamedata, FunctionDef *function, List *list) {
 
     if (wantedOpcodeCount < 255 && !checkListSize(list, wantedOpcodeCount, wantedOpcodeCount)) {
         std::stringstream ss;
-        ss << "Opcode expected " << opcode->inputs << " operands, but found ";
+        ss << "Opcode '" << opcode->name << "' expected " << opcode->inputs << " operands, but found ";
         ss << list->values.size() - 1 << '.';
         gamedata.addError(list->values[0].origin, ErrorMsg::Error, ss.str());
         return;
