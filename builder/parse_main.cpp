@@ -272,7 +272,14 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     } else {
         funcName = defaultName;
     }
-    state.skip(Token::OpenParan);
+    try {
+        state.skip(Token::OpenParan);
+    } catch (BuildError &e) {
+        gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
+        state.skipTo(Token::CloseBrace);
+        state.next();
+        return 0;
+    }
 
     FunctionDef *function = new FunctionDef;
     function->origin = origin;
@@ -491,7 +498,11 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
 
     while (!state.matches(Token::Semicolon) && !state.eof()) {
         parse_objectProperty(gamedata, state, object);
-        if (gamedata.errorCount > 0) return 0;
+        if (gamedata.errorCount > 0) {
+            state.skipTo(Token::Semicolon);
+            state.next();
+            return 0;
+        }
     }
 
     state.next();
