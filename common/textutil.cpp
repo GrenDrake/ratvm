@@ -1,9 +1,15 @@
+#include <algorithm>
 #include <sstream>
 #include <utf8proc.h>
 #include "textutil.h"
 
 bool c_isspace(int c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+int c_tolower(int c) {
+    if (c >= 'A' && c <= 'Z') c += 32;
+    return c;
 }
 
 void normalize(std::string &s) {
@@ -143,4 +149,10 @@ IntParseError parseAsInt(std::string text, int &result) {
 
     result = static_cast<int>(longResult);
     return IntParseError::OK;
+}
+
+std::string &strToLower(std::string &text) {
+    std::transform(text.begin(), text.end(), text.begin(),
+        [](unsigned char c) -> unsigned char { return c_tolower(c); });
+    return text;
 }

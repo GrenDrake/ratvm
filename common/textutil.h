@@ -11,6 +11,7 @@ enum class IntParseError {
 };
 
 bool c_isspace(int c);
+int c_tolower(int c);
 bool isValidIdentifier(int c);
 void normalize(std::string &s);
 IntParseError parseAsInt(std::string text, int &result);
@@ -21,6 +22,7 @@ std::string codepointToString(int cp);
 std::string& trim(std::string &text);
 std::string trim(const std::string &text);
 std::vector<std::string> explodeString(const std::string &s);
+std::string &strToLower(std::string &text);
 
 std::ostream& operator<<(std::ostream &out, const IntParseError &err);
 

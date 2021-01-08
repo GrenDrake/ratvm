@@ -108,8 +108,7 @@ void gameloop(GameData &gamedata, bool doSilent) {
             std::cout << "\n> ";
             std::string inputText;
             std::getline(std::cin, inputText);
-            std::transform(inputText.begin(), inputText.end(), inputText.begin(),
-                    [](unsigned char c) -> unsigned char { return std::tolower(c); });
+            strToLower(inputText);
             if (inputText == "quit") {
                 if (!doSilent) {
                     std::cout << "\nGoodbye!\n";

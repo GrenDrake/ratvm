@@ -129,6 +129,10 @@ void test_explode() {
     assert_true(result, "test_explode: failed to explode single word string with leading and trailing whitepsace");
 }
 
+void test_strToLower() {
+    std::string w1("word");
+    assert_true("word" == strToLower(w1), "test_strToLower: all lowercase remains unchanged");
+}
 
 int main() {
 
@@ -138,6 +142,7 @@ int main() {
         test_parseInt_commas();
         test_trim();
         test_explode();
+        test_strToLower();
     } catch (TestFailed &e) {
         std::cerr << "Test Failed: " << e.what() << '\n';
         return 1;
