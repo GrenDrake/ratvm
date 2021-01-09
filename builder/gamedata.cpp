@@ -41,13 +41,13 @@ void FunctionDef::addLocal(const std::string &name, Value::Type type, bool alway
     }
 }
 const LocalDef* FunctionDef::getLocal(int position) const {
-    if (position < 0 || position >= locals.size()) {
+    if (position < 0 || position >= static_cast<int>(locals.size())) {
         return nullptr;
     }
     return &locals[position];
 }
 LocalDef* FunctionDef::getLocal(int position) {
-    if (position < 0 || position >= locals.size()) {
+    if (position < 0 || position >= static_cast<int>(locals.size())) {
         return nullptr;
     }
     return &locals[position];
