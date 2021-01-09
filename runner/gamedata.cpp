@@ -98,108 +98,106 @@ void ObjectDef::set(unsigned propId, const Value &value) {
 
 
 GameData::~GameData() {
-    for (ObjectDef *def : objects)  if (def) delete def;
-    for (ListDef   *def : lists)    if (def) delete def;
-    for (MapDef    *def : maps)     if (def) delete def;
-    for (StringDef *def : strings)  if (def) delete def;
+    for (const auto &def : objects)  if (def.second) delete def.second;
+    for (const auto &def : lists)    if (def.second) delete def.second;
+    for (const auto &def : maps)     if (def.second) delete def.second;
+    for (const auto &def : strings)  if (def.second) delete def.second;
 }
 
 const StringDef& GameData::getString(int index) const {
-    if (index < 0 || index >= static_cast<int>(strings.size()) || strings[index] == nullptr) {
+    const auto &def = strings.find(index);
+    if (def == strings.end()) {
         throw GameBadReference("Tried to access invalid string number "
                         + std::to_string(index));
     }
-    return *strings[index];
+    return *def->second;
 }
 StringDef& GameData::getString(int index) {
-    if (index < 0 || index >= static_cast<int>(strings.size()) || strings[index] == nullptr) {
+    auto def = strings.find(index);
+    if (def == strings.end()) {
         throw GameBadReference("Tried to access invalid string number "
                         + std::to_string(index));
     }
-    return *strings[index];
+    return *def->second;
 }
 const ListDef& GameData::getList(int index) const {
-    if (index <= 0 || index >= static_cast<int>(lists.size()) || lists[index] == nullptr) {
+    const auto &def = lists.find(index);
+    if (def == lists.end()) {
         throw GameBadReference("Tried to access invalid list number "
                         + std::to_string(index));
     }
-    return *lists[index];
+    return *def->second;
 }
 ListDef& GameData::getList(int index) {
-    if (index <= 0 || index >= static_cast<int>(lists.size()) || lists[index] == nullptr) {
+    auto def = lists.find(index);
+    if (def == lists.end()) {
         throw GameBadReference("Tried to access invalid list number "
                         + std::to_string(index));
     }
-    return *lists[index];
+    return *def->second;
 }
 const MapDef& GameData::getMap(int index) const {
-    if (index <= 0 || index >= static_cast<int>(maps.size()) || maps[index] == nullptr) {
+    const auto &def = maps.find(index);
+    if (def == maps.end()) {
         throw GameBadReference("Tried to access invalid map number "
                         + std::to_string(index));
     }
-    return *maps[index];
+    return *def->second;
 }
 MapDef& GameData::getMap(int index) {
-    if (index <= 0 || index >= static_cast<int>(maps.size()) || maps[index] == nullptr) {
+    auto def = maps.find(index);
+    if (def == maps.end()) {
         throw GameBadReference("Tried to access invalid map number "
                         + std::to_string(index));
     }
-    return *maps[index];
+    return *def->second;
 }
 const ObjectDef& GameData::getObject(int index) const {
-    if (index <= 0 || index >= static_cast<int>(objects.size()) || objects[index] == nullptr) {
+    const auto &def = objects.find(index);
+    if (def == objects.end()) {
         throw GameBadReference("Tried to access invalid object number "
                         + std::to_string(index));
     }
-    return *objects[index];
+    return *def->second;
 }
 ObjectDef& GameData::getObject(int index) {
-    if (index <= 0 || index >= static_cast<int>(objects.size()) || objects[index] == nullptr) {
+    auto def = objects.find(index);
+    if (def == objects.end()) {
         throw GameBadReference("Tried to access invalid object number "
                         + std::to_string(index));
     }
-    return *objects[index];
+    return *def->second;
 }
 const FunctionDef& GameData::getFunction(int index) const {
-    if (index <= 0 || index >= static_cast<int>(functions.size())) {
+    const auto &def = functions.find(index);
+    if (def == functions.end()) {
         throw GameBadReference("Tried to access invalid function number "
                         + std::to_string(index));
     }
-    return functions[index];
+    return def->second;
 }
 FunctionDef& GameData::getFunction(int index) {
-    if (index <= 0 || index >= static_cast<int>(functions.size())) {
-        throw GameBadReference("Tried to access invalid function number "
+    auto def = functions.find(index);
+    if (def == functions.end()) {
+        throw GameBadReference("Tried to access invalid funtion number "
                         + std::to_string(index));
     }
-    return functions[index];
+    return def->second;
 }
 
 
 int GameData::collectGarbage() {
     // clear existing marks
-    for (ObjectDef *obj  : objects) if (obj)  obj->gcMark = false;
-    for (ListDef   *list : lists)   if (list) list->gcMark = false;
-    for (MapDef    *map  : maps)    if (map)  map->gcMark = false;
-    for (StringDef *str  : strings) if (str)  str->gcMark = false;
+    for (auto &def : objects) if (def.second)  def.second->gcMark = false;
+    for (auto &def : lists)   if (def.second)  def.second->gcMark = false;
+    for (auto &def : maps)    if (def.second)  def.second->gcMark = false;
+    for (auto &def : strings) if (def.second)  def.second->gcMark = false;
 
     // mark objects
-    for (unsigned i = 0; i <= staticObjects; ++i) {
-        ObjectDef *def = objects[i];
-        if (def) mark(*def);
-    }
-    for (unsigned i = 0; i <= staticLists; ++i) {
-        ListDef *def = lists[i];
-        if (def) mark(*def);
-    }
-    for (unsigned i = 0; i <= staticMaps; ++i) {
-        MapDef *def = maps[i];
-        if (def) mark(*def);
-    }
-    for (unsigned i = 0; i <= staticStrings; ++i) {
-        StringDef *def = strings[i];
-        if (def) mark(*def);
-    }
+    for (auto &def : objects)   if (def.second && def.second->isStatic) mark(*def.second);
+    for (auto &def : lists)     if (def.second && def.second->isStatic) mark(*def.second);
+    for (auto &def : maps)      if (def.second && def.second->isStatic) mark(*def.second);
+    for (auto &def : strings)   if (def.second && def.second->isStatic) mark(*def.second);
     // mark options
     for (GameOption &option : options) {
         mark(option.extra);
@@ -218,48 +216,73 @@ int GameData::collectGarbage() {
 
     // collect objects
     int collectionCount = 0;
-    for (unsigned i = 0; i < objects.size(); ++i) {
-        ObjectDef *def = objects[i];
-        if (!def || def->gcMark) continue;
-        delete def;
-        objects[i] = nullptr;
-        ++collectionCount;
-    }
-    for (unsigned i = 0; i < lists.size(); ++i) {
-        ListDef *def = lists[i];
-        if (!def || def->gcMark) continue;
-        delete def;
-        lists[i] = nullptr;
-        ++collectionCount;
-    }
-    for (unsigned i = 0; i < maps.size(); ++i) {
-        MapDef *def = maps[i];
-        if (!def || def->gcMark) continue;
-        delete def;
-        maps[i] = nullptr;
-        ++collectionCount;
-    }
-    for (unsigned i = 0; i < strings.size(); ++i) {
-        StringDef *def = strings[i];
-        if (!def || def->gcMark) continue;
-        delete def;
-        strings[i] = nullptr;
-        ++collectionCount;
+    for (auto iter = objects.begin(); iter != objects.end(); ) {
+        if (!iter->second || !iter->second->gcMark) {
+            if (iter->second) delete iter->second;
+            iter = objects.erase(iter);
+            ++collectionCount;
+        } else {
+            ++iter;
+        }
     }
 
-    // trim containers
-    while (!objects.empty() && objects.back() == nullptr) {
-        objects.resize(objects.size() - 1);
+    for (auto iter = lists.begin(); iter != lists.end(); ) {
+        if (!iter->second || !iter->second->gcMark) {
+            if (iter->second) delete iter->second;
+            iter = lists.erase(iter);
+            ++collectionCount;
+        } else {
+            ++iter;
+        }
     }
-    while (!lists.empty() && lists.back() == nullptr) {
-        lists.resize(lists.size() - 1);
+    for (auto iter = maps.begin(); iter != maps.end(); ) {
+        if (!iter->second || !iter->second->gcMark) {
+            if (iter->second) delete iter->second;
+            iter = maps.erase(iter);
+            ++collectionCount;
+        } else {
+            ++iter;
+        }
     }
-    while (!maps.empty() && maps.back() == nullptr) {
-        maps.resize(maps.size() - 1);
+    for (auto iter = strings.begin(); iter != strings.end(); ) {
+        if (!iter->second || !iter->second->gcMark) {
+            if (iter->second) delete iter->second;
+            iter = strings.erase(iter);
+            ++collectionCount;
+        } else {
+            ++iter;
+        }
     }
-    while (!strings.empty() && strings.back() == nullptr) {
-        strings.resize(strings.size() - 1);
-    }
+
+
+    // for (unsigned i = 0; i < objects.size(); ++i) {
+    //     ObjectDef *def = objects[i];
+    //     if (!def || def->gcMark) continue;
+    //     delete def;
+    //     objects[i] = nullptr;
+    //     ++collectionCount;
+    // }
+    // for (unsigned i = 0; i < lists.size(); ++i) {
+    //     ListDef *def = lists[i];
+    //     if (!def || def->gcMark) continue;
+    //     delete def;
+    //     lists[i] = nullptr;
+    //     ++collectionCount;
+    // }
+    // for (unsigned i = 0; i < maps.size(); ++i) {
+    //     MapDef *def = maps[i];
+    //     if (!def || def->gcMark) continue;
+    //     delete def;
+    //     maps[i] = nullptr;
+    //     ++collectionCount;
+    // }
+    // for (unsigned i = 0; i < strings.size(); ++i) {
+    //     StringDef *def = strings[i];
+    //     if (!def || def->gcMark) continue;
+    //     delete def;
+    //     strings[i] = nullptr;
+    //     ++collectionCount;
+    // }
 
     return collectionCount;
 }
@@ -380,30 +403,34 @@ Value GameData::makeNew(Value::Type type) {
     switch(type) {
         case Value::List: {
             ListDef *newDef = new ListDef;
-            newDef->ident = lists.size();
+            newDef->ident = nextList;
+            ++nextList;
             newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
-            lists.push_back(newDef);
+            lists.insert(std::make_pair(newDef->ident, newDef));
             return Value(Value::List, newDef->ident);
         }
         case Value::Map: {
             MapDef *newDef = new MapDef;
-            newDef->ident = maps.size();
+            newDef->ident = nextMap;
+            ++nextMap;
             newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
-            maps.push_back(newDef);
+            maps.insert(std::make_pair(newDef->ident, newDef));
             return Value(Value::Map, newDef->ident);
         }
         case Value::Object: {
             ObjectDef *newDef = new ObjectDef;
-            newDef->ident = objects.size();
+            newDef->ident = nextObject;
+            ++nextObject;
             newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
-            objects.push_back(newDef);
+            objects.insert(std::make_pair(newDef->ident, newDef));
             return Value(Value::Object, newDef->ident);
         }
         case Value::String: {
             StringDef *newDef = new StringDef;
-            newDef->ident = strings.size();
+            newDef->ident = nextString;
+            ++nextString;
             newDef->srcFile = newDef->srcLine = newDef->srcName = ORIGIN_DYNAMIC;
-            strings.push_back(newDef);
+            strings.insert(std::make_pair(newDef->ident, newDef));
             return Value(Value::String, newDef->ident);
         }
         default:

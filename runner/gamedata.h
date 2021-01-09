@@ -34,9 +34,13 @@ const int PROP_PARENT            = 3;
 struct GameData;
 
 struct DataItem {
+    DataItem()
+    : ident(-1), srcFile(-1), srcLine(-1), srcName(-1), gcMark(false), isStatic(false) { }
+
     unsigned ident;
     int srcFile, srcLine, srcName;
     bool gcMark;
+    bool isStatic;
 };
 
 struct StringDef : public DataItem {
@@ -152,16 +156,21 @@ struct GameData {
 
     bool gameLoaded;
     int mainFunction;
-    std::vector<StringDef*> strings;
-    std::vector<ListDef*> lists;
-    std::vector<MapDef*> maps;
-    std::vector<ObjectDef*> objects;
-    std::vector<FunctionDef> functions;
+    std::map<int, StringDef*> strings;
+    std::map<int, ListDef*> lists;
+    std::map<int, MapDef*> maps;
+    std::map<int, ObjectDef*> objects;
+    std::map<int, FunctionDef> functions;
     ByteStream bytecode;
     unsigned staticStrings;
     unsigned staticLists;
     unsigned staticMaps;
     unsigned staticObjects;
+
+    unsigned nextString;
+    unsigned nextList;
+    unsigned nextMap;
+    unsigned nextObject;
     Value noneValue;
 
     int refGamename, refVersion, refAuthor, refGameid, refBuild;

@@ -46,20 +46,25 @@ void GameData::load(const std::string &filename) {
     inf.seekg(HEADER_SIZE);
 
     // READ STRINGS
+    nextString = 1;
     staticStrings = read_32(inf);
     for (unsigned i = 0; i < staticStrings; ++i) {
         StringDef *def = new StringDef;
         def->ident = i;
+        def->isStatic = true;
+        if (def->ident >= nextString) nextString = def->ident + 1;
         def->text = read_str(inf);
-        strings.push_back(def);
+        strings.insert(std::make_pair(def->ident, def));
     }
 
     // // READ LISTS
-    lists.push_back(nullptr);
+    nextList = 1;
     staticLists = read_32(inf); // dummy list so index matches IDs
     for (unsigned i = 0; i < staticLists; ++i) {
         ListDef *def = new ListDef;
         def->ident = i + 1;
+        def->isStatic = true;
+        if (def->ident >= nextList) nextList = def->ident + 1;
         def->srcName = -1;
         def->srcFile = read_32(inf);
         def->srcLine = read_32(inf);
@@ -70,15 +75,17 @@ void GameData::load(const std::string &filename) {
             value.value = read_32(inf);
             def->items.push_back(value);
         }
-        lists.push_back(def);
+        lists.insert(std::make_pair(def->ident, def));
     }
 
     // READ MAPS
-    maps.push_back(nullptr);
+    nextMap = 1;
     staticMaps = read_32(inf); // dummy map so index matches IDs
     for (unsigned i = 0; i < staticMaps; ++i) {
         MapDef *def = new MapDef;
         def->ident = i + 1;
+        def->isStatic = true;
+        if (def->ident >= nextMap) nextMap = def->ident + 1;
         def->srcName = -1;
         def->srcFile = read_32(inf);
         def->srcLine = read_32(inf);
@@ -91,15 +98,17 @@ void GameData::load(const std::string &filename) {
             v2.value = read_32(inf);
             def->rows.push_back(MapDef::Row{v1,v2});
         }
-        maps.push_back(def);
+        maps.insert(std::make_pair(def->ident, def));
     }
 
     // READ OBJECTS
-    objects.push_back(nullptr);
+    nextObject = 1;
     staticObjects = read_32(inf);
     for (unsigned i = 0; i < staticObjects; ++i) {
         ObjectDef *def = new ObjectDef;
         def->ident = i + 1;
+        def->isStatic = true;
+        if (def->ident >= nextObject) nextObject = def->ident + 1;
         def->srcName = read_32(inf);
         def->srcFile = read_32(inf);
         def->srcLine = read_32(inf);
@@ -111,11 +120,10 @@ void GameData::load(const std::string &filename) {
             value.value = read_32(inf);
             def->properties.insert(std::make_pair(propId, value));
         }
-        objects.push_back(def);
+        objects.insert(std::make_pair(def->ident, def));
     }
 
     // READ FUNCTION HEADERS
-    functions.push_back(FunctionDef{});
     unsigned functionCount = read_32(inf);
     for (unsigned i = 0; i < functionCount; ++i) {
         FunctionDef def;
@@ -130,7 +138,7 @@ void GameData::load(const std::string &filename) {
             def.argTypes.push_back(static_cast<Value::Type>(read_8(inf)));
         }
         def.position = read_32(inf);
-        functions.push_back(def);
+        functions.insert(std::make_pair(def.ident, def));
     }
 
     // READ FUNCTION BYTECODE
