@@ -52,6 +52,9 @@ std::ostream& operator<<(std::ostream &out, const Token::Type &type) {
         case Token::String:
             out << "String";
             break;
+        case Token::Vocab:
+            out << "Vocab";
+            break;
         case Token::Integer:
             out << "Integer";
             break;

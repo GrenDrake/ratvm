@@ -185,6 +185,10 @@ public:
     void addError(const Origin &origin, ErrorMsg::Type type, const std::string &text);
     bool hasErrors() const;
 
+    void addVocab(const std::string &word);
+    int  getVocabNumber(const std::string &word) const;
+    void sortVocab();
+
     int errorCount;
     std::vector<ErrorMsg> errors;
     SymbolTable symbols;
@@ -196,9 +200,10 @@ public:
     std::vector<GameMap*> maps;
     std::vector<FunctionDef*> functions;
     std::vector<FlagSet> flagsets;
+    std::vector<std::string> vocab;
     ByteStream bytecode;
 
-    std::streampos stringsStart, listsStart, mapsStart, objectsStart;
+    std::streampos vocabStart, stringsStart, listsStart, mapsStart, objectsStart;
     std::streampos functionsStart, bytecodeStart, fileEnd;
 
     int nextAnonymousId;

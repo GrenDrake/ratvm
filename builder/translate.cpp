@@ -23,6 +23,7 @@ void add_default_constants(GameData &gamedata) {
     gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::TypeId, 7}, 1));
     gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::TypeId, 9}, 1));
     gamedata.symbols.add(SymbolDef(Origin(), "Reference",       Value{Value::TypeId, 10}, 1));
+    gamedata.symbols.add(SymbolDef(Origin(), "Vocab",           Value{Value::TypeId, 11}, 1));
     gamedata.symbols.add(SymbolDef(Origin(), "none",            Value{Value::None,    0}, 1));
     gamedata.symbols.add(SymbolDef(Origin(), "saveAllowed",     Value{Value::Integer, 0}, 1));
     gamedata.symbols.add(SymbolDef(Origin(), "infobarLeft",     Value{Value::Integer, 1}, 1));

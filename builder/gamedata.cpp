@@ -74,7 +74,7 @@ int FunctionDef::getLocalNumber(const std::string &name) const {
 }
 
 GameData::GameData()
-: errorCount(0), stringsStart(0), listsStart(0), mapsStart(0), objectsStart(0),
+: errorCount(0), vocabStart(0), stringsStart(0), listsStart(0), mapsStart(0), objectsStart(0),
   functionsStart(0), bytecodeStart(0), fileEnd(0),
   nextAnonymousId(firstAnonymousId) {
     objects.push_back(nullptr);
@@ -216,6 +216,25 @@ void GameData::addError(const Origin &origin, ErrorMsg::Type type, const std::st
 
 bool GameData::hasErrors() const {
     return errorCount > 0;
+}
+
+void GameData::addVocab(const std::string &word) {
+    if (getVocabNumber(word) < 0) {
+        vocab.push_back(word);
+    }
+}
+
+int GameData::getVocabNumber(const std::string &word) const {
+    int count = 0;
+    for (const std::string &v : vocab) {
+        if (v == word) return count;
+        ++count;
+    }
+    return -1;
+}
+
+void GameData::sortVocab() {
+    std::sort(vocab.begin(), vocab.end());
 }
 
 std::ostream& operator<<(std::ostream &out, const ErrorMsg::Type &type) {

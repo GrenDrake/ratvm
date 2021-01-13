@@ -103,6 +103,13 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         write_str(out, string);
     }
 
+    // write dictionary section
+    gamedata.vocabStart = out.tellp();
+    write_32(out, gamedata.vocab.size());
+    for (const std::string &string : gamedata.vocab) {
+        write_str(out, string);
+    }
+
     // write lists section
     gamedata.listsStart = out.tellp();
     write_32(out, gamedata.lists.size() - 1);

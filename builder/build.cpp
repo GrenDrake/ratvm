@@ -106,6 +106,7 @@ int main(int argc, char *argv[]) {
             tokens.insert(tokens.end(), newTokens.begin(), newTokens.end());
         }
         if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
+        gamedata.sortVocab();
         parse_tokens(gamedata, tokens);
         if (gamedata.hasErrors()) { dump_errors(gamedata, useAnsiEscapes); return 1; }
         translate_symbols(gamedata);
@@ -170,7 +171,7 @@ int main(int argc, char *argv[]) {
 
     if (!gamedata.errors.empty()) {
         dump_errors(gamedata, useAnsiEscapes);
-    } 
+    }
     if (!gamedata.hasErrors()) {
         auto runEnd = std::chrono::system_clock::now();
         auto buildTimeRaw = std::chrono::duration_cast<std::chrono::milliseconds>(runEnd - runStart);

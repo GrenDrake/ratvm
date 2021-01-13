@@ -185,6 +185,14 @@ FunctionDef& GameData::getFunction(int index) {
     return def->second;
 }
 
+std::string NO_SUCH_VOCAB("INVALID VOCAB");
+const std::string& GameData::getVocab(int index) const {
+    if (index < 0 || index >= vocab.size()) {
+        NO_SUCH_VOCAB = "INVALID VOCAB " + std::to_string(index);
+        return NO_SUCH_VOCAB;
+    }
+    return vocab[index];
+}
 
 int GameData::collectGarbage() {
     // clear existing marks
@@ -336,6 +344,7 @@ void GameData::mark(const Value &value) {
             case Value::TypeId:
             case Value::LocalVar:
             case Value::JumpTarget:
+            case Value::Vocab:
             case Value::VarRef:
                 break;
         }
@@ -357,6 +366,7 @@ std::string GameData::getSource(const Value &value) {
         case Value::String:
         case Value::LocalVar:
         case Value::VarRef:
+        case Value::Vocab:
         case Value::JumpTarget:
         case Value::TypeId:
             return "primitive";
@@ -466,6 +476,7 @@ bool GameData::isValid(const Value &what) const {
             case Value::Map:        getMap(what.value);         break;
             case Value::String:     getString(what.value);      break;
             case Value::Function:   getFunction(what.value);    break;
+            case Value::Vocab:      return what.value > 0 && what.value < static_cast<int>(vocab.size());
             default:                return true;
         }
     } catch (const GameBadReference&) {
@@ -488,6 +499,9 @@ std::string GameData::asString(const Value &value) {
         case Value::String: {
             const StringDef &strDef = getString(value.value);
             return strDef.text;
+        }
+        case Value::Vocab: {
+            return getVocab(value.value);
         }
         case Value::Integer: {
             return std::to_string(value.value);

@@ -18,6 +18,7 @@ public:
     enum Type {
         Identifier,
         String,
+        Vocab,
         Integer,
         Property,
 

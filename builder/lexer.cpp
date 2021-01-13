@@ -173,7 +173,7 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
             next(state);
             continue;
 
-        } else if (c == '"' || c == '\'') {
+        } else if (c == '"' || c == '\'' || c == '`') {
             Origin origin = state.origin;
             int quote_char = c;
             next(state);
@@ -193,6 +193,9 @@ std::vector<Token> lex_string(GameData &gamedata, const std::string &source_name
                     text.erase(UINT16_MAX);
                 }
                 tokens.push_back(Token(origin, Token::String, text));
+            } else if (quote_char == '`') {
+                gamedata.addVocab(text);
+                tokens.push_back(Token(origin, Token::Vocab, text));
             } else {
                 if (text.size() != 1) {
                     gamedata.addError(origin, ErrorMsg::Error,

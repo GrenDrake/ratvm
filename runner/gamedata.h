@@ -120,6 +120,7 @@ struct GameData {
     ObjectDef& getObject(int index);
     const FunctionDef& getFunction(int index) const;
     FunctionDef& getFunction(int index);
+    const std::string& getVocab(int index) const;
 
     int collectGarbage();
     void mark(ObjectDef &object);
@@ -161,6 +162,7 @@ struct GameData {
     std::map<int, MapDef*> maps;
     std::map<int, ObjectDef*> objects;
     std::map<int, FunctionDef> functions;
+    std::vector<std::string> vocab;
     ByteStream bytecode;
     unsigned staticStrings;
     unsigned staticLists;

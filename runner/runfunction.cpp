@@ -763,6 +763,20 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 callStack.push(newList);
                 break; }
 
+            case OpcodeDef::StrToDict: {
+                Value text = callStack.pop();
+                text.requireType(Value::String);
+                const std::string &s = getString(text.value).text;
+                int vocabNumber = -1;
+                for (int i = 0; i < vocab.size(); ++i) {
+                    if (vocab[i] == s) {
+                        vocabNumber = i;
+                        break;
+                    }
+                }
+                callStack.push(Value(Value::Vocab, vocabNumber));
+                break; }
+
             default: {
                 std::stringstream ss;
                 ss << "Unrecognized opcode " << opcode << '.';

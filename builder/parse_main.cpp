@@ -539,6 +539,10 @@ Value parse_value(GameData &gamedata, ParseState &state, const std::string &defa
         int newId = gamedata.getStringId(state.here()->text);
         value = Value{Value::String, newId};
         state.next();
+    } else if (state.matches(Token::Vocab)) {
+        int newId = gamedata.getVocabNumber(state.here()->text);
+        value = Value{Value::Vocab, newId};
+        state.next();
     } else if (state.matches(Token::Identifier)) {
         value = Value{Value::Symbol, 0, state.here()->text};
         state.next();

@@ -17,6 +17,7 @@ struct Value {
         TypeId      = 8,
         JumpTarget  = 9,
         VarRef      = 10,
+        Vocab       = 11,
         LocalVar    = 15,
         Any         = 32,
         Colon       = 93,

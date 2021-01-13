@@ -57,6 +57,13 @@ void GameData::load(const std::string &filename) {
         strings.insert(std::make_pair(def->ident, def));
     }
 
+    // READ VOCAB
+    int staticVocab = read_32(inf);
+    for (unsigned i = 0; i < staticVocab; ++i) {
+        std::string word = read_str(inf);
+        vocab.push_back(word);
+    }
+
     // // READ LISTS
     nextList = 1;
     staticLists = read_32(inf); // dummy list so index matches IDs

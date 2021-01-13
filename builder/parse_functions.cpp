@@ -125,6 +125,10 @@ ListValue parse_listvalue(GameData &gamedata, FunctionDef *function, ParseState 
             int ident = gamedata.getStringId(state.here()->text);
             newValue = ListValue{here->origin,  Value{Value::String, ident} };
             break; }
+        case Token::Vocab: {
+            int ident = gamedata.getVocabNumber(state.here()->text);
+            newValue = ListValue{here->origin,  Value{Value::Vocab, ident} };
+            break; }
         case Token::OpenParan: {
             List *sublist = parse_list(gamedata, function, state);
             newValue = ListValue{here->origin,  Value{Value::Expression}, sublist };

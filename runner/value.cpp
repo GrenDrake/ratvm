@@ -45,6 +45,9 @@ std::ostream& operator<<(std::ostream &out, const Value::Type &type) {
         case Value::Map:
             out << "Map";
             break;
+        case Value::Vocab:
+            out << "Vocab";
+            break;
         case Value::Function:
             out << "Function";
             break;
