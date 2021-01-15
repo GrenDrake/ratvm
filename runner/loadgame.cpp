@@ -66,7 +66,7 @@ void GameData::load(const std::string &filename) {
 
     // // READ LISTS
     nextList = 1;
-    staticLists = read_32(inf); // dummy list so index matches IDs
+    staticLists = read_32(inf);
     for (unsigned i = 0; i < staticLists; ++i) {
         ListDef *def = new ListDef;
         def->ident = i + 1;
@@ -88,7 +88,7 @@ void GameData::load(const std::string &filename) {
 
     // READ MAPS
     nextMap = 1;
-    staticMaps = read_32(inf); // dummy map so index matches IDs
+    staticMaps = read_32(inf);
     for (unsigned i = 0; i < staticMaps; ++i) {
         MapDef *def = new MapDef;
         def->isStatic = true;
