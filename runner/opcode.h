@@ -78,9 +78,7 @@ struct OpcodeDef {
         StringCompare       = 68,
         Error               = 69,
         Origin              = 70,
-        AddPage             = 71,
-        DelPage             = 72,
-        EndPage             = 73,
+        // unused: 71, 72, 73
         New                 = 74,
         StringAppendUF      = 75,
         IsStatic            = 76,
