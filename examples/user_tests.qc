@@ -335,6 +335,51 @@ function testLoad() {
 }
 
 // ////////////////////////////////////////////////////////////////////////////
+// Parsing test
+// ////////////////////////////////////////////////////////////////////////////
+declare parsingObjects [ `ball` `table` `torch` ];
+function testParsing() {
+    [ line words i verb noun ]
+
+    ("Enter a command in the format VERB NOUN. Known verbs are: eat, take, drop. Enter a blank line to quit. You can see:")
+    (set i 0)
+    (while (lt i (size parsingObjects)) (proc
+        ("[br]- " (get parsingObjects i))
+        (inc i)))
+    ("\n")
+
+    (while 1 (proc
+        (set line (get_line "Now what? "))
+        (if (not (str_compare line ""))
+            (return))
+        (set words (tokenize line))
+
+        (if (neq (size words) 2) (proc
+            ("Invalid command.\n")
+            (continue)))
+
+        (set verb (get_dict (get words 0)))
+        (set noun (get_dict (get words 1)))
+
+        (if (eq (indexof noun parsingObjects) -1) (proc
+            ("I don't see a " (get words 1) " here.\n")
+            (continue)))
+
+        (if (eq verb `take`) (proc
+            ("Taking the " (get words 1) ".\n")
+            (continue)))
+        (if (eq verb `drop`) (proc
+            ("Dropping the " (get words 1) ".\n")
+            (continue)))
+        (if (eq verb `eat`) (proc
+            ("Eating the " (get words 1) ".\n")
+            (continue)))
+        ("I don't know how to \"" (get words 0) "\" something.\n")
+    ))
+}
+
+
+// ////////////////////////////////////////////////////////////////////////////
 // Test selection
 // ////////////////////////////////////////////////////////////////////////////
 function showOptions() {
@@ -353,13 +398,14 @@ function showOptions() {
         (option "Test origins"              testOrigins)
 
         (option "Test input methods"        testInputs)
+        (option "Test parsing"              testParsing)
 
         (option "Restore magic numbers"     testLoad)
         (option "Save magic numbers"        testSave)
 
         (set choice (get_option none))
         (choice none)
-        (if (not (or (eq choice showOptions) (eq choice testInputs)))
+        (if (not (or (eq choice showOptions) (eq choice testInputs) (eq choice testParsing)))
             (proc
                 (option "Return to main page" showOptions)
                 (get_option none)))))
