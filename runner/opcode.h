@@ -74,7 +74,7 @@ struct OpcodeDef {
         AddOption           = 63,
         StringClear         = 65,
         StringAppend        = 66,
-        StringLength        = 67,
+        // unused: 67
         StringCompare       = 68,
         Error               = 69,
         Origin              = 70,

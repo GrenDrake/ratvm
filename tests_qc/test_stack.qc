@@ -134,7 +134,6 @@ function testExpressionsStack() {
     (str_clear local)
     (str_append local "Some text\n")
     (str_append_uf local "Some text\n")
-    (str_length local)
     (str_compare local "Some text\n")
     (origin aMap)
     (new List)

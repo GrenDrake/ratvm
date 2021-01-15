@@ -22,24 +22,18 @@ declare strSigmaUpper "Σ"; // code point 03A3
 
 function testStringManipulation() {
     [ testString ]
+
+    ("\n# Test String Manipulation\n")
+
+    (set testString (new String))
+    ("Check new string is empty...[br]")
+    (if (str_compare testString "") (error "New string not empty."))
+
+    ("Copying \"Fred\" to dynamic string...[br]")
+    (str_append testString "Fred")
+    (if (str_compare testString "Fred") (error "Failed to copy \"Fred\" to new string."))
+
     (asm
-        "\n# Test String Manipulation\n" say
-
-        "Check static string \"Fred\" has length four...[br]" say
-        "Fred" str_length 4 eq strlenNewString jnz
-        "Bad length on static string \"Fred\"." error
-
-        strlenNewString:
-        String new *testString set
-        "Check new string has zero length...[br]" say
-        testString str_length strcpyStrlen jz
-        "Bad initial length on new string." error
-
-        strcpyStrlen:
-        "Copying \"Fred\" to dynamic string...[br]" say
-        "Fred" testString str_append
-        testString str_length 4 eq stringCompares jnz
-        "Bad length on copied string \"Fred\"." error
 
         stringCompares:
         "Comparing static and dynamic strings with [b]==[/b]...[br]" say

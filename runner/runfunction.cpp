@@ -613,13 +613,6 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 theString.requireType(Value::String);
                 stringAppend(theString, toAppend, true);
                 break; }
-            case OpcodeDef::StringLength: {
-                Value theString = callStack.pop();
-                theString.requireType(Value::String);
-                const StringDef &strDef = getString(theString.value);
-                int length = static_cast<int>(strDef.text.size());
-                callStack.push(Value{Value::Integer, length});
-                break; }
             case OpcodeDef::StringCompare: {
                 Value stringA = callStack.pop();
                 Value stringB = callStack.pop();
