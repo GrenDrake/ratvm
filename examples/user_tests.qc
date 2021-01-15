@@ -175,9 +175,8 @@ function testInputs() {
         (option "Value 2 (key: G)"      receiveExtra   2    'g')
         (option "Return to main menu"   none)
         (set choice (get_option xtra))
-        (if choice
-            (dispatcher choice xtra)
-            (return 0))))
+        (if (eq choice none) (return 0))
+        (choice xtra)))
 }
 function receiveExtra(extra) {
     ("Option extra value: " extra)
@@ -357,24 +356,13 @@ function showOptions() {
 
         (option "Restore magic numbers"     testLoad)
         (option "Save magic numbers"        testSave)
+
         (set choice (get_option none))
-        (dispatcher choice)
-        ))
-}
-
-
-function dispatcher(optionFunc extraValue) {
-    (optionFunc extraValue)
-
-    (if (or
-            (eq optionFunc showOptions)
-            (eq optionFunc receiveExtra)
-            (eq optionFunc testGetkey)
-            (eq optionFunc testLineInput)
-            (eq optionFunc testInputs))
-        (return))
-    (option "Return to main page" showOptions)
-    (get_option none)
+        (choice none)
+        (if (not (or (eq choice showOptions) (eq choice testInputs)))
+            (proc
+                (option "Return to main page" showOptions)
+                (get_option none)))))
 }
 
 function main() {
