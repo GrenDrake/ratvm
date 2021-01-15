@@ -338,8 +338,10 @@ function testLoad() {
 // Parsing test
 // ////////////////////////////////////////////////////////////////////////////
 declare parsingObjects [ `ball` `table` `torch` ];
+declare words [];
+declare vocab [];
 function testParsing() {
-    [ line words i verb noun ]
+    [ line i verb noun ]
 
     ("Enter a command in the format VERB NOUN. Known verbs are: eat, take, drop. Enter a blank line to quit. You can see:")
     (set i 0)
@@ -351,15 +353,15 @@ function testParsing() {
     (while 1 (proc
         (set line (get_line "Now what? "))
         (if (not (str_compare line ""))
-            (return))
-        (set words (tokenize line))
+            (return)
+        (tokenize line words vocab))
 
         (if (neq (size words) 2) (proc
             ("Invalid command.\n")
             (continue)))
 
-        (set verb (get_dict (get words 0)))
-        (set noun (get_dict (get words 1)))
+        (set verb (get vocab 0))
+        (set noun (get vocab 1))
 
         (if (eq (indexof noun parsingObjects) -1) (proc
             ("I don't see a " (get words 1) " here.\n")

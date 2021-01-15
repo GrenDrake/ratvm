@@ -193,6 +193,12 @@ const std::string& GameData::getVocab(int index) const {
     }
     return vocab[index];
 }
+int GameData::getVocab(const std::string &text) const {
+    for (unsigned i = 0; i < vocab.size(); ++i) {
+        if (vocab[i] == text) return i;
+    }
+    return -1;
+}
 
 int GameData::collectGarbage() {
     // clear existing marks

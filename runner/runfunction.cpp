@@ -753,28 +753,22 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
 
             case OpcodeDef::Tokenize: {
                 Value text = callStack.pop();
+                Value strList = callStack.pop();
+                Value vocabList = callStack.pop();
+                // std::cerr << text.type << " " << strList.value << " " << vocabList.type << "\n";
                 text.requireType(Value::String);
-                Value newList = makeNew(Value::List);
-                ListDef &listDef = getList(newList.value);
+                strList.requireType(Value::List, Value::None);
+                vocabList.requireType(Value::List, Value::None);
+                ListDef *strListDef = strList.type == Value::None ? nullptr : &getList(strList.value);
+                if (strListDef) strListDef->items.clear();
+                ListDef *vocabListDef = vocabList.type == Value::None ? nullptr : &getList(vocabList.value);
+                if (vocabListDef) vocabListDef->items.clear();
+
                 auto result = explodeString(getString(text.value).text);
                 for (const std::string &s : result) {
-                    listDef.items.push_back(makeNewString(s));
+                    if (strListDef)   strListDef->items.push_back(makeNewString(s));
+                    if (vocabListDef) vocabListDef->items.push_back(Value(Value::Vocab, getVocab(s)));
                 }
-                callStack.push(newList);
-                break; }
-
-            case OpcodeDef::StrToDict: {
-                Value text = callStack.pop();
-                text.requireType(Value::String);
-                const std::string &s = getString(text.value).text;
-                int vocabNumber = -1;
-                for (int i = 0; i < vocab.size(); ++i) {
-                    if (vocab[i] == s) {
-                        vocabNumber = i;
-                        break;
-                    }
-                }
-                callStack.push(Value(Value::Vocab, vocabNumber));
                 break; }
 
             default: {

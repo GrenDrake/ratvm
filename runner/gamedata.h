@@ -121,6 +121,7 @@ struct GameData {
     const FunctionDef& getFunction(int index) const;
     FunctionDef& getFunction(int index);
     const std::string& getVocab(int index) const;
+    int getVocab(const std::string &text) const;
 
     int collectGarbage();
     void mark(ObjectDef &object);

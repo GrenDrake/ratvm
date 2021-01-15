@@ -91,7 +91,6 @@ struct OpcodeDef {
         FileWrite           = 81,
         FileDelete          = 82,
         Tokenize            = 83,
-        StrToDict           = 84,
     };
 
     std::string name;

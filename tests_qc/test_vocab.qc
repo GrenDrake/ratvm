@@ -5,6 +5,7 @@ declare GAMEID  "";
 
 declare vocabInput  [ "joy" "to" "the" "world" ];
 declare vocabResult [ `joy` `to` `the` `world` ];
+declare vocabList   [];
 
 function main() {
     [ i v ]
@@ -18,7 +19,8 @@ function main() {
     (set i 0)
     (while (lt i (size vocabInput))
         (proc
-            (set v (get_dict (get vocabInput i)))
+            (tokenize (get vocabInput i) none vocabList)
+            (set v (get vocabList 0))
             (if (neq v (get vocabResult i)) (error "dictionary lookup failed."))
             (inc i)))
 

@@ -83,8 +83,7 @@ OpcodeDef opcodes[] = {
     {   "file_read",    OpcodeDef::FileRead,                2, 1 },
     {   "file_write",   OpcodeDef::FileWrite,               2, 1 },
     {   "file_delete",  OpcodeDef::FileDelete,              1, 1 },
-    {   "tokenize",     OpcodeDef::Tokenize,                1, 1 },
-    {   "get_dict",     OpcodeDef::StrToDict,               1, 1 },
+    {   "tokenize",     OpcodeDef::Tokenize,                3, 0 },
     {   ""                                                       }
 };
 

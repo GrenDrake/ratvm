@@ -19,13 +19,20 @@ function testStringTokenizeResult(result expected message) {
             (inc i)))
 }
 
+declare wordList [];
 function main() {
-    (testStringTokenizeResult (tokenize "  joy  to  the  world  ")     tokenizeResultLong "tokenize: maximally spaced")
-    (testStringTokenizeResult (tokenize "   joy   to  the    world  ") tokenizeResultLong "failed to explode maximally spaced string")
-    (testStringTokenizeResult (tokenize "joy to the world")            tokenizeResultLong "failed to explode minimally spaced string")
-
-    (testStringTokenizeResult (tokenize "world")     tokenizeResultShort "failed to explode single word string")
-    (testStringTokenizeResult (tokenize "  world")   tokenizeResultShort "failed to explode single word string with leading whitespace")
-    (testStringTokenizeResult (tokenize "world  ")   tokenizeResultShort "failed to explode single word string with trailing whitepsace")
-    (testStringTokenizeResult (tokenize "  world  ") tokenizeResultShort "failed to explode single word string with leading and trailing whitepsace")
+    (tokenize "  joy  to  the  world  " wordList none)
+    (testStringTokenizeResult wordList tokenizeResultLong "tokenize: maximally spaced")
+    (tokenize "   joy   to  the    world  " wordList none)
+    (testStringTokenizeResult wordList tokenizeResultLong "failed to explode maximally spaced string")
+    (tokenize "joy to the world" wordList none)
+    (testStringTokenizeResult wordList tokenizeResultLong "failed to explode minimally spaced string")
+    (tokenize "world" wordList none)
+    (testStringTokenizeResult wordList tokenizeResultShort "failed to explode single word string")
+    (tokenize "  world" wordList none)
+    (testStringTokenizeResult wordList tokenizeResultShort "failed to explode single word string with leading whitespace")
+    (tokenize "world  " wordList none)
+    (testStringTokenizeResult wordList tokenizeResultShort "failed to explode single word string with trailing whitepsace")
+    (tokenize "  world  " wordList none)
+    (testStringTokenizeResult wordList tokenizeResultShort "failed to explode single word string with leading and trailing whitepsace")
 }
