@@ -71,10 +71,11 @@ void GameData::load(const std::string &filename) {
         ListDef *def = new ListDef;
         def->ident = i + 1;
         def->isStatic = true;
-        if (def->ident >= nextList) nextList = def->ident + 1;
         def->srcName = -1;
         def->srcFile = read_32(inf);
         def->srcLine = read_32(inf);
+        def->ident = read_32(inf);
+        if (def->ident >= nextList) nextList = def->ident + 1;
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             Value value;
@@ -90,12 +91,12 @@ void GameData::load(const std::string &filename) {
     staticMaps = read_32(inf); // dummy map so index matches IDs
     for (unsigned i = 0; i < staticMaps; ++i) {
         MapDef *def = new MapDef;
-        def->ident = i + 1;
         def->isStatic = true;
-        if (def->ident >= nextMap) nextMap = def->ident + 1;
         def->srcName = -1;
         def->srcFile = read_32(inf);
         def->srcLine = read_32(inf);
+        def->ident = read_32(inf);
+        if (def->ident >= nextMap) nextMap = def->ident + 1;
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             Value v1, v2;
@@ -115,10 +116,11 @@ void GameData::load(const std::string &filename) {
         ObjectDef *def = new ObjectDef;
         def->ident = i + 1;
         def->isStatic = true;
-        if (def->ident >= nextObject) nextObject = def->ident + 1;
         def->srcName = read_32(inf);
         def->srcFile = read_32(inf);
         def->srcLine = read_32(inf);
+        def->ident = read_32(inf);
+        if (def->ident >= nextObject) nextObject = def->ident + 1;
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {
             unsigned propId = read_16(inf);
@@ -134,10 +136,10 @@ void GameData::load(const std::string &filename) {
     unsigned functionCount = read_32(inf);
     for (unsigned i = 0; i < functionCount; ++i) {
         FunctionDef def;
-        def.ident = i + 1;
         def.srcName = read_32(inf);
         def.srcFile = read_32(inf);
         def.srcLine = read_32(inf);
+        def.ident = read_32(inf);
         def.arg_count = read_16(inf);
         def.local_count = read_16(inf);
         int count = def.arg_count + def.local_count;

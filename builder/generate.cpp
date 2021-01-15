@@ -118,6 +118,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         if (list == nullptr) continue;
         write_32(out, list->origin.fileNameString);
         write_32(out, list->origin.line);
+        write_32(out, list->globalId);
         write_16(out, list->items.size());
         for (const Value &value : list->items) {
             write_8(out, value.type);
@@ -133,6 +134,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         if (map == nullptr) continue;
         write_32(out, map->origin.fileNameString);
         write_32(out, map->origin.line);
+        write_32(out, map->globalId);
         write_16(out, map->rows.size());
         for (const GameMap::MapRow &row : map->rows) {
             write_8(out, row.key.type);
@@ -150,6 +152,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         write_32(out, object->nameString);
         write_32(out, object->origin.fileNameString);
         write_32(out, object->origin.line);
+        write_32(out, object->globalId);
         write_16(out, object->properties.size());
         for (const GameProperty &property : object->properties) {
             write_16(out, property.id);
@@ -167,6 +170,7 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         write_32(out, function->nameString);
         write_32(out, function->origin.fileNameString);
         write_32(out, function->origin.line);
+        write_32(out, function->globalId);
         write_16(out, function->argument_count);
         write_16(out, function->local_count);
         for (const LocalDef &def : function->locals) {
