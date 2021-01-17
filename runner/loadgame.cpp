@@ -58,7 +58,7 @@ void GameData::load(const std::string &filename) {
     }
 
     // READ VOCAB
-    int staticVocab = read_32(inf);
+    staticVocab = read_32(inf);
     for (unsigned i = 0; i < staticVocab; ++i) {
         std::string word = read_str(inf);
         vocab.push_back(word);

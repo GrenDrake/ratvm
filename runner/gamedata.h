@@ -169,6 +169,7 @@ struct GameData {
     unsigned staticLists;
     unsigned staticMaps;
     unsigned staticObjects;
+    unsigned staticVocab;
 
     unsigned nextString;
     unsigned nextList;

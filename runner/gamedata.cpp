@@ -187,7 +187,7 @@ FunctionDef& GameData::getFunction(int index) {
 
 std::string NO_SUCH_VOCAB("INVALID VOCAB");
 const std::string& GameData::getVocab(int index) const {
-    if (index < 0 || index >= vocab.size()) {
+    if (index < 0 || index >= static_cast<int>(vocab.size())) {
         NO_SUCH_VOCAB = "INVALID VOCAB " + std::to_string(index);
         return NO_SUCH_VOCAB;
     }
