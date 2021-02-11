@@ -53,7 +53,7 @@ tests_qc: $(BUILD) $(RUNNER)
 	cp ./tests_qc/*.qvm $(PLAYQUOLL)games/
 
 clean: clean_runner
-	$(RM) builder/*.o runner/*.o tests/*.o
+	$(RM) builder/*.o runner/*.o tests/*.o tests_qc/*.qvm
 	$(RM) $(BUILD) $(TEST_BYTESTREAM) $(TEST_TEXTUTIL) $(TEST_FIBONACCI)
 
 clean_runner:
