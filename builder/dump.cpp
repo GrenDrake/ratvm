@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <ostream>
 #include <iomanip>
+#include <sstream>
 
 #include "gamedata.h"
 #include "opcode.h"
@@ -231,9 +232,13 @@ void dump_fullBytecode(GameData &gamedata, std::ostream &out) {
     gamedata.bytecode.dump(out, 0);
 }
 
+const int IR_WIDTH = 45;
 void dump_ir(GameData &gamedata, std::ostream &out) {
+    out << std::left;
+
     for (const FunctionDef *function : gamedata.functions) {
         if (!function) continue;
+
         out << "FUNCTION #" << function->globalId << ' ' << function->name << " (";
         for (const LocalDef &def : function->locals) {
             out << ' ' << def.name;
@@ -241,40 +246,43 @@ void dump_ir(GameData &gamedata, std::ostream &out) {
         out << " ) " << function->asmCode.size() << " operations\n";
         if (function->isAsm) out << "    (asm function)\n";
         for (const AsmLine *line : function->asmCode) {
-            out << std::right << std::dec;
-            out << "    ";
+            std::stringstream work;
+            work << std::right << std::dec << "    ";
 
             const AsmLabel *label = dynamic_cast<const AsmLabel*>(line);
             if (label) {
-                out << "LABEL " << label->text << '\n';
+                work << "LABEL " << label->text;
+                out << std::setw(IR_WIDTH) << work.str() << line->getOrigin() << "\n";
                 continue;
             }
 
             const AsmOpcode *code = dynamic_cast<const AsmOpcode*>(line);
             if (code) {
                 const OpcodeDef *opdef = getOpcodeByCode(code->opcode);
-                out << "OPCODE " << code->opcode;
-                if (opdef)  out << " (" << opdef->name << ")\n";
-                else        out << '\n';
+                work << "OPCODE " << code->opcode << " (";
+                if (opdef)  work << opdef->name;
+                else        work << "UNKNOWN";
+                work << ')';
+                out << std::setw(IR_WIDTH) << work.str() << line->getOrigin() << "\n";
                 continue;
             }
 
             const AsmValue *value = dynamic_cast<const AsmValue*>(line);
             if (value) {
-                out << "VALUE " << value->value;
+                work << "VALUE " << value->value;
                 switch (value->value.type) {
                     case Value::VarRef:
                     case Value::LocalVar: {
-                        out << " (";
+                        work << " (";
                         const LocalDef *def = function->getLocal(value->value.value);
-                        if (def) out << def->name;
-                        else     out << "INVALID";
-                        out << ")\n";
+                        if (def) work << def->name;
+                        else     work << "INVALID";
+                        work << ')';
                         break; }
                     default:
-                        out << '\n';
                         break;
                 }
+                out << std::setw(IR_WIDTH) << work.str() << line->getOrigin() << "\n";
                 continue;
             }
         }
