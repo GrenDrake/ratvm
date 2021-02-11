@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
             std::cerr << "USAGE: ./run [options] [game file]\n";
             std::cerr << "    -version   Display version data then quit.\n";
             std::cerr << "    -dump      Dump game data then quit.\n";
-            std::cerr << "    -quick     Run initial game function then quit.\n";
+            std::cerr << "    -silent    Run initial game function then quit.\n";
             return 0;
         } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
             std::cerr << "Console Runner QuollVM, V1.0\n";
