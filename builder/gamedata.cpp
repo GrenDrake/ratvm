@@ -237,6 +237,42 @@ void GameData::sortVocab() {
     std::sort(vocab.begin(), vocab.end());
 }
 
+GameObject* GameData::objectById(int ident) {
+    for (GameObject *o : objects) {
+        if (o && o->globalId == ident) return o;
+    }
+    return nullptr;
+}
+
+GameList* GameData::listById(int ident) {
+    for (GameList *o : lists) {
+        if (o && o->globalId == ident) return o;
+    }
+    return nullptr;
+}
+
+GameMap* GameData::mapById(int ident) {
+    for (GameMap *o : maps) {
+        if (o && o->globalId == ident) return o;
+    }
+    return nullptr;
+}
+
+FunctionDef* GameData::functionById(int ident) {
+    for (FunctionDef *o : functions) {
+        if (o && o->globalId == ident) return o;
+    }
+    return nullptr;
+}
+
+FlagSet* GameData::flagSetById(int ident) {
+    for (FlagSet &o : flagsets) {
+        if (o.globalId == ident) return &o;
+    }
+    return nullptr;
+}
+
+
 std::ostream& operator<<(std::ostream &out, const ErrorMsg::Type &type) {
     switch(type) {
         case ErrorMsg::Fatal:   out << "fatal";     break;

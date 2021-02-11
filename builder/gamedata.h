@@ -189,6 +189,12 @@ public:
     int  getVocabNumber(const std::string &word) const;
     void sortVocab();
 
+    GameObject*  objectById(int ident);
+    GameList*    listById(int ident);
+    GameMap*     mapById(int ident);
+    FunctionDef* functionById(int ident);
+    FlagSet*     flagSetById(int ident);
+
     int errorCount;
     std::vector<ErrorMsg> errors;
     SymbolTable symbols;

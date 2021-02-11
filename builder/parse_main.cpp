@@ -19,6 +19,9 @@
 #include "token.h"
 
 
+static int nextDataId = 1;
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Parse function declarations
 
@@ -228,14 +231,13 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a set of flags
 int parse_flags(GameData &gamedata, ParseState &state) {
-    static int nextFlagsId = 0;
     const Origin &origin = state.here()->origin;
     state.skip("flags");
     state.skip(Token::OpenParan);
 
     FlagSet flagset;
     flagset.origin = origin;
-    flagset.globalId = nextFlagsId++;
+    flagset.globalId = nextDataId++;
     // values
     while (!state.eof() && !state.matches(Token::CloseParan)) {
         if (state.here()->type == Token::Integer) {
@@ -257,7 +259,6 @@ int parse_flags(GameData &gamedata, ParseState &state) {
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a function
 int parse_function(GameData &gamedata, ParseState &state, const std::string &defaultName) {
-    static int nextFunctionId = 1;
     bool isAsm = false;
     const Origin &origin = state.here()->origin;
     state.skip("function");
@@ -267,7 +268,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
         funcName = state.here()->text;
         gamedata.symbols.add(SymbolDef(origin,
                                         funcName,
-                                        Value{Value::Function, nextFunctionId}));
+                                        Value{Value::Function, nextDataId}));
         state.next();
     } else {
         funcName = defaultName;
@@ -286,7 +287,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     function->origin.fileNameString = gamedata.getStringId(origin.file);
     function->name = funcName;
     function->nameString = gamedata.getStringId(funcName);
-    function->globalId = nextFunctionId++;
+    function->globalId = nextDataId++;
     function->isAsm = isAsm;
     gamedata.functions.push_back(function);
     // hidden "self" argument
@@ -354,7 +355,6 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a list declaration
 int parse_list(GameData &gamedata, ParseState &state) {
-    static int nextListId = 1;
     const Origin &origin = state.here()->origin;
     state.skip(Token::OpenSquare);
 
@@ -362,7 +362,7 @@ int parse_list(GameData &gamedata, ParseState &state) {
     gamedata.lists.push_back(list);
     list->origin = origin;
     list->origin.fileNameString = gamedata.getStringId(origin.file);
-    list->globalId = nextListId++;
+    list->globalId = nextDataId++;
     while (!state.matches(Token::CloseSquare)) {
         if (state.eof()) {
             delete list;
@@ -380,14 +380,13 @@ int parse_list(GameData &gamedata, ParseState &state) {
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a map declaration
 int parse_map(GameData &gamedata, ParseState &state) {
-    static int nextMapId = 1;
     const Origin &origin = state.here()->origin;
 
     GameMap *map = new GameMap;
     gamedata.maps.push_back(map);
     map->origin = origin;
     map->origin.fileNameString = gamedata.getStringId(origin.file);
-    map->globalId = nextMapId++;
+    map->globalId = nextDataId++;
     state.skip(Token::OpenBrace);
     while (!state.matches(Token::CloseBrace)) {
         if (state.eof()) {
@@ -448,7 +447,6 @@ void parse_objectProperty(GameData &gamedata, ParseState &state, GameObject *obj
 ///////////////////////////////////////////////////////////////////////////////
 // Parse a single object
 int parse_object(GameData &gamedata, ParseState &state, const std::string &defaultName) {
-    static int nextObjectId = 1;
     unsigned internalNameId = gamedata.getPropertyId("internal_name");
     unsigned parentId = gamedata.getPropertyId("parent");
 
@@ -475,7 +473,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
     object->origin.fileNameString = gamedata.getStringId(origin.file);
     object->name = objectName;
     object->nameString = gamedata.getStringId(objectName);
-    object->globalId = nextObjectId++;
+    object->globalId = nextDataId++;
     gamedata.objects.push_back(object);
     if (!objectName.empty()) {
         if (validSymbol(objectName)) {
@@ -592,7 +590,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
         } else if (state.matches("object")) {
             int objectId = parse_object(gamedata, state, "");
             if (objectId > 0) {
-                GameObject *object = gamedata.objects[objectId];
+                GameObject *object = gamedata.objectById(objectId);
                 if (object && object->name.empty()) {
                     gamedata.addError(object->origin, ErrorMsg::Warning, "Anonymous object at top level can never be referenced.");
                 }
@@ -600,7 +598,7 @@ int parse_tokens(GameData &gamedata, const std::vector<Token> &tokens) {
         } else if (state.matches("function")) {
             int functionId = parse_function(gamedata, state, "");
             if (functionId > 0) {
-                FunctionDef *function = gamedata.functions[functionId];
+                FunctionDef *function = gamedata.functionById(functionId);
                 if (function && function->name.empty()) {
                     gamedata.addError(function->origin, ErrorMsg::Warning, "Anonymous function at top level can never be referenced.");
                 }
