@@ -1,6 +1,6 @@
 # output files
 *.o
-*.qvm
+*.rvm
 *.exe
 build
 run

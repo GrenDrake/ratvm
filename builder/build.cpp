@@ -26,7 +26,7 @@ void dump_errors(GameData &gamedata, bool useAnsiEscapes);
 
 int main(int argc, char *argv[]) {
     std::vector<std::string> sourceFiles;
-    std::string outputFile = "game.qvm";
+    std::string outputFile = "game.rvm";
     bool dump_tokens = false;
     bool dump_data = false;
     bool dump_bytecode = false;
