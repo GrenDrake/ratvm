@@ -35,7 +35,7 @@ sqlite3* openDatabase() {
     sqlite3 *db;
     int rc;
 
-    std::string dbPath = getBasePath() + "quollvm.db";
+    std::string dbPath = getBasePath() + "ratvm.db";
 
     rc = sqlite3_open(dbPath.c_str(), &db);
     if (rc) {

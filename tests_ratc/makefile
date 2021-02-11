@@ -1,32 +1,32 @@
 BUILD=../build
 RUNNER=../run
 
-TEST_VALUES_SRC=test_values.qc
-TEST_VALUES=./test_values.qvm
-TEST_STACK_SRC=./test_stack.qc
-TEST_STACK=./test_stack.qvm
-TEST_EXPLODE_SRC=./test_explode.qc
-TEST_EXPLODE=./test_explode.qvm
-TEST_MATH_SRC=./test_math.qc
-TEST_MATH=./test_math.qvm
-TEST_MAPS_SRC=./test_maps.qc
-TEST_MAPS=./test_maps.qvm
-TEST_LISTS_SRC=./test_lists.qc
-TEST_LISTS=./test_lists.qvm
-TEST_OBJECTS_SRC=./test_objects.qc
-TEST_OBJECTS=./test_objects.qvm
-TEST_STRINGS_SRC=./test_strings.qc
-TEST_STRINGS=./test_strings.qvm
-TEST_JUMPS_SRC=./test_jumps.qc
-TEST_JUMPS=./test_jumps.qvm
-TEST_COMPARISONS_SRC=./test_comparisons.qc
-TEST_COMPARISONS=./test_comparisons.qvm
-TEST_FILEIO_SRC=./test_fileio.qc
-TEST_FILEIO=./test_fileio.qvm
-TEST_DYNAMIC_SRC=./test_dynamic.qc
-TEST_DYNAMIC=./test_dynamic.qvm
-TEST_VOCAB_SRC=./test_vocab.qc
-TEST_VOCAB=./test_vocab.qvm
+TEST_VALUES_SRC=test_values.ratc
+TEST_VALUES=./test_values.rvm
+TEST_STACK_SRC=./test_stack.ratc
+TEST_STACK=./test_stack.rvm
+TEST_EXPLODE_SRC=./test_explode.ratc
+TEST_EXPLODE=./test_explode.rvm
+TEST_MATH_SRC=./test_math.ratc
+TEST_MATH=./test_math.rvm
+TEST_MAPS_SRC=./test_maps.ratc
+TEST_MAPS=./test_maps.rvm
+TEST_LISTS_SRC=./test_lists.ratc
+TEST_LISTS=./test_lists.rvm
+TEST_OBJECTS_SRC=./test_objects.ratc
+TEST_OBJECTS=./test_objects.rvm
+TEST_STRINGS_SRC=./test_strings.ratc
+TEST_STRINGS=./test_strings.rvm
+TEST_JUMPS_SRC=./test_jumps.ratc
+TEST_JUMPS=./test_jumps.rvm
+TEST_COMPARISONS_SRC=./test_comparisons.ratc
+TEST_COMPARISONS=./test_comparisons.rvm
+TEST_FILEIO_SRC=./test_fileio.ratc
+TEST_FILEIO=./test_fileio.rvm
+TEST_DYNAMIC_SRC=./test_dynamic.ratc
+TEST_DYNAMIC=./test_dynamic.rvm
+TEST_VOCAB_SRC=./test_vocab.ratc
+TEST_VOCAB=./test_vocab.rvm
 
 
 all:  $(TEST_COMPARISONS) $(TEST_DYNAMIC) $(TEST_EXPLODE) $(TEST_FILEIO) \
@@ -75,6 +75,6 @@ $(TEST_VOCAB): $(BUILD) $(TEST_VOCAB_SRC)
 	$(RUNNER) $(TEST_VOCAB) -silent
 
 clean:
-	$(RM) *.qvm
+	$(RM) *.rvm
 
 .PHONY: all clean

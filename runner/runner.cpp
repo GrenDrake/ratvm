@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
             std::cerr << "    -silent    Run initial game function then quit.\n";
             return 0;
         } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
-            std::cerr << "Console Runner QuollVM, V1.0\n";
+            std::cerr << "Console Runner RatVM, V1.0\n";
             return 0;
         } else if (strcmp(argv[i], "-dump") == 0) {
             doDump = true;
