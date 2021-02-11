@@ -247,29 +247,28 @@ void dump_ir(GameData &gamedata, std::ostream &out) {
         if (function->isAsm) out << "    (asm function)\n";
         for (const AsmLine *line : function->asmCode) {
             std::stringstream work;
-            work << std::right << std::dec << "    ";
+            work << std::right << std::dec;
 
             const AsmLabel *label = dynamic_cast<const AsmLabel*>(line);
             if (label) {
-                work << "LABEL " << label->text;
-                out << std::setw(IR_WIDTH) << work.str() << line->getOrigin() << "\n";
+                work << '.' << label->text << ':';
+                out << std::setw(IR_WIDTH + 4) << work.str() << line->getOrigin() << "\n";
                 continue;
             }
 
+            out  << "    ";
             const AsmOpcode *code = dynamic_cast<const AsmOpcode*>(line);
             if (code) {
                 const OpcodeDef *opdef = getOpcodeByCode(code->opcode);
-                work << "OPCODE " << code->opcode << " (";
                 if (opdef)  work << opdef->name;
-                else        work << "UNKNOWN";
-                work << ')';
+                else        work << '(' << code->opcode << ')';
                 out << std::setw(IR_WIDTH) << work.str() << line->getOrigin() << "\n";
                 continue;
             }
 
             const AsmValue *value = dynamic_cast<const AsmValue*>(line);
             if (value) {
-                work << "VALUE " << value->value;
+                work << "push " << value->value;
                 switch (value->value.type) {
                     case Value::VarRef:
                     case Value::LocalVar: {
