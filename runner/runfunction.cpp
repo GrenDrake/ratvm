@@ -700,28 +700,33 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
 
             case OpcodeDef::FileList: {
                 Value gameIdRef = callStack.pop();
-                gameIdRef.requireType(Value::String);
-                const std::string &gameId = getString(gameIdRef.value).text;
-                FileList filelist = getFileList(gameId);
+                gameIdRef.requireType(Value::String, Value::None);
+                std::string forGameId;
+                std::string myGameId = "";
+                if (gameIdRef.type != Value::None) {
+                    forGameId = getString(gameIdRef.value).text;
+                    myGameId = getString(refGameid).text;
+                }
+                FileList filelist = getFileList();
                 Value listId = makeNew(Value::List);
                 ListDef &list = getList(listId.value);
                 callStack.push(listId);
                 for (auto record : filelist) {
+                    if (forGameId != myGameId) continue;
                     Value rowId = makeNew(Value::List);
                     ListDef &row = getList(rowId.value);
                     row.items.push_back(makeNewString(record.name));
-                    row.items.push_back(makeNewString(record.date));
+                    std::string timeString = trim(ctime(&record.date));
+                    row.items.push_back(makeNewString(timeString));
+                    row.items.push_back(makeNewString(record.gameId));
                     list.items.push_back(rowId);
                 }
                 break; }
             case OpcodeDef::FileRead: {
                 Value fileNameId = callStack.pop();
-                Value gameIdId = callStack.pop();
                 fileNameId.requireType(Value::String);
-                gameIdId.requireType(Value::String);
                 const std::string &filename = getString(fileNameId.value).text;
-                const std::string &gameid   = getString(gameIdId.value).text;
-                Value listId = getFile(filename, gameid);
+                Value listId = getFile(filename);
                 callStack.push(listId);
                 break; }
             case OpcodeDef::FileWrite: {
@@ -730,17 +735,15 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 fileNameId.requireType(Value::String);
                 dataListId.requireType(Value::List);
                 const std::string &filename = getString(fileNameId.value).text;
-                const std::string &gameid   = getString(refGameid).text;
                 const ListDef &listDef = getList(dataListId.value);
-                bool result = saveFile(filename, gameid, &listDef);
+                bool result = saveFile(filename, &listDef);
                 callStack.push(Value{Value::Integer, result ? 1 : 0});
                 break; }
             case OpcodeDef::FileDelete: {
                 Value fileNameId = callStack.pop();
                 fileNameId.requireType(Value::String);
                 const std::string &filename = getString(fileNameId.value).text;
-                const std::string &gameid   = getString(refGameid).text;
-                bool result = deleteFile(filename, gameid);
+                bool result = deleteFile(filename);
                 callStack.push(Value{Value::Integer, result ? 1 : 0});
                 break; }
 

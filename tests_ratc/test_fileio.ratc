@@ -8,7 +8,7 @@ declare TEST_FILE_NAME "Short Test File";
 
 function delete_all_files() {
     [ theFilelist counter length ]
-    (set theFilelist (file_list GAMEID))
+    (set theFilelist (file_list none))
     (set counter 0)
     (set length (size theFilelist))
     (while (lt counter length)
@@ -23,7 +23,7 @@ function main() {
     ("\n# Testing file io...")
 
     (delete_all_files)
-    (set theFilelist (file_list GAMEID))
+    (set theFilelist (file_list none))
 
     // make sure we're starting with zero files
     (if (neq (size theFilelist) 0) (error "File list is not empty before tests."))
@@ -36,7 +36,7 @@ function main() {
     (list_push aList 60)
     (file_write TEST_FILE_NAME aList)
 
-    (set filedata (file_read TEST_FILE_NAME GAMEID))
+    (set filedata (file_read TEST_FILE_NAME))
     (if (eq filedata none) (error "Failed to load test file."))
     (if (neq (size filedata) 4) (error "File content is wrong size."))
     (if (neq (get filedata 0) 4)  (error "First file value is wrong."))

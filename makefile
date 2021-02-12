@@ -1,8 +1,9 @@
+CC=gcc
 PLAYQUOLL=../playquoll/
 CFLAGS= -std=c99 -g -Wall
-CXXFLAGS= -std=c++11 -g -Wall -I../utf8proc-2.4.0/ -I./common/
+CXXFLAGS= -std=c++11 -g -Wall -I../utf8proc/ -I./common/ -DUTF8PROC_STATIC
 
-UTF8PROC_LIB=-L../utf8proc-2.4.0/ -lutf8proc
+UTF8PROC_LIB=-L../utf8proc/ -lutf8proc
 
 BUILD_OBJS=builder/build.o builder/general.o builder/lexer.o \
 		   builder/parse_main.o builder/translate.o builder/gamedata.o \
@@ -32,7 +33,7 @@ $(BUILD): $(BUILD_OBJS)
 	$(CXX) $(BUILD_OBJS) $(UTF8PROC_LIB) -o $(BUILD)
 
 $(RUNNER): $(RUNNER_OBJS)
-	$(CXX) $(RUNNER_OBJS) $(UTF8PROC_LIB) -lsqlite3 -o $(RUNNER)
+	$(CXX) $(RUNNER_OBJS) $(UTF8PROC_LIB) -o $(RUNNER)
 
 $(TEST_BYTESTREAM): $(BUILD) $(TEST_BYTESTREAM_OBJS)
 	$(CXX) $(TEST_BYTESTREAM_OBJS) -o $(TEST_BYTESTREAM)

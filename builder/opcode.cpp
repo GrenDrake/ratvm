@@ -76,7 +76,7 @@ OpcodeDef opcodes[] = {
     {   "encode_string",OpcodeDef::EncodeString,            1, 1 },
     {   "decode_string",OpcodeDef::DecodeString,            1, 1 },
     {   "file_list",    OpcodeDef::FileList,                1, 1 },
-    {   "file_read",    OpcodeDef::FileRead,                2, 1 },
+    {   "file_read",    OpcodeDef::FileRead,                1, 1 },
     {   "file_write",   OpcodeDef::FileWrite,               2, 1 },
     {   "file_delete",  OpcodeDef::FileDelete,              1, 1 },
     {   "tokenize",     OpcodeDef::Tokenize,                3, 0 },

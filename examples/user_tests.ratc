@@ -318,7 +318,7 @@ function testSave() {
 
 function testLoad() {
     [ aList ]
-    (set aList (file_read "magic" GAMEID))
+    (set aList (file_read "magic"))
     (if aList
         (proc
             (if (eq (size aList) 6)

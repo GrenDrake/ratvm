@@ -92,8 +92,10 @@ struct GameOption {
 };
 
 struct FileRecord {
+    int fileId;
     std::string name;
-    std::string date;
+    long date;
+    std::string gameId;
 };
 typedef std::vector<FileRecord> FileList;
 
@@ -143,10 +145,11 @@ struct GameData {
     std::string asString(const Value &value);
     void sortList(const Value &listId);
 
-    FileList getFileList(const std::string &gameId);
-    Value getFile(const std::string &fileName, const std::string &gameId);
-    bool saveFile(const std::string &filename, const std::string &gameId, const ListDef *list);
-    bool deleteFile(const std::string &filename, const std::string &gameId);
+    FileList getFileList();
+    bool saveFileList(const FileList &files);
+    Value getFile(const std::string &fileName);
+    bool saveFile(const std::string &filename, const ListDef *list);
+    bool deleteFile(const std::string &filename);
 
 
     bool showDebug;
