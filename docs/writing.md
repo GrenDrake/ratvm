@@ -1,8 +1,8 @@
 ---
-Writing Games
+title: Writing Games
 ---
 
-# Writing Games
+## Writing Games
 
 
 Every RatVM game is made from one or more source files.

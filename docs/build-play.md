@@ -2,7 +2,7 @@
 title: Building and Playing Games
 ---
 
-# Building and Playing Games
+# # Building and Playing Games
 
 The `build` command-line utility is used to transform one or more source files written in RatScript in a single RatVM image.
 Source files combined this way are treated as a single, large document; Rat has no concept of a "module" scope.
@@ -52,7 +52,7 @@ Argument | Description
 -ir | Dump the IR (intermediate representation) code generated.
 
 
-## Invoke Run
+## Invoking Run
 
 The `run` program included in this repository was designed for use in automated testing, but can be used to play games normally.
 It is invoked like so:
