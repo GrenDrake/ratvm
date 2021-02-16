@@ -5,6 +5,11 @@ Its design draws inspiration from many sources and was mostly built using the "t
 
 RatCode files typically have the extension `.ratc`.
 
+## Comments
+
+RatCode supports both C-style comments (`/* ... */`) and C++ style comments. (`// ...`).
+C-style comments may not be nested; doing so will produce a compiler error.
+
 ## Value Types
 
 Every value in RatCode is of one of a handful of types.
