@@ -5,6 +5,60 @@ Its design draws inspiration from many sources and was mostly built using the "t
 
 RatCode files typically have the extension `.ratc`.
 
+## Value Types
+
+Every value in RatCode is of one of a handful of types.
+Conversions between types is never performed automatically; the `astype` opcode can cast a value from one type to another, but this can have unexpected effects if used carelessly.
+
+There are two types of value: reference values refer to data contained elsewhere (such as a value referring to an object) and primitive values directly contain the value's data in the value (such as with integers).
+String, List, Map, Function, and Object types are always reference values.
+
+<dl>
+<dt>Any</dt>
+<dd>The Any type is not an actual type, but rather a placeholder in argument lists that permits any time of value to be passed.</dd>
+
+<dt>None</dt>
+<dd>The None type represents a lack of a value and is largely equivalent to `null` in other languages.
+The None type has only one valid valid, called `none`.</dd>
+
+<dt>Integer</dt>
+<dd>Integers in RatCode are signed, 32-bit values.
+Valid values are whole numbers in the range 2,147,483,648 to 2,147,483,647.
+
+<dt>Property</dt>
+<dd>Property names are identifiers prefixed with a dollar sign (`$`) that serve to identify specific properties on objects.
+They exist within their own namespace and are represented internally as integers.
+
+<dt>Type</dt>
+<dd>Types are the names of the various types of value used in RatCode.
+The valid entries are the same as the headings found in this list.</dd>
+
+<dt>Vocab</dt>
+<dd>Vocab values are vocabulary that can be compared to text the player types into the game.</dd>
+
+<dt>Reference</dt>
+<dd>Used only with specific opcodes, References values are typically created automatically and can be mostly ignored in normal development.
+A Reference value contains a reference to a specific local variable of the current function.</dd>
+
+<dt>String</dt>
+<dd>A value that references a specific string in the game's string database.</dd>
+
+<dt>List</dt>
+<dd>A value that references a specific list in the game's list database.</dd>
+
+<dt>Map</dt>
+<dd>A value that references a specific map in the game's map database.</dd>
+
+<dt>Function</dt>
+<dd>A value that references a specific function in the game's function database.</dd>
+
+<dt>Object</dt>
+<dd>A value that references a specific object in the game's object database.</dd>
+</dl>
+
+
+
+
 ## Declarations
 
 At the top level, a rat-code source file consists of a series of declaration.
@@ -37,12 +91,12 @@ They may not be declared using the `declare` keyword.
 
 ### Functions
 
-Functions are ddclared using the `function` keyword.
+Functions are declared using the `function` keyword.
 They may take multiple arguments, each of which can have a type specified.
-When not specified, the type defauls to any.
+When not specified, the type defaults to Any.
 The types of the values passed to a function are checked at run-time.
 
-The syntax of statements insidd a function is covered later.
+The syntax of statements inside a function is covered later.
 
 ```
 function aFunction(arg1 arg2:Integer) {
