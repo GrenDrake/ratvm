@@ -13,48 +13,47 @@ Conversions between types is never performed automatically; the `astype` opcode 
 There are two types of value: reference values refer to data contained elsewhere (such as a value referring to an object) and primitive values directly contain the value's data in the value (such as with integers).
 String, List, Map, Function, and Object types are always reference values.
 
-<dl>
-<dt>Any</dt>
-<dd>The Any type is not an actual type, but rather a placeholder in argument lists that permits any time of value to be passed.</dd>
+**Any**:
+The Any type is not an actual type, but rather a placeholder in argument lists that permits any type of value to be passed.
 
-<dt>None</dt>
-<dd>The None type represents a lack of a value and is largely equivalent to `null` in other languages.
-The None type has only one valid valid, called `none`.</dd>
+**None**:
+The None type represents a lack of a value and is largely equivalent to `null` in other languages.
+The None type has only one valid valid, called `none`.
 
-<dt>Integer</dt>
-<dd>Integers in RatCode are signed, 32-bit values.
-Valid values are whole numbers in the range 2,147,483,648 to 2,147,483,647.</dd>
+**Integer**:
+Integers in RatCode are signed, 32-bit values.
+Valid values are whole numbers in the range 2,147,483,648 to 2,147,483,647.
 
-<dt>Property</dt>
-<dd>Property names are identifiers prefixed with a dollar sign (`$`) that serve to identify specific properties on objects.
-They exist within their own namespace and are represented internally as integers.</dd>
+**Property**:
+Property names are identifiers prefixed with a dollar sign (`$`) that serve to identify specific properties on objects.
+They exist within their own namespace and are represented internally as integers.
 
-<dt>Type</dt>
-<dd>Types are the names of the various types of value used in RatCode.
-The valid entries are the same as the headings found in this list.</dd>
+**Type**:
+Types are the names of the various types of value used in RatCode.
+The valid entries are the same as the headings found in this list.
 
-<dt>Vocab</dt>
-<dd>Vocab values are vocabulary that can be compared to text the player types into the game.</dd>
+**Vocab**:
+Vocab values are vocabulary that can be compared to text the player types into the game.
 
-<dt>Reference</dt>
-<dd>Used only with specific opcodes, References values are typically created automatically and can be mostly ignored in normal development.
-A Reference value contains a reference to a specific local variable of the current function.</dd>
+**Reference**:
+Used only with specific opcodes, References values are typically created automatically and can be mostly ignored in normal development.
+A Reference value contains a reference to a specific local variable of the current function.
 
-<dt>String</dt>
-<dd>A value that references a specific string in the game's string database.</dd>
+**String**:
+A value that references a specific string in the game's string database.
 
-<dt>List</dt>
-<dd>A value that references a specific list in the game's list database.</dd>
+**List**:
+A value that references a specific list in the game's list database.
 
-<dt>Map</dt>
-<dd>A value that references a specific map in the game's map database.</dd>
+**Map**:
+A value that references a specific map in the game's map database.
 
-<dt>Function</dt>
-<dd>A value that references a specific function in the game's function database.</dd>
+**Function**:
+A value that references a specific function in the game's function database.
 
-<dt>Object</dt>
-<dd>A value that references a specific object in the game's object database.</dd>
-</dl>
+**Object**:
+A value that references a specific object in the game's object database.
+
 
 ## Declarations
 
