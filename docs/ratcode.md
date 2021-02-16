@@ -23,11 +23,11 @@ The None type has only one valid valid, called `none`.</dd>
 
 <dt>Integer</dt>
 <dd>Integers in RatCode are signed, 32-bit values.
-Valid values are whole numbers in the range 2,147,483,648 to 2,147,483,647.
+Valid values are whole numbers in the range 2,147,483,648 to 2,147,483,647.</dd>
 
 <dt>Property</dt>
 <dd>Property names are identifiers prefixed with a dollar sign (`$`) that serve to identify specific properties on objects.
-They exist within their own namespace and are represented internally as integers.
+They exist within their own namespace and are represented internally as integers.</dd>
 
 <dt>Type</dt>
 <dd>Types are the names of the various types of value used in RatCode.
@@ -55,9 +55,6 @@ A Reference value contains a reference to a specific local variable of the curre
 <dt>Object</dt>
 <dd>A value that references a specific object in the game's object database.</dd>
 </dl>
-
-
-
 
 ## Declarations
 
