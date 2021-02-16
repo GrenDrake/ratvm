@@ -9,5 +9,7 @@ Welcome to the documentation for RatVM.
 
 ## RatCode Reference
 
+- [RatCode](ratcode.html)
+- [Text Formatting](formatting.html)
 - [Opcodes](opcodes.html)
 - [Statements](statements.html)
