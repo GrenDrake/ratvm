@@ -1,5 +1,5 @@
 CC=gcc
-PLAYQUOLL=../playquoll/
+PLAYQUOLL=./playrat/
 CFLAGS= -std=c99 -g -Wall
 CXXFLAGS= -std=c++11 -g -Wall -I../utf8proc/ -I./common/ -DUTF8PROC_STATIC
 
