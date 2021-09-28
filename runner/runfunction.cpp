@@ -716,7 +716,8 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                     Value rowId = makeNew(Value::List);
                     ListDef &row = getList(rowId.value);
                     row.items.push_back(makeNewString(record.name));
-                    std::string timeString = trim(ctime(&record.date));
+                    std::time_t recordDate = record.date;
+                    std::string timeString = trim(ctime(&recordDate));
                     row.items.push_back(makeNewString(timeString));
                     row.items.push_back(makeNewString(record.gameId));
                     list.items.push_back(rowId);

@@ -94,7 +94,7 @@ struct GameOption {
 struct FileRecord {
     int fileId;
     std::string name;
-    long date;
+    long long date;
     std::string gameId;
 };
 typedef std::vector<FileRecord> FileList;
