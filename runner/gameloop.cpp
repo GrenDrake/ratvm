@@ -109,7 +109,7 @@ void gameloop(GameData &gamedata, bool doSilent) {
             std::string inputText;
             std::getline(std::cin, inputText);
             strToLower(inputText);
-            if (inputText == "quit") {
+            if (inputText == "quit" || inputText == "q") {
                 if (!doSilent) {
                     std::cout << "\nGoodbye!\n";
                 }
