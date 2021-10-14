@@ -268,36 +268,6 @@ int GameData::collectGarbage() {
         }
     }
 
-
-    // for (unsigned i = 0; i < objects.size(); ++i) {
-    //     ObjectDef *def = objects[i];
-    //     if (!def || def->gcMark) continue;
-    //     delete def;
-    //     objects[i] = nullptr;
-    //     ++collectionCount;
-    // }
-    // for (unsigned i = 0; i < lists.size(); ++i) {
-    //     ListDef *def = lists[i];
-    //     if (!def || def->gcMark) continue;
-    //     delete def;
-    //     lists[i] = nullptr;
-    //     ++collectionCount;
-    // }
-    // for (unsigned i = 0; i < maps.size(); ++i) {
-    //     MapDef *def = maps[i];
-    //     if (!def || def->gcMark) continue;
-    //     delete def;
-    //     maps[i] = nullptr;
-    //     ++collectionCount;
-    // }
-    // for (unsigned i = 0; i < strings.size(); ++i) {
-    //     StringDef *def = strings[i];
-    //     if (!def || def->gcMark) continue;
-    //     delete def;
-    //     strings[i] = nullptr;
-    //     ++collectionCount;
-    // }
-
     return collectionCount;
 }
 
@@ -355,7 +325,7 @@ void GameData::mark(const Value &value) {
                 break;
         }
     } catch (const GameBadReference&) {
-        // do nothing; no need to mark non-existance objects
+        // do nothing; no need to mark non-existant objects
     }
 }
 
