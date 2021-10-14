@@ -24,7 +24,7 @@ struct SymbolDef {
 
 class SymbolTable {
 public:
-    void add(const SymbolDef &symbol);
+    void add(const Origin &definingAt, const SymbolDef &symbol);
     const SymbolDef* get(const std::string &name, bool countsAsUse = false);
     void markUsed(const std::string &name);
     std::vector<SymbolDef> symbols;

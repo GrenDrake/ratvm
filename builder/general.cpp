@@ -184,11 +184,12 @@ const GameProperty* GameObject::getProperty(unsigned id) const {
 /* ************************************************************************** *
  * SymbolTable functions                                                      *
  * ************************************************************************** */
-void SymbolTable::add(const SymbolDef &symbol) {
+void SymbolTable::add(const Origin &definingAt, const SymbolDef &symbol) {
     const SymbolDef *oldSymbol = get(symbol.name);
     if (oldSymbol != nullptr) {
         std::stringstream ss;
-        ss << "Symbol ~" << symbol.name << "~ already defined at ";
+        ss << "Symbol ~" << symbol.name << "~ defined at " << definingAt;
+        ss << " already defined at ";
         ss << oldSymbol->origin << '.';
         throw BuildError(symbol.origin, ss.str());
     }

@@ -13,25 +13,25 @@
 #include "build.h"
 
 void add_default_constants(GameData &gamedata) {
-    gamedata.symbols.add(SymbolDef(Origin(), "None",            Value{Value::TypeId, 0}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Integer",         Value{Value::TypeId, 1}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "String",          Value{Value::TypeId, 2}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "List",            Value{Value::TypeId, 3}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Map",             Value{Value::TypeId, 4}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Function",        Value{Value::TypeId, 5}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Object",          Value{Value::TypeId, 6}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Property",        Value{Value::TypeId, 7}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Label",           Value{Value::TypeId, 9}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Reference",       Value{Value::TypeId, 10}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "Vocab",           Value{Value::TypeId, 11}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "none",            Value{Value::None,    0}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "saveAllowed",     Value{Value::Integer, 0}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarLeft",     Value{Value::Integer, 1}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarRight",    Value{Value::Integer, 2}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarFooter",   Value{Value::Integer, 3}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "infobarTitle",    Value{Value::Integer, 4}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "true",            Value{Value::Integer, 1}, 1));
-    gamedata.symbols.add(SymbolDef(Origin(), "false",           Value{Value::Integer, 0}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "None",            Value{Value::TypeId, 0}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Integer",         Value{Value::TypeId, 1}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "String",          Value{Value::TypeId, 2}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "List",            Value{Value::TypeId, 3}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Map",             Value{Value::TypeId, 4}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Function",        Value{Value::TypeId, 5}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Object",          Value{Value::TypeId, 6}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Property",        Value{Value::TypeId, 7}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Label",           Value{Value::TypeId, 9}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Reference",       Value{Value::TypeId, 10}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "Vocab",           Value{Value::TypeId, 11}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "none",            Value{Value::None,    0}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "saveAllowed",     Value{Value::Integer, 0}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "infobarLeft",     Value{Value::Integer, 1}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "infobarRight",    Value{Value::Integer, 2}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "infobarFooter",   Value{Value::Integer, 3}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "infobarTitle",    Value{Value::Integer, 4}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "true",            Value{Value::Integer, 1}, 1));
+    gamedata.symbols.add(Origin(), SymbolDef(Origin(), "false",           Value{Value::Integer, 0}, 1));
     gamedata.getPropertyId("(invalid)");
     gamedata.getPropertyId("internal_name");
     gamedata.getPropertyId("ident");
@@ -83,13 +83,13 @@ void translate_symbols(GameData &gamedata) {
                     gamedata.addError(symbol.origin, ErrorMsg::Error, ss.str());
                 } else {
                     try {
-                        gamedata.symbols.add(SymbolDef{symbol.origin, symbol.name, realValue->value});
+                        gamedata.symbols.add(symbol.origin, SymbolDef{symbol.origin, symbol.name, realValue->value});
                     } catch (BuildError &e) {
                         gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
                     }
                 }
             } else {
-                gamedata.symbols.add(symbol);
+                gamedata.symbols.add(symbol.origin, symbol);
             }
         }
     }

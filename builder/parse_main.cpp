@@ -56,7 +56,7 @@ void parse_constant(GameData &gamedata, ParseState &state) {
         ss << "Declaration of " << constantName << " cannot declare objects or functions.";
         gamedata.addError(state.here()->origin, ErrorMsg::Error, ss.str());
     }
-    gamedata.symbols.add(SymbolDef(origin,
+    gamedata.symbols.add(origin, SymbolDef(origin,
                                     constantName,
                                     value));
     try {
@@ -89,7 +89,7 @@ static void parse_default(GameData &gamedata, ParseState &state) {
     }
     const SymbolDef *oldDefault = gamedata.defaults.get(defaultName);
     if (!oldDefault) {
-        gamedata.defaults.add(SymbolDef(origin,
+        gamedata.defaults.add(origin, SymbolDef(origin,
                                         defaultName,
                                         value));
     } else {
@@ -266,7 +266,7 @@ int parse_function(GameData &gamedata, ParseState &state, const std::string &def
     std::string funcName;
     if (state.matches(Token::Identifier)) {
         funcName = state.here()->text;
-        gamedata.symbols.add(SymbolDef(origin,
+        gamedata.symbols.add(origin, SymbolDef(origin,
                                         funcName,
                                         Value{Value::Function, nextDataId}));
         state.next();
@@ -477,7 +477,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
     gamedata.objects.push_back(object);
     if (!objectName.empty()) {
         if (validSymbol(objectName)) {
-            gamedata.symbols.add(SymbolDef(origin,
+            gamedata.symbols.add(origin, SymbolDef(origin,
                                             objectName,
                                             Value{Value::Object, object->globalId}));
         }
