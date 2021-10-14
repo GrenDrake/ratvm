@@ -69,7 +69,6 @@ void GameData::load(const std::string &filename) {
     staticLists = read_32(inf);
     for (unsigned i = 0; i < staticLists; ++i) {
         ListDef *def = new ListDef;
-        def->ident = i + 1;
         def->isStatic = true;
         def->srcName = -1;
         def->srcFile = read_32(inf);
@@ -114,7 +113,6 @@ void GameData::load(const std::string &filename) {
     staticObjects = read_32(inf);
     for (unsigned i = 0; i < staticObjects; ++i) {
         ObjectDef *def = new ObjectDef;
-        def->ident = i + 1;
         def->isStatic = true;
         def->srcName = read_32(inf);
         def->srcFile = read_32(inf);
