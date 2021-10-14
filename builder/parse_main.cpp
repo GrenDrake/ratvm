@@ -153,7 +153,12 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
                 hasError = true;
                 gamedata.addError(origin, ErrorMsg::Error, ss.str());
             } else {
-                GameList *theList = gamedata.lists[old->value.value];
+                GameList *theList = gamedata.listById(old->value.value);
+                if (!theList) {
+                    gamedata.addError(state.here()->origin, ErrorMsg::Error,
+                            "Failed to find original list for extension.");
+                    return;
+                }
                 state.next();
                 while (!state.eof() && !state.matches(Token::CloseSquare)) {
                     if (state.matches(Token::Semicolon)) {
@@ -175,7 +180,12 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
                 hasError = true;
                 gamedata.addError(origin, ErrorMsg::Error, ss.str());
             } else {
-                GameMap *theMap = gamedata.maps[old->value.value];
+                GameMap *theMap = gamedata.mapById(old->value.value);
+                if (!theMap) {
+                    gamedata.addError(state.here()->origin, ErrorMsg::Error,
+                            "Failed to find original list for extension.");
+                    return;
+                }
                 state.next();
                 while (!state.eof() && !state.matches(Token::CloseBrace)) {
                     if (state.matches(Token::Semicolon)) {
@@ -200,7 +210,12 @@ static void parse_extend(GameData &gamedata, ParseState &state) {
 
         default:
             if (oldType == Value::Object) {
-                GameObject *object = gamedata.objects[old->value.value];
+                GameObject *object = gamedata.objectById(old->value.value);
+                if (!object) {
+                    gamedata.addError(state.here()->origin, ErrorMsg::Error,
+                            "Failed to find original object for extension.");
+                    return;
+                }
                 while (!state.matches(Token::Semicolon) && !state.eof()) {
                     parse_objectProperty(gamedata, state, object);
                     if (gamedata.errorCount > 0) {
