@@ -1,7 +1,7 @@
-declare TITLE   "Automated Test Suite for Comparisons";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Comparisons";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test compare command
@@ -122,7 +122,8 @@ function testAndOr() {
     (if (not (or 1 1 1)) (error "(or 1 1 1) evalulated to false (should be true)"))
 }
 
-function main() {
+default main test_comparisons;
+function test_comparisons() {
     (testCompare)
     (testAndOr)
 }

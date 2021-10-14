@@ -1,14 +1,7 @@
-// ////////////////////////////////////////////////////////////////////////////
-// First string : this must be the first string used for one of the tests
-//                to function correctly.
-// ////////////////////////////////////////////////////////////////////////////
-declare firstString "this is the first string";
-
-
-declare TITLE   "Automated Test Suite for Values";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Values";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -19,12 +12,12 @@ declare testInt 7384;
 declare testStr "A Name";
 declare testProperty $testFunc;
 declare testFlags flags( 6 7 8 testInt );
-declare testList [ 1 2 3 ];
-declare testMap {
+declare testListForValues [ 1 2 3 ];
+declare testMapForValues {
     1: "The"
     2: "End"
 };
-object first_obj
+object a_test_obj
     $anInt 2
     $aString "Hello World!"
     $aProperty $apple
@@ -59,17 +52,15 @@ function testValues() {
     ("Checking basic value types...[br]")
     (if (neq (typeof testInt) Integer)       (error "Failed typeof testInt == Integer."))
     (if (neq (typeof testStr) String)        (error "Failed typeof testStr == String."))
-    (if (neq (typeof testList) List)         (error "Failed typeof testList == List."))
-    (if (neq (typeof testMap) Map)           (error "Failed typeof testMap == Map."))
+    (if (neq (typeof testListForValues) List)         (error "Failed typeof testListForValues == List."))
+    (if (neq (typeof testMapForValues) Map)           (error "Failed typeof testMapForValues == Map."))
     (if (neq (typeof testValues) Function)   (error "Failed typeof testValues == Function."))
-    (if (neq (typeof first_obj) Object)      (error "Failed typeof first_obj == Object."))
+    (if (neq (typeof a_test_obj) Object)      (error "Failed typeof a_test_obj == Object."))
     (if (neq (typeof testProperty) Property) (error "Failed typeof testProperty == Property."))
     (if (neq (typeof testFlags) Integer)     (error "Failed typeof testFlags == Integer."))
     (if (neq localvar none)                  (error "Failed localvar default value == none."))
     (set localvar 0)
     (if (neq (typeof localvar) Integer)      (error "Failed typeof localvar == Integer."))
-    (set localvar (astype localvar String))
-    (if (neq localvar firstString)           (error "Failed localvar cast to string."))
 
     (asm
         *localvar typeof Reference eq all_done jnz
@@ -103,9 +94,9 @@ function testIsValid() {
 
         "Testing valid values...[br]" say
         "The" is_valid false eq test_isvalid_badstring jnz
-        testList is_valid false eq test_isvalid_badlist jnz
-        testMap is_valid false eq test_isvalid_badmap jnz
-        first_obj is_valid false eq test_isvalid_badobject jnz
+        testListForValues is_valid false eq test_isvalid_badlist jnz
+        testMapForValues is_valid false eq test_isvalid_badmap jnz
+        a_test_obj is_valid false eq test_isvalid_badobject jnz
         testValues is_valid false eq test_isvalid_badfunc jnz
 
         "Testing invalid values...[br]" say
@@ -142,11 +133,11 @@ function testIsValid() {
         test_isvalid_badstring:
             "String \"The\" registered as invalid." error
         test_isvalid_badlist:
-            "List testList registered as invalid." error
+            "List testListForValues registered as invalid." error
         test_isvalid_badmap:
-            "Map testMap registered as invalid." error
+            "Map testMapForValues registered as invalid." error
         test_isvalid_badobject:
-            "Object first_obj registered as invalid." error
+            "Object a_test_obj registered as invalid." error
         test_isvalid_badfunc:
             "Function testValues registered as invalid." error
 
@@ -166,7 +157,8 @@ function testIsValid() {
 // ////////////////////////////////////////////////////////////////////////////
 // Tests runner
 // ////////////////////////////////////////////////////////////////////////////
-function main() {
+default main test_values;
+function test_values() {
     (testDefaults)
     (testValues)
     (testIsValid)

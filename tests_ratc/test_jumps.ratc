@@ -1,7 +1,7 @@
-declare TITLE   "Automated Test Suite for Jumps and Function Calls";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Jumps and Function Calls";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 
 
@@ -136,8 +136,8 @@ function testSyntaxReturnDefault() {
     // uses default return value
 }
 
-
-function main() {
+default main test_jumps;
+function test_jumps() {
     (testJumps)
     (testCall)
 }

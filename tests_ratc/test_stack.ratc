@@ -1,8 +1,7 @@
-
-declare TITLE   "Automated Test Suite for Stack Manipulation";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "23D1A6FF-C456-48E3-8894-879401C2DDB6";
+default TITLE   "Automated Test Suite for Stack Manipulation";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "23D1A6FF-C456-48E3-8894-879401C2DDB6";
 
 declare aList [ 9 5 6 3 7 8 ];
 object anObject $aProperty 55;
@@ -12,7 +11,8 @@ declare aMap { 4: 5 2: 5 };
 // Test stack commands
 // ////////////////////////////////////////////////////////////////////////////
 
-function main() {
+default main test_stack;
+function test_stack() {
     (asm
         2 4 6 8
 

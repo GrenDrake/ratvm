@@ -1,6 +1,13 @@
 BUILD=../build
 RUNNER=../run
 
+TEST_ALL_SRC=test_all.ratc \
+			 ./test_values.ratc ./test_stack.ratc ./test_explode.ratc \
+			 ./test_math.ratc ./test_maps.ratc ./test_lists.ratc \
+			 ./test_objects.ratc ./test_strings.ratc ./test_jumps.ratc \
+			 ./test_comparisons.ratc ./test_fileio.ratc ./test_dynamic.ratc \
+			 ./test_vocab.ratc
+TEST_ALL=./test_all.rvm
 TEST_VALUES_SRC=test_values.ratc
 TEST_VALUES=./test_values.rvm
 TEST_STACK_SRC=./test_stack.ratc
@@ -31,9 +38,12 @@ TEST_VOCAB=./test_vocab.rvm
 
 all:  $(TEST_COMPARISONS) $(TEST_DYNAMIC) $(TEST_EXPLODE) $(TEST_FILEIO) \
 	  $(TEST_JUMPS) $(TEST_LISTS) $(TEST_MAPS) $(TEST_MATH) $(TEST_OBJECTS) \
-	  $(TEST_STACK) $(TEST_STRINGS) $(TEST_VALUES) $(TEST_VOCAB)
+	  $(TEST_STACK) $(TEST_STRINGS) $(TEST_VALUES) $(TEST_VOCAB) $(TEST_ALL)
 
 
+$(TEST_ALL): $(BUILD) $(TEST_ALL_SRC)
+	$(BUILD) $(TEST_ALL_SRC) -o $(TEST_ALL)
+	$(RUNNER) $(TEST_ALL) -silent
 $(TEST_COMPARISONS): $(BUILD) $(TEST_COMPARISONS_SRC)
 	$(BUILD) $(TEST_COMPARISONS_SRC) -o $(TEST_COMPARISONS)
 	$(RUNNER) $(TEST_COMPARISONS) -silent

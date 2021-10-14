@@ -1,11 +1,11 @@
 
-declare TITLE   "Automated Test Suite for Dynamic Value Creation and Destruction";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Dynamic Value Creation and Destruction";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 
-declare testList [ 1 2 3 ];
+declare testListForDynamic [ 1 2 3 ];
 
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -74,18 +74,9 @@ function testDynamic() {
 
         testListAddValue:
         "New List Item" 0 newList ins
-        0 newList get "New List Item" eq testIsStatic jnz
+        0 newList get "New List Item" eq endOfTests jnz
         "List item not updated." error
 
-        testIsStatic:
-        "Testing isStatic...[br]" say
-        main is_static reportedStaticAsDynamic jz
-        "Fred" is_static reportedStaticAsDynamic jz
-        testList is_static reportedStaticAsDynamic jz
-
-        newObj is_static reportedDynamicAsStatic jnz
-        newStr is_static reportedDynamicAsStatic jnz
-        ret
 
         reportedStaticAsDynamic:
         "Reported static value as dynamic." error
@@ -93,8 +84,15 @@ function testDynamic() {
         reportedDynamicAsStatic:
         "Reported dynamic value as static." error
 
-        List new List new List new say
+        endOfTests:
     )
+
+    ("Testing isStatic...[br]")
+    (if (not (is_static main)) (error "reported static ~main~ as dynamic."))
+    (if (not (is_static "Fred")) (error "reported static string ~Fred~ as dynamic."))
+    (if (not (is_static testListForDynamic)) (error "reported static ~testListForDynamic~ as dynamic."))
+    (if (is_static newObj) (error ("reported ~newObj~ as static.")))
+    (if (is_static newStr) (error ("reported ~newStr~ as static.")))
 }
 
 function testGarbage(localVar fakeRef) {
@@ -125,7 +123,8 @@ function testGarbage(localVar fakeRef) {
     )
 }
 
-function main() {
+default main test_dynamic;
+function test_dynamic() {
     (testDynamic)
     (testGarbage)
 }

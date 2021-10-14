@@ -1,13 +1,14 @@
-declare TITLE   "Automated Test Suite for Math Operations";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Math Operations";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 // ////////////////////////////////////////////////////////////////////////////
 // Test math commands
 // ////////////////////////////////////////////////////////////////////////////
 
-function main() {
+default main test_math;
+function test_math() {
     (asm
         "\n# Testing math opcodes\n" say
         "Testing arithmetic...[br]" say

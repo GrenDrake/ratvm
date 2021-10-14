@@ -1,7 +1,7 @@
-declare TITLE   "Automated Test Suite for File IO";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for File IO";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 declare FILE_NAME 0;
 declare TEST_FILE_NAME "Short Test File";
@@ -18,8 +18,9 @@ function delete_all_files() {
     (return length)
 }
 
-function main() {
-    [ theFilelist filedata aList ]
+default main test_fileio;
+function test_fileio() {
+    [ theFilelist filedata listVar ]
     ("\n# Testing file io...")
 
     (delete_all_files)
@@ -29,12 +30,12 @@ function main() {
     (if (neq (size theFilelist) 0) (error "File list is not empty before tests."))
 
     // write a short test file
-    (set aList (new List))
-    (list_push aList 4)
-    (list_push aList 8)
-    (list_push aList 20)
-    (list_push aList 60)
-    (file_write TEST_FILE_NAME aList)
+    (set listVar (new List))
+    (list_push listVar 4)
+    (list_push listVar 8)
+    (list_push listVar 20)
+    (list_push listVar 60)
+    (file_write TEST_FILE_NAME listVar)
 
     (set filedata (file_read TEST_FILE_NAME))
     (if (eq filedata none) (error "Failed to load test file."))

@@ -1,7 +1,7 @@
-declare TITLE   "Automated Test Suite for Maps";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Maps";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 declare testMap {
     1: "The"
@@ -15,7 +15,8 @@ extend testMap {
 // ////////////////////////////////////////////////////////////////////////////
 // Test Map Methods
 // ////////////////////////////////////////////////////////////////////////////
-function main() {
+default main test_maps;
+function test_maps() {
     [ keys ]
     (asm
         "\n# Testing Map Operations\n" say

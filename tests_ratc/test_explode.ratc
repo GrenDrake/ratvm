@@ -1,8 +1,8 @@
 
-declare TITLE   "Automated Test Suite for Tokenize Command";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Tokenize Command";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 declare tokenizeResultLong  [ "joy" "to" "the" "world" ];
 declare tokenizeResultShort [ "world" ];
@@ -20,7 +20,8 @@ function testStringTokenizeResult(result expected message) {
 }
 
 declare wordList [];
-function main() {
+default main test_explode;
+function test_explode() {
     (tokenize "  joy  to  the  world  " wordList none)
     (testStringTokenizeResult wordList tokenizeResultLong "tokenize: maximally spaced")
     (tokenize "   joy   to  the    world  " wordList none)

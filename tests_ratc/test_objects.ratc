@@ -1,7 +1,7 @@
-declare TITLE   "Automated Test Suite for Objects";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Objects";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 object first_obj
     $anInt 2
@@ -24,7 +24,8 @@ object parent_obj
 // ////////////////////////////////////////////////////////////////////////////
 // Test object property commands
 // ////////////////////////////////////////////////////////////////////////////
-function main() {
+default main test_objects;
+function test_objects() {
     (asm
         "\n# Testing Object Manipulation\nTesting get on objects...[br]" say
         $aString first_obj get "Hello World!" eq object_get jnz

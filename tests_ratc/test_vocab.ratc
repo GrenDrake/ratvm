@@ -1,13 +1,14 @@
-declare TITLE   "Automated Test Suite for Vocab and the Dictionary";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Vocab and the Dictionary";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 declare vocabInput  [ "joy" "to" "the" "world" ];
 declare vocabResult [ `joy` `to` `the` `world` ];
 declare vocabList   [];
 
-function main() {
+default main test_vocab;
+function test_vocab() {
     [ i v ]
 
     // test checking if index is valid vocab

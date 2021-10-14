@@ -1,7 +1,7 @@
-declare TITLE   "Automated Test Suite for Lists";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Lists";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 declare testList [ 1 2 3 ];
 extend testList [ 100 200 ];
@@ -22,7 +22,8 @@ function printArray(theArray) {
     (" (length: " length ")\n")
 }
 
-function main() {
+default main test_lists;
+function test_lists() {
     [ counter random_value ]
     (asm
         "\n# Testing List Operations\n" say

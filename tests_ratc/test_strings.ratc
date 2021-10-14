@@ -1,7 +1,7 @@
-declare TITLE   "Automated Test Suite for Strings";
-declare AUTHOR  "Gren Drake";
-declare VERSION 1;
-declare GAMEID  "";
+default TITLE   "Automated Test Suite for Strings";
+default AUTHOR  "Gren Drake";
+default VERSION 1;
+default GAMEID  "";
 
 
 
@@ -123,7 +123,8 @@ function testStringEncoding() {
     (if (str_compare recodedText testString2) (error "Recoded test string two has wrong value."))
 }
 
-function main() {
+default main test_strings;
+function test_strings() {
     (testStringManipulation)
     (testStringEncoding)
 }
