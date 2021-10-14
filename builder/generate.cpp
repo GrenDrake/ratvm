@@ -70,13 +70,8 @@ void generate(GameData &gamedata, const std::string &outputFile) {
     // write header
     write_32(out, FILETYPE_ID); // 0: magic number
     write_32(out, 0);           // 4: format version
-    FunctionDef *mainFunction = gamedata.functionByName("main");
-    if (mainFunction) {         // 8: main function index
-        write_32(out, mainFunction->globalId);
-    } else {
-        gamedata.addError(Origin(outputFile,0,0), ErrorMsg::Error, "Function \"main\" not defined.");
-        write_32(out, 0);
-    }
+    // 8: main function index
+    write_symbol(out, "main", Value::Function, gamedata, outputFile);
     // 12: write gamefile flags
     write_32(out, 0);
 
