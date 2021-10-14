@@ -72,6 +72,10 @@ void translate_symbols(GameData &gamedata) {
     }
 
     for (SymbolDef &symbol : gamedata.defaults.symbols) {
+        if (symbol.value.type == Value::Symbol) {
+            gamedata.symbols.markUsed(symbol.value.text);
+        }
+
         if (!gamedata.symbols.get(symbol.name)) {
             if (symbol.value.type == Value::Symbol) {
                 const SymbolDef *realValue = gamedata.symbols.get(symbol.value.text);
