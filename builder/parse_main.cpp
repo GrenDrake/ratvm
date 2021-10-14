@@ -92,12 +92,15 @@ static void parse_default(GameData &gamedata, ParseState &state) {
         gamedata.defaults.add(origin, SymbolDef(origin,
                                         defaultName,
                                         value));
-    } else {
-        std::stringstream ss;
-        ss << "Default value for " << defaultName;
-        ss << " already declared at " << oldDefault->origin << ".";
-        gamedata.addError(origin, ErrorMsg::Warning, ss.str());
     }
+    // TODO : find a way to gracefully handle multiple default statements for
+    //        a name that doesn't make a mess of the ratc unit tests
+    //  else {
+    //     std::stringstream ss;
+    //     ss << "Default value for " << defaultName;
+    //     ss << " already declared at " << oldDefault->origin << ".";
+    //     gamedata.addError(origin, ErrorMsg::Warning, ss.str());
+    // }
     try {
         state.skip(Token::Semicolon);
     } catch (BuildError &e) {
