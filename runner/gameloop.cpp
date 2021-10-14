@@ -106,8 +106,9 @@ void gameloop(GameData &gamedata, bool doSilent) {
         hasNext = false;
         do {
             std::cout << "\n> ";
-            std::string inputText;
-            std::getline(std::cin, inputText);
+            std::string rawInputText;
+            std::getline(std::cin, rawInputText);
+            std::string inputText(rawInputText);
             strToLower(inputText);
             if (inputText == "quit" || inputText == "q") {
                 if (!doSilent) {
@@ -131,7 +132,7 @@ void gameloop(GameData &gamedata, bool doSilent) {
                     hasValue = true;
                     break; }
                 case OptionType::Line: {
-                    nextValue = gamedata.makeNewString(inputText);
+                    nextValue = gamedata.makeNewString(rawInputText);
                     hasNext = true;
                     hasValue = true;
                     break; }

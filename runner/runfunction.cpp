@@ -752,7 +752,6 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 Value text = callStack.pop();
                 Value strList = callStack.pop();
                 Value vocabList = callStack.pop();
-                // std::cerr << text.type << " " << strList.value << " " << vocabList.type << "\n";
                 text.requireType(Value::String);
                 strList.requireType(Value::List, Value::None);
                 vocabList.requireType(Value::List, Value::None);
@@ -762,9 +761,10 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 if (vocabListDef) vocabListDef->items.clear();
 
                 auto result = explodeString(getString(text.value).text);
-                for (const std::string &s : result) {
-                    if (strListDef)   strListDef->items.push_back(makeNewString(s));
-                    if (vocabListDef) vocabListDef->items.push_back(Value(Value::Vocab, getVocab(s)));
+                for (std::string word : result) {
+                    strToLower(word);
+                    if (strListDef)     strListDef->items.push_back(makeNewString(word));
+                    if (vocabListDef)   vocabListDef->items.push_back(Value(Value::Vocab, getVocab(word)));
                 }
                 break; }
 
