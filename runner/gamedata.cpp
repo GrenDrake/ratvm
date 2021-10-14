@@ -436,10 +436,22 @@ Value GameData::makeNewString(const std::string &str) {
 
 bool GameData::isStatic(const Value &what) const {
     switch(what.type) {
-        case Value::Object: return static_cast<unsigned>(what.value) <= staticObjects;
-        case Value::List:   return static_cast<unsigned>(what.value) <= staticLists;
-        case Value::Map:    return static_cast<unsigned>(what.value) <= staticMaps;
-        case Value::String: return static_cast<unsigned>(what.value) < staticStrings;
+        case Value::Object: {
+            const ObjectDef &def = getObject(what.value);
+            return def.isStatic;
+        }
+        case Value::List: {
+            const ListDef &def = getList(what.value);
+            return def.isStatic;
+        }
+        case Value::Map: {
+            const MapDef &def = getMap(what.value);
+            return def.isStatic;
+        }
+        case Value::String: {
+            const StringDef &def = getString(what.value);
+            return def.isStatic;
+        }
         default:            return true;
     }
 }
