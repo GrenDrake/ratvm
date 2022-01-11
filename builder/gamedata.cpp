@@ -137,6 +137,26 @@ bool propertySorter(const GameProperty &left, const GameProperty &right) {
     return left.id < right.id;
 }
 
+bool GameData::isIndirectLoop(int childId, int parentId) {
+    if (childId == 0 || parentId == 0) return false;
+    if (childId == parentId) return true;
+
+    GameObject *object = objectById(childId);
+    GameObject *parent = objectById(parentId);
+    if (!object || !parent) return false;
+
+    int superParentId = parent->parentId;
+    while (superParentId > 0) {
+        if (superParentId == object->globalId) {
+            return true;
+        } else {
+            GameObject *superParent = objectById(superParentId);
+            superParentId = superParent->parentId;
+        }
+    }
+    return false;
+}
+
 void GameData::organize() {
     for (GameObject *object : objects) {
         if (!object) continue;
@@ -157,7 +177,14 @@ void GameData::organize() {
                     addError(object->origin, ErrorMsg::Error, "(internal) Parent object does not exist.");
                 } else if (parent->childId == 0) {
                     parent->childId = object->globalId;
+                    if (isIndirectLoop(object->globalId, parent->globalId)) {
+                        addError(object->origin, ErrorMsg::Error, "Object may not indirectly be own parent.");
+                    }
                 } else {
+                    if (isIndirectLoop(object->globalId, parent->globalId)) {
+                        addError(object->origin, ErrorMsg::Error, "Object may not indirectly be own parent.");
+                    }
+
                     GameObject *lastSibling = objectById(parent->childId);
                     while (lastSibling && lastSibling->siblingId > 0) {
                         lastSibling = objectById(lastSibling->siblingId);

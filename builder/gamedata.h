@@ -181,6 +181,7 @@ public:
     const std::string* getPropertyName(unsigned id) const;
     unsigned getStringId(std::string name);
     const std::string& getString(unsigned id) const;
+    bool isIndirectLoop(int childId, int parentId);
     void organize();
     FunctionDef* functionByName(const std::string &name);
     int checkObjectIdents();
