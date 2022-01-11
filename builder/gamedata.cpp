@@ -148,6 +148,8 @@ void GameData::organize() {
                 addError(object->origin, ErrorMsg::Error, "Undefined symbol " + object->parentName);
             } else if (parentSymbol->value.type != Value::Object) {
                 addError(object->origin, ErrorMsg::Error, "Object parent must be object.");
+            } else if (parentSymbol->value.value == object->globalId) {
+                addError(object->origin, ErrorMsg::Error, "Object cannot be own parent.");
             } else {
                 object->parentId = parentSymbol->value.value;
                 GameObject *parent = objectById(parentSymbol->value.value);
