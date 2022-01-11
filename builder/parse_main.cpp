@@ -466,13 +466,13 @@ void parse_objectProperty(GameData &gamedata, ParseState &state, GameObject *obj
 // Parse a single object
 int parse_object(GameData &gamedata, ParseState &state, const std::string &defaultName) {
     unsigned internalNameId = gamedata.getPropertyId("internal_name");
-    unsigned parentId = gamedata.getPropertyId("parent");
+    unsigned prototypeId = gamedata.getPropertyId("prototype");
 
     const Origin &origin = state.here()->origin;
     state.next(); // skip "object"
 
     std::string objectName = "";
-    std::string parentName = "";
+    std::string prototypeName = "";
     if (state.matches(Token::Identifier)) {
         objectName = state.here()->text;
         state.next();
@@ -482,7 +482,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
     if (state.matches(Token::Colon)) {
         state.next();
         state.require(Token::Identifier);
-        parentName = state.here()->text;
+        prototypeName = state.here()->text;
         state.next();
     }
 
@@ -503,10 +503,10 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
         object->addProperty(state.here()->origin, internalNameId,
                             Value{Value::String, nameStringId});
     }
-    if (!parentName.empty()) {
+    if (!prototypeName.empty()) {
         try {
-            object->addProperty(state.here()->origin, parentId,
-                                Value{Value::Symbol, 0, parentName});
+            object->addProperty(state.here()->origin, prototypeId,
+                                Value{Value::Symbol, 0, prototypeName});
         } catch (BuildError &e) {
             gamedata.addError(e.getOrigin(), ErrorMsg::Error, e.getMessage());
         }

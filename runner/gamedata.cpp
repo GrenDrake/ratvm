@@ -70,13 +70,13 @@ void MapDef::del(const Value &key) {
 }
 
 
-Value ObjectDef::get(GameData &gamedata, unsigned propId, bool checkParent) const {
+Value ObjectDef::get(GameData &gamedata, unsigned propId, bool checkPrototype) const {
     auto iter = properties.find(propId);
     if (iter == properties.end()) {
-        if (checkParent) {
-            Value parent = get(gamedata, PROP_PARENT, false);
-            if (parent.type == Value::Object) {
-                return gamedata.getObject(parent.value).get(gamedata, propId);
+        if (checkPrototype) {
+            Value prototype = get(gamedata, PROP_PROTOTYPE, false);
+            if (prototype.type == Value::Object) {
+                return gamedata.getObject(prototype.value).get(gamedata, propId);
             }
         }
         return Value{Value::Integer, 0};
