@@ -289,6 +289,28 @@ void dump_ir(GameData &gamedata, std::ostream &out) {
     }
 }
 
+void dump_objtree(GameData &gamedata, std::ostream &out) {
+
+    out << "digraph G {\n";
+
+    for (const GameObject *object : gamedata.objects) {
+        if (!object) continue;
+
+        if (object->parentId) {
+            out << "\tobj" << object->globalId << " -> obj" << object->parentId << "[color=red]; // parent\n";
+        }
+        if (object->childId) {
+            out << "\tobj" << object->globalId << " -> obj" << object->childId << "[color=blue]; // child\n";
+        }
+        if (object->siblingId) {
+            out << "\tobj" << object->globalId << " -> obj" << object->siblingId << "[color=green]; // sibling\n";
+        }
+    }
+
+    out << "}\n";
+
+}
+
 void dump_stringtable(GameData &gamedata, std::ostream &out) {
     for (unsigned i = 0; i < gamedata.stringTable.size(); ++i) {
         out << i << " [" << gamedata.stringTable[i].size() << "] ~";

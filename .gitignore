@@ -21,6 +21,8 @@ functions.txt
 data.txt
 bytecode.txt
 asm.txt
+objtree.dot
+objtree.png
 
 # system files
 .vscode

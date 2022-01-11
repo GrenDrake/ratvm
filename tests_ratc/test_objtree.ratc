@@ -1,0 +1,20 @@
+declare TITLE   "Fibonacci Benchmark";
+declare AUTHOR  "Gren Drake";
+declare VERSION 1;
+declare GAMEID  "5AF56A1B-3BBF-47A4-B986-7BC7C59FB401";
+
+
+object the_parent ;
+object the_child_1 @the_parent ;
+object the_child_2 @the_parent ;
+object the_child_3 @the_parent ;
+object the_subchild_1 @the_child_2 ;
+
+
+object new_parent ;
+object new_child_1 @new_parent;
+object new_child_2 @new_child_1;
+object new_child_3 @new_child_1;
+
+function main() {
+}

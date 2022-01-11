@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
     bool dump_strings = false;
     bool dump_asmCode = false;
     bool dump_irFlag = false;
+    bool dump_objTree = false;
     bool skipIdentCheck = false;
     bool useAnsiEscapes = true;
     bool showFiles = false;
@@ -60,6 +61,8 @@ int main(int argc, char *argv[]) {
             dump_strings = true;
         } else if (strcmp(argv[i], "-ir") == 0) {
             dump_irFlag = true;
+        } else if (strcmp(argv[i], "-objtree") == 0) {
+            dump_objTree = true;
         } else if (strcmp(argv[i], "-skip-ident-check") == 0) {
             skipIdentCheck = true;
 
@@ -156,6 +159,10 @@ int main(int argc, char *argv[]) {
     if (dump_tokens) {
         std::ofstream tokenFile("tokens.txt");
         dump_token_list(tokens, tokenFile);
+    }
+    if (dump_objTree) {
+        std::ofstream objtreeFile("objtree.dot");
+        dump_objtree(gamedata, objtreeFile);
     }
 
     gamedata.symbols.markUsed("TITLE");

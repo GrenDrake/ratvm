@@ -473,6 +473,7 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
 
     std::string objectName = "";
     std::string prototypeName = "";
+    std::string parentName = "";
     if (state.matches(Token::Identifier)) {
         objectName = state.here()->text;
         state.next();
@@ -485,6 +486,12 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
         prototypeName = state.here()->text;
         state.next();
     }
+    if (state.matches(Token::AtSymbol)) {
+        state.next();
+        state.require(Token::Identifier);
+        parentName = state.here()->text;
+        state.next();
+    }
 
     GameObject *object = new GameObject;
     object->origin = origin;
@@ -492,6 +499,8 @@ int parse_object(GameData &gamedata, ParseState &state, const std::string &defau
     object->name = objectName;
     object->nameString = gamedata.getStringId(objectName);
     object->globalId = nextDataId++;
+    object->parentName = parentName;
+    object->parentId = object->childId = object->siblingId = 0;
     gamedata.objects.push_back(object);
     if (!objectName.empty()) {
         if (validSymbol(objectName)) {

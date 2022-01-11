@@ -141,6 +141,33 @@ void GameData::organize() {
     for (GameObject *object : objects) {
         if (!object) continue;
         std::sort(object->properties.begin(), object->properties.end(), propertySorter);
+
+        if (!object->parentName.empty()) {
+            const SymbolDef *parentSymbol = symbols.get(object->parentName, true);
+            if (!parentSymbol) {
+                addError(object->origin, ErrorMsg::Error, "Undefined symbol " + object->parentName);
+            } else if (parentSymbol->value.type != Value::Object) {
+                addError(object->origin, ErrorMsg::Error, "Object parent must be object.");
+            } else {
+                object->parentId = parentSymbol->value.value;
+                GameObject *parent = objectById(parentSymbol->value.value);
+                if (!parent) {
+                    addError(object->origin, ErrorMsg::Error, "(internal) Parent object does not exist.");
+                } else if (parent->childId == 0) {
+                    parent->childId = object->globalId;
+                } else {
+                    GameObject *lastSibling = objectById(parent->childId);
+                    while (lastSibling && lastSibling->siblingId > 0) {
+                        lastSibling = objectById(lastSibling->siblingId);
+                    }
+                    if (!lastSibling) {
+                        addError(object->origin, ErrorMsg::Error, "(internal) Broken sibling chain.");
+                    } else {
+                        lastSibling->siblingId = object->globalId;
+                    }
+                }
+            }
+        }
     }
 }
 
