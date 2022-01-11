@@ -13,6 +13,7 @@ function main() {
     (test_maps)
     (test_math)
     (test_objects)
+    (test_objtree)
     (test_stack)
     (test_strings)
     (test_values)

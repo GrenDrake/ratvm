@@ -6,7 +6,7 @@ TEST_ALL_SRC=test_all.ratc \
 			 ./test_math.ratc ./test_maps.ratc ./test_lists.ratc \
 			 ./test_objects.ratc ./test_strings.ratc ./test_jumps.ratc \
 			 ./test_comparisons.ratc ./test_fileio.ratc ./test_dynamic.ratc \
-			 ./test_vocab.ratc
+			 ./test_vocab.ratc ./test_objtree.ratc
 TEST_ALL=./test_all.rvm
 TEST_VALUES_SRC=test_values.ratc
 TEST_VALUES=./test_values.rvm
@@ -34,11 +34,14 @@ TEST_DYNAMIC_SRC=./test_dynamic.ratc
 TEST_DYNAMIC=./test_dynamic.rvm
 TEST_VOCAB_SRC=./test_vocab.ratc
 TEST_VOCAB=./test_vocab.rvm
+TEST_OBJTREE_SRC=./test_objtree.ratc
+TEST_OBJTREE=./test_objtree.rvm
 
 
 all:  $(TEST_COMPARISONS) $(TEST_DYNAMIC) $(TEST_EXPLODE) $(TEST_FILEIO) \
 	  $(TEST_JUMPS) $(TEST_LISTS) $(TEST_MAPS) $(TEST_MATH) $(TEST_OBJECTS) \
-	  $(TEST_STACK) $(TEST_STRINGS) $(TEST_VALUES) $(TEST_VOCAB) $(TEST_ALL)
+	  $(TEST_STACK) $(TEST_STRINGS) $(TEST_VALUES) $(TEST_VOCAB) \
+	  $(TEST_OBJTREE) $(TEST_ALL)
 
 
 $(TEST_ALL): $(BUILD) $(TEST_ALL_SRC)
@@ -83,6 +86,9 @@ $(TEST_VALUES): $(BUILD) $(TEST_VALUES_SRC)
 $(TEST_VOCAB): $(BUILD) $(TEST_VOCAB_SRC)
 	$(BUILD) $(TEST_VOCAB_SRC) -o $(TEST_VOCAB)
 	$(RUNNER) $(TEST_VOCAB) -silent
+$(TEST_OBJTREE): $(BUILD) $(TEST_OBJTREE_SRC)
+	$(BUILD) $(TEST_OBJTREE_SRC) -o $(TEST_OBJTREE)
+	$(RUNNER) $(TEST_OBJTREE) -silent
 
 clean:
 	$(RM) *.rvm
