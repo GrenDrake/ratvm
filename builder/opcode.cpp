@@ -80,6 +80,13 @@ OpcodeDef opcodes[] = {
     {   "file_write",   OpcodeDef::FileWrite,               2, 1 },
     {   "file_delete",  OpcodeDef::FileDelete,              1, 1 },
     {   "tokenize",     OpcodeDef::Tokenize,                3, 0 },
+    {   "parent",       OpcodeDef::GetParent,               1, 1 },
+    {   "first_child",  OpcodeDef::GetFirstChild,           1, 1 },
+    {   "sibling",      OpcodeDef::GetSibling,              1, 1 },
+    {   "children",     OpcodeDef::GetChildren,             1, 1 },
+    {   "child_count",  OpcodeDef::GetChildCount,           1, 1 },
+    {   "move_to",      OpcodeDef::MoveTo,                  2, 0 },
+
     {   ""                                                       }
 };
 

@@ -89,6 +89,12 @@ struct OpcodeDef {
         FileWrite           = 81,
         FileDelete          = 82,
         Tokenize            = 83,
+        GetParent           = 84,
+        GetFirstChild       = 85,
+        GetSibling          = 86,
+        GetChildren         = 87,
+        GetChildCount       = 88,
+        MoveTo              = 89,
     };
 
     std::string name;
