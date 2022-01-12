@@ -10,11 +10,133 @@ object the_child_2 @the_parent ;
 object the_child_3 @the_parent ;
 object the_subchild_1 @the_child_2 ;
 
-object new_parent ;
-object new_child_1 @new_parent;
-object new_child_2 @new_child_1;
-object new_child_3 @new_child_1;
+
+function test_object_family(the_test_id the_object expected_children parent_object child_object sibling_object) {
+    (if (neq (child_count the_object) expected_children)
+        (error (string the_test_id ": expected " expected_children " children but found " (child_count the_object) "."))
+
+    (if (neq (parent the_object) parent_object)
+        (error (string the_test_id ": expected parent obj#" (astype parent_object Integer) " but found obj#" (astype (parent the_object) Integer) "."))
+    (if (neq (first_child the_object) child_object)
+        (error (string the_test_id ": expected first child obj#" (astype child_object Integer) " but found obj#" (astype (first_child the_object) Integer) "."))
+    (if (neq (sibling the_object) sibling_object)
+        (error (string the_test_id ": expected sibling obj#" (astype sibling_object Integer) " but found obj#" (astype (sibling the_object) Integer) "."))
+}
+
 
 default main test_objtree;
 function test_objtree() {
+
+    [ childList ]
+
+    ("Testing get children count...\n")
+    (if (neq (child_count the_parent) 3)
+        (error "the_parent reports wrong number of children."))
+    (if (neq (child_count the_child_1) 0)
+        (error "the_child_1 reports wrong number of children."))
+    (if (neq (child_count the_child_2) 1)
+        (error "the_child_2 reports wrong number of children."))
+    (if (neq (child_count the_child_3) 0)
+        (error "the_child_3 reports wrong number of children."))
+    (if (neq (child_count the_subchild_1) 0)
+        (error "the_subchild_1 reports wrong number of children."))
+
+    ("Testing get parent...\n")
+    (if (neq (parent the_parent) none)
+        (error "the_parent reports wrong parent."))
+    (if (neq (parent the_child_1) the_parent)
+        (error "the_child_1 reports wrong parent."))
+    (if (neq (parent the_child_2) the_parent)
+        (error "the_child_2 reports wrong parent."))
+    (if (neq (parent the_child_3) the_parent)
+        (error "the_child_3 reports wrong parent."))
+    (if (neq (parent the_subchild_1) the_child_2)
+        (error "the_subchild_1 reports wrong parent."))
+
+    ("Testing get child...\n")
+    (if (neq (first_child the_parent) the_child_1)
+        (error "the_parent reports wrong child."))
+    (if (neq (first_child the_child_1) none)
+        (error "the_child_1 reports wrong child."))
+    (if (neq (first_child the_child_2) the_subchild_1)
+        (error "the_child_2 reports wrong child."))
+    (if (neq (first_child the_child_3) none)
+        (error "the_child_3 reports wrong child."))
+    (if (neq (first_child the_subchild_1) none)
+        (error "the_subchild_1 reports wrong child."))
+
+    ("Testing get sibling...\n")
+    (if (neq (sibling the_parent) none)
+        (error "the_parent reports wrong sibling."))
+    (if (neq (sibling the_child_1) the_child_2)
+        (error "the_child_1 reports wrong sibling."))
+    (if (neq (sibling the_child_2) the_child_3)
+        (error "the_child_2 reports wrong sibling."))
+    (if (neq (sibling the_child_3) none)
+        (error "the_child_3 reports wrong sibling."))
+    (if (neq (sibling the_subchild_1) none)
+        (error "the_subchild_1 reports wrong sibling."))
+
+    ("Testing get child list...\n")
+    (set childList (children the_parent))
+    (if (neq (size childList) 3)
+        (error "child list of the_parent has wrong number of children"))
+    (if (neq (get childList 0) the_child_1)
+        (error "child list of the_parent has wrong first child"))
+    (if (neq (get childList 1) the_child_2)
+        (error "child list of the_parent has wrong second child"))
+    (if (neq (get childList 2) the_child_3)
+        (error "child list of the_parent has wrong third child"))
+
+    (set childList (children the_child_2))
+    (if (neq (size childList) 1)
+        (error "child list of the_child_2 has wrong number of children"))
+    (if (neq (get childList 0) the_subchild_1)
+        (error "child list of the_child_2 has wrong first child"))
+
+    (set childList (children the_child_1))
+    (if (neq (size childList) 0)
+        (error "child list of the_child_1 has wrong number of children"))
+    (set childList (children the_child_3))
+    (if (neq (size childList) 0)
+        (error "child list of the_child_3 has wrong number of children"))
+    (set childList (children the_subchild_1))
+    (if (neq (size childList) 0)
+        (error "child list of the_subchild_1 has wrong number of children"))
+
+    ("Testing move_to...\n")
+    (test_object_family "initial parent"      the_parent      3 none        the_child_1     none)
+    (test_object_family "initial child_1"     the_child_1     0 the_parent  none            the_child_2)
+    (test_object_family "initial child_2"     the_child_2     1 the_parent  the_subchild_1  the_child_3)
+    (test_object_family "initial child_3"     the_child_3     0 the_parent  none            none)
+    (test_object_family "initial subchild_1"  the_subchild_1  0 the_child_2 none            none)
+
+    (move_to the_child_1 none)
+    (test_object_family "c1 -> none"          the_parent      2 none        the_child_2     none)
+    (test_object_family "c1 -> none"          the_child_1     0 none        none            none)
+    (test_object_family "c1 -> none"          the_child_2     1 the_parent  the_subchild_1  the_child_3)
+    (test_object_family "c1 -> none"          the_child_3     0 the_parent  none            none)
+    (test_object_family "c1 -> none"          the_subchild_1  0 the_child_2 none            none)
+
+    (move_to the_child_3 none)
+    (test_object_family "c3 -> none"          the_parent      1 none        the_child_2     none)
+    (test_object_family "c3 -> none"          the_child_1     0 none        none            none)
+    (test_object_family "c3 -> none"          the_child_2     1 the_parent  the_subchild_1  none)
+    (test_object_family "c3 -> none"          the_child_3     0 none        none            none)
+    (test_object_family "c3 -> none"          the_subchild_1  0 the_child_2 none            none)
+
+    (move_to the_child_3 the_subchild_1)
+    (test_object_family "c3 -> sc1"           the_parent      1 none            the_child_2     none)
+    (test_object_family "c3 -> sc1"           the_child_1     0 none            none            none)
+    (test_object_family "c3 -> sc1"           the_child_2     1 the_parent      the_subchild_1  none)
+    (test_object_family "c3 -> sc1"           the_child_3     0 the_subchild_1  none            none)
+    (test_object_family "c3 -> sc1"           the_subchild_1  1 the_child_2     the_child_3     none)
+
+    (move_to the_child_1 the_child_2)
+    (test_object_family "c1 -> c2"            the_parent      1 none            the_child_2     none)
+    (test_object_family "c1 -> c2"            the_child_1     0 the_child_2     none            none)
+    (test_object_family "c1 -> c2"            the_child_2     2 the_parent      the_subchild_1  none)
+    (test_object_family "c1 -> c2"            the_child_3     0 the_subchild_1  none            none)
+    (test_object_family "c1 -> c2"            the_subchild_1  1 the_child_2     the_child_3     the_child_1)
+
 }
