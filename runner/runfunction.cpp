@@ -785,7 +785,36 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                     callStack.push(Value{Value::Integer, count});
                 }
                 break; }
-
+            case OpcodeDef::GetParent: {
+                Value objectId = callStack.pop();
+                objectId.requireType(Value::Object);
+                const ObjectDef &object = getObject(objectId.value);
+                if (object.parentId == 0) {
+                    callStack.push(noneValue);
+                } else {
+                    callStack.push(Value{Value::Object, object.parentId});
+                }
+                break; }
+            case OpcodeDef::GetFirstChild: {
+                Value objectId = callStack.pop();
+                objectId.requireType(Value::Object);
+                const ObjectDef &object = getObject(objectId.value);
+                if (object.childId == 0) {
+                    callStack.push(noneValue);
+                } else {
+                    callStack.push(Value{Value::Object, object.childId});
+                }
+                break; }
+            case OpcodeDef::GetSibling: {
+                Value objectId = callStack.pop();
+                objectId.requireType(Value::Object);
+                const ObjectDef &object = getObject(objectId.value);
+                if (object.siblingId == 0) {
+                    callStack.push(noneValue);
+                } else {
+                    callStack.push(Value{Value::Object, object.siblingId});
+                }
+                break; }
             default: {
                 std::stringstream ss;
                 ss << "Unrecognized opcode " << opcode << '.';
