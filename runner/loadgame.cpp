@@ -118,6 +118,9 @@ void GameData::load(const std::string &filename) {
         def->srcFile = read_32(inf);
         def->srcLine = read_32(inf);
         def->ident = read_32(inf);
+        def->parentId = read_32(inf);
+        def->childId = read_32(inf);
+        def->siblingId = read_32(inf);
         if (def->ident >= nextObject) nextObject = def->ident + 1;
         unsigned itemCount = read_16(inf);
         for (unsigned j = 0; j < itemCount; ++j) {

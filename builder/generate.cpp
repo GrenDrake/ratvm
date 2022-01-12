@@ -148,6 +148,9 @@ void generate(GameData &gamedata, const std::string &outputFile) {
         write_32(out, object->origin.fileNameString);
         write_32(out, object->origin.line);
         write_32(out, object->globalId);
+        write_32(out, object->parentId);
+        write_32(out, object->childId);
+        write_32(out, object->siblingId);
         write_16(out, object->properties.size());
         for (const GameProperty &property : object->properties) {
             write_16(out, property.id);

@@ -68,6 +68,7 @@ struct MapDef : public DataItem  {
 };
 struct ObjectDef : public DataItem  {
     std::map<unsigned, Value> properties;
+    int childId, parentId, siblingId;
 
     Value get(GameData &gamedata, unsigned propId, bool checkPrototype = true) const;
     bool has(unsigned propId) const;
