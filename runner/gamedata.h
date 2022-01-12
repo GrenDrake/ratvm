@@ -68,7 +68,7 @@ struct MapDef : public DataItem  {
 };
 struct ObjectDef : public DataItem  {
     std::map<unsigned, Value> properties;
-    int childId, parentId, siblingId;
+    unsigned childId, parentId, siblingId;
 
     Value get(GameData &gamedata, unsigned propId, bool checkPrototype = true) const;
     bool has(unsigned propId) const;
@@ -140,6 +140,8 @@ struct GameData {
     void say(const Value &what);
     Value makeNew(Value::Type type);
     Value makeNewString(const std::string &str);
+    void moveObject(Value objectToMove, Value newParent);
+    bool isIndirectLoop(unsigned childId, unsigned parentId);
     bool isStatic(const Value &what) const;
     bool isValid(const Value &what) const;
     void stringAppend(const Value &stringId, const Value &toAppend, bool upperFirst = false);

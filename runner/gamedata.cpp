@@ -434,6 +434,72 @@ Value GameData::makeNewString(const std::string &str) {
     return newId;
 }
 
+void GameData::moveObject(Value objectToMove, Value newParent) {
+    if (isIndirectLoop(objectToMove.value, newParent.value)) {
+        throw GameError("Tried to create circular containment.");
+    }
+
+    ObjectDef &toMove = getObject(objectToMove.value);
+    unsigned oldParent = toMove.parentId;
+    toMove.parentId = 0;
+    if (oldParent > 0) {
+        ObjectDef &oldParentObj = getObject(oldParent);
+        if (oldParentObj.childId == toMove.ident) {
+            oldParentObj.childId = toMove.siblingId;
+        } else {
+            unsigned child = oldParentObj.childId;
+            while (child > 0) {
+                ObjectDef &c = getObject(child);
+                if (c.siblingId == toMove.ident) {
+                    c.siblingId = toMove.siblingId;
+                    break;
+                }
+                child = c.siblingId;
+            }
+        }
+    }
+    toMove.siblingId = 0;
+
+    if (newParent.type != Value::None) {
+        toMove.parentId = newParent.value;
+        ObjectDef &parent = getObject(newParent.value);
+        if (parent.childId == 0) {
+            parent.childId = objectToMove.value;
+        } else {
+            int childId = parent.childId;
+            while (1) {
+                ObjectDef &child = getObject(childId);
+                if (child.siblingId > 0) {
+                    childId = child.siblingId;
+                } else {
+                    child.siblingId = objectToMove.value;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+bool GameData::isIndirectLoop(unsigned childId, unsigned parentId) {
+    if (childId == 0 || parentId == 0) return false;
+    if (childId == parentId) return true;
+
+    ObjectDef &object = getObject(childId);
+    if (object.parentId == parentId) return true;
+    ObjectDef &parent = getObject(parentId);
+
+    unsigned superParentId = parent.parentId;
+    while (superParentId > 0) {
+        if (superParentId == object.ident) {
+            return true;
+        } else {
+            ObjectDef &superParent = getObject(superParentId);
+            superParentId = superParent.parentId;
+        }
+    }
+    return false;
+}
+
 bool GameData::isStatic(const Value &what) const {
     switch(what.type) {
         case Value::Object: {

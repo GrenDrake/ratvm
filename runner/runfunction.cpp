@@ -792,7 +792,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 if (object.parentId == 0) {
                     callStack.push(noneValue);
                 } else {
-                    callStack.push(Value{Value::Object, object.parentId});
+                    callStack.push(Value{Value::Object, static_cast<int>(object.parentId)});
                 }
                 break; }
             case OpcodeDef::GetFirstChild: {
@@ -802,7 +802,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 if (object.childId == 0) {
                     callStack.push(noneValue);
                 } else {
-                    callStack.push(Value{Value::Object, object.childId});
+                    callStack.push(Value{Value::Object, static_cast<int>(object.childId)});
                 }
                 break; }
             case OpcodeDef::GetSibling: {
@@ -812,7 +812,7 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                 if (object.siblingId == 0) {
                     callStack.push(noneValue);
                 } else {
-                    callStack.push(Value{Value::Object, object.siblingId});
+                    callStack.push(Value{Value::Object, static_cast<int>(object.siblingId)});
                 }
                 break; }
             case OpcodeDef::GetChildren: {
@@ -830,6 +830,13 @@ Value GameData::resume(bool pushValue, const Value &inValue) {
                         child = &getObject(child->siblingId);
                     }
                 }
+                break; }
+            case OpcodeDef::MoveTo: {
+                Value toMove = callStack.pop();
+                toMove.requireType(Value::Object);
+                Value theParent = callStack.pop();
+                theParent.requireType(Value::Object, Value::None);
+                moveObject(toMove, theParent);
                 break; }
             default: {
                 std::stringstream ss;
